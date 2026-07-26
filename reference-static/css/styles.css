@@ -1,8 +1,10 @@
 /* ==========================================================================
    Corvanta Design System
+   Colors, typography, spacing, and component styles
    ========================================================================== */
 
 :root {
+  /* Colors */
   --color-primary: #2EB87C;
   --color-primary-dark: #249A67;
   --color-primary-light: #E6F7EF;
@@ -17,15 +19,18 @@
   --color-warning: #F59E0B;
   --color-error: #EF4444;
 
+  /* Typography */
   --font-heading: "Plus Jakarta Sans", "Poppins", sans-serif;
   --font-body: "Inter", sans-serif;
 
+  /* Radius */
   --radius-button: 12px;
   --radius-card: 16px;
   --radius-input: 12px;
   --radius-image: 20px;
   --radius-full: 999px;
 
+  /* Spacing scale */
   --sp-1: 8px;
   --sp-2: 16px;
   --sp-3: 24px;
@@ -34,10 +39,12 @@
   --sp-8: 64px;
   --sp-12: 96px;
 
+  /* Shadows */
   --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.05);
   --shadow-md: 0 4px 16px rgba(17, 24, 39, 0.08);
   --shadow-lg: 0 12px 32px rgba(17, 24, 39, 0.12);
 
+  /* Container */
   --container-max: 1280px;
 }
 
@@ -146,7 +153,10 @@ section { padding: var(--sp-12) 0; }
   box-shadow: var(--shadow-sm);
 }
 .btn-primary:hover { background: var(--color-primary-dark); box-shadow: var(--shadow-md); transform: translateY(-1px); }
-.btn-secondary { background: var(--color-secondary); color: #fff; }
+.btn-secondary {
+  background: var(--color-secondary);
+  color: #fff;
+}
 .btn-secondary:hover { background: #111827; }
 .btn-outline {
   background: transparent;
@@ -289,7 +299,12 @@ section { padding: var(--sp-12) 0; }
 }
 .navbar .container { display: flex; align-items: center; justify-content: space-between; height: 80px; }
 .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-heading); font-weight: 800; font-size: 1.375rem; color: var(--color-secondary); }
-.logo-img { height: 36px; width: auto; display: block; border-radius: 0; }
+.logo .logo-mark {
+  width: 38px; height: 38px; border-radius: 11px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800;
+}
+.logo-img { height: 36px; width: auto; display: block; }
 .nav-links { display: flex; align-items: center; gap: var(--sp-4); }
 .nav-links a {
   font-weight: 600;
@@ -314,6 +329,7 @@ section { padding: var(--sp-12) 0; }
   background: linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-bg) 100%);
 }
 .hero-split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: var(--sp-6); align-items: center; }
+.hero-badge { margin-bottom: var(--sp-2); }
 .hero h1 { margin-bottom: var(--sp-2); }
 .hero .lead { margin-bottom: var(--sp-4); max-width: 520px; }
 .hero-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-4); }
