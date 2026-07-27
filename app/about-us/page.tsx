@@ -191,17 +191,14 @@ export default function AboutUsPage() {
       <section>
         <div className="container">
           <div className="cta-band">
-            <h2>Join the Corvanta community</h2>
+            <h2>Ready to grow your business?</h2>
             <p className="lead">
-              Whether you&rsquo;re growing a business or growing a career,
-              we&rsquo;d love to help.
+              Tell us what you need and we&rsquo;ll match you with the right
+              talent.
             </p>
             <div className="hero-actions">
               <Link href="/find-a-talent" className="btn btn-primary btn-lg">
                 Find a Talent <ArrowRight size={18} />
-              </Link>
-              <Link href="/apply-as-a-va" className="btn btn-outline-white btn-lg">
-                Apply as a VA
               </Link>
             </div>
           </div>

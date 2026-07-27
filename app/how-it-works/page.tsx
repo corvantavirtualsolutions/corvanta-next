@@ -74,54 +74,6 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* For VAs */}
-      <section className="bg-surface">
-        <div className="container">
-          <div className="section-header text-center">
-            <span className="eyebrow">For Virtual Assistants</span>
-            <h2>Joining the Corvanta network</h2>
-            <p className="lead">
-              Here&rsquo;s what it looks like to apply and get placed as a VA.
-            </p>
-          </div>
-          <div className="steps">
-            {[
-              {
-                num: "01",
-                title: "Apply online",
-                body: "Submit your experience, specialty, and availability in about 10 minutes.",
-              },
-              {
-                num: "02",
-                title: "Complete assessment",
-                body: "Show us your skills with a short, specialty-specific assessment.",
-              },
-              {
-                num: "03",
-                title: "Interview",
-                body: "Meet with our talent team to discuss fit and expectations.",
-              },
-              {
-                num: "04",
-                title: "Get matched",
-                body: "Join our active roster and get matched with businesses that fit your skills.",
-              },
-            ].map((step) => (
-              <div key={step.num} className="step-card">
-                <div className="step-number">{step.num}</div>
-                <h4>{step.title}</h4>
-                <p>{step.body}</p>
-              </div>
-            ))}
-          </div>
-          <div className="text-center" style={{ marginTop: "var(--sp-4)" }}>
-            <Link href="/apply-as-a-va" className="btn btn-secondary">
-              Apply as a VA <ArrowRight size={18} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* Why It Works */}
       <section>
         <div className="container">
@@ -172,15 +124,12 @@ export default function HowItWorksPage() {
           <div className="cta-band">
             <h2>Ready to get started?</h2>
             <p className="lead">
-              Whether you&rsquo;re hiring or looking for work, your next step
-              takes just a few minutes.
+              Tell us what you need and get matched with a skilled Virtual
+              Assistant in just a few days.
             </p>
             <div className="hero-actions">
               <Link href="/find-a-talent" className="btn btn-primary btn-lg">
                 Find a Talent <ArrowRight size={18} />
-              </Link>
-              <Link href="/apply-as-a-va" className="btn btn-outline-white btn-lg">
-                Apply as a VA
               </Link>
             </div>
           </div>

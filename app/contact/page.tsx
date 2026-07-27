@@ -31,11 +31,6 @@ const faqItems = [
     answer:
       "Every VA completes a skills assessment, background check, and live interview with our talent team before joining the network.",
   },
-  {
-    question: "How do I apply to become a Virtual Assistant?",
-    answer:
-      "Visit our Apply as a VA page and submit an application — it takes about 10 minutes and our team reviews it within 2 business days.",
-  },
 ];
 
 export default function ContactPage() {
@@ -49,8 +44,8 @@ export default function ContactPage() {
           </div>
           <h1>We&rsquo;d love to hear from you</h1>
           <p className="lead">
-            Questions about hiring a VA, applying, or partnering with Corvanta?
-            Reach out any time.
+            Questions about hiring a VA or partnering with Corvanta? Reach out
+            any time.
           </p>
         </div>
       </section>
@@ -118,7 +113,6 @@ export default function ContactPage() {
                 <label className="form-label">I am a...</label>
                 <select className="form-select">
                   <option>Business looking to hire</option>
-                  <option>Virtual Assistant applicant</option>
                   <option>Partner / Press</option>
                   <option>Other</option>
                 </select>

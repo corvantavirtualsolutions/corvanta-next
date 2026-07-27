@@ -440,12 +440,6 @@ export default function HomePage() {
               <Link href="/find-a-talent" className="btn btn-primary btn-lg">
                 Find a Talent <ArrowRight size={18} />
               </Link>
-              <Link
-                href="/apply-as-a-va"
-                className="btn btn-outline-white btn-lg"
-              >
-                Apply as a VA
-              </Link>
             </div>
           </div>
         </div>

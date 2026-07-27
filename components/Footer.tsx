@@ -67,14 +67,6 @@ export default function Footer() {
           </div>
 
           <div className="footer-col">
-            <h5>Virtual Assistants</h5>
-            <ul>
-              <li><Link href="/apply-as-a-va">Apply as a VA</Link></li>
-              <li><Link href="/how-it-works">How It Works</Link></li>
-            </ul>
-          </div>
-
-          <div className="footer-col">
             <h5>Resources</h5>
             <ul>
               <li><Link href="/blog">Blogs &amp; News</Link></li>

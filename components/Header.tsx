@@ -10,7 +10,6 @@ const navLinks = [
   { href: "/how-it-works", label: "How It Works" },
   { href: "/about-us", label: "About Us" },
   { href: "/contact", label: "Contact" },
-  { href: "/apply-as-a-va", label: "Apply as a VA" },
 ];
 
 export default function Header() {
@@ -41,9 +40,6 @@ export default function Header() {
           </nav>
 
           <div className="nav-actions">
-            <Link href="/apply-as-a-va" className="btn btn-outline btn-sm">
-              Apply as a VA
-            </Link>
             <Link href="/find-a-talent" className="btn btn-primary btn-sm">
               Find a Talent
             </Link>
