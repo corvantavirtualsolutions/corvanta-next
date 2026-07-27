@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ShieldCheck, Star, Handshake, Lightbulb, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Us | Corvanta",
+  title: "About Us | Corvanta Virtual Solutions",
   description: "Learn about Corvanta's mission, values, and leadership team.",
 };
 

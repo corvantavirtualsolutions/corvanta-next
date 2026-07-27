@@ -22,9 +22,9 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Home | Corvanta",
+  title: "Corvanta Virtual Solutions | Grow Your Business with Skilled VAs",
   description:
-    "Corvanta matches you with vetted, experienced Virtual Assistants who handle the busywork — so your team can focus on growth.",
+    "Corvanta Virtual Solutions matches you with vetted, experienced Virtual Assistants who handle the busywork — so your team can focus on growth.",
 };
 
 export default function HomePage() {

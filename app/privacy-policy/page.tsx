@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Corvanta",
+  title: "Privacy Policy | Corvanta Virtual Solutions",
   description: "Corvanta's Privacy Policy.",
 };
 

@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, Clock, ArrowRight } from "lucide-react";
 import Accordion from "@/components/Accordion";
 
 export const metadata: Metadata = {
-  title: "Contact | Corvanta",
+  title: "Contact | Corvanta Virtual Solutions",
   description:
     "Get in touch with the Corvanta team or find answers to frequently asked questions.",
 };

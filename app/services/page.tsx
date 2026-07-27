@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Services | Corvanta",
+  title: "Services | Corvanta Virtual Solutions",
   description:
     "Explore the full range of Virtual Assistant services Corvanta offers.",
 };

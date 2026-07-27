@@ -16,7 +16,7 @@ export default function Footer() {
                 height={36}
                 className="logo-img"
               />
-              Corvanta
+              Corvanta Virtual Solutions
             </Link>
             <p>
               Corvanta connects growing businesses with vetted, skilled Virtual

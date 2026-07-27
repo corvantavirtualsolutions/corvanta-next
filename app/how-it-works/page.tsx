@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ShieldCheck, Users, Headphones, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "How It Works | Corvanta",
+  title: "How It Works | Corvanta Virtual Solutions",
   description:
     "See how Corvanta matches businesses with Virtual Assistants, and how VAs join our network.",
 };

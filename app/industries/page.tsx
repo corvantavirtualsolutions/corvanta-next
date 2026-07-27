@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Industries | Corvanta",
+  title: "Industries | Corvanta Virtual Solutions",
   description:
     "See the industries Corvanta's Virtual Assistants specialize in supporting.",
 };

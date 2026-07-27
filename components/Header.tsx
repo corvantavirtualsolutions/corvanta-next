@@ -6,8 +6,8 @@ import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
-  { href: "/", label: "Home" },
   { href: "/how-it-works", label: "How It Works" },
+  { href: "/industries", label: "Industries" },
   { href: "/about-us", label: "About Us" },
   { href: "/contact", label: "Contact" },
 ];
@@ -28,21 +28,23 @@ export default function Header() {
               className="logo-img"
               priority
             />
-            Corvanta
+            Corvanta Virtual Solutions
           </Link>
 
-          <nav className="nav-links">
-            {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="nav-right">
+            <nav className="nav-links">
+              {navLinks.map((link) => (
+                <Link key={link.href} href={link.href}>
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
 
-          <div className="nav-actions">
-            <Link href="/find-a-talent" className="btn btn-primary btn-sm">
-              Find a Talent
-            </Link>
+            <div className="nav-actions">
+              <Link href="/find-a-talent" className="btn btn-primary btn-sm">
+                Find a Talent
+              </Link>
+            </div>
           </div>
 
           <button
@@ -69,7 +71,7 @@ export default function Header() {
               height={36}
               className="logo-img"
             />
-            Corvanta
+            Corvanta Virtual Solutions
           </Link>
           <button
             className="mobile-nav-close"

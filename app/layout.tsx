@@ -19,10 +19,15 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Corvanta | Vetted Virtual Assistants for Growing Businesses",
+  title: "Corvanta Virtual Solutions | Vetted Virtual Assistants for Growing Businesses",
   description:
-    "Corvanta connects growing businesses with vetted, skilled Virtual Assistants — so you can focus on what matters most.",
-  icons: { icon: "/logo.png" },
+    "Corvanta Virtual Solutions connects growing businesses with vetted, skilled Virtual Assistants — so you can focus on what matters most.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/logo.png", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({

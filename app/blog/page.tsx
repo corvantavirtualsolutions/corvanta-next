@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Blog & News | Corvanta",
+  title: "Blog & News | Corvanta Virtual Solutions",
   description:
     "Insights on remote work, delegation, and growing your business with Corvanta.",
 };
