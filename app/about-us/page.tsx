@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ShieldCheck, Star, Handshake, Lightbulb, ArrowRight } from "lucide-react";
+import { ShieldCheck, Star, Handshake, Lightbulb, ArrowRight, Linkedin, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About Us | Corvanta Virtual Solutions",
@@ -181,6 +181,14 @@ export default function AboutUsPage() {
                 <h4>{member.name}</h4>
                 <div className="role">{member.role}</div>
                 <p>{member.bio}</p>
+                <div className="team-social">
+                  <a href="#" aria-label={`${member.name} on LinkedIn`} className="team-social-link">
+                    <Linkedin size={16} />
+                  </a>
+                  <a href="#" aria-label={`Email ${member.name}`} className="team-social-link">
+                    <Mail size={16} />
+                  </a>
+                </div>
               </div>
             ))}
           </div>

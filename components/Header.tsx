@@ -3,13 +3,29 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 
-const navLinks = [
-  { href: "/how-it-works", label: "How It Works" },
-  { href: "/industries", label: "Industries" },
-  { href: "/about-us", label: "About Us" },
-  { href: "/contact", label: "Contact" },
+type DropdownItem = { label: string; href: string };
+type NavItem =
+  | { label: string; href: string; dropdown?: never }
+  | { label: string; href?: never; dropdown: DropdownItem[] };
+
+const navItems: NavItem[] = [
+  { label: "How It Works", href: "/how-it-works" },
+  {
+    label: "Industries",
+    dropdown: [
+      { label: "Services We Offer", href: "/services" },
+      { label: "Industries We Serve", href: "/industries" },
+    ],
+  },
+  {
+    label: "About Us",
+    dropdown: [
+      { label: "About Us", href: "/about-us" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
 ];
 
 export default function Header() {
@@ -33,11 +49,29 @@ export default function Header() {
 
           <div className="nav-right">
             <nav className="nav-links">
-              {navLinks.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  {link.label}
-                </Link>
-              ))}
+              {navItems.map((item) =>
+                item.dropdown ? (
+                  <div key={item.label} className="nav-item">
+                    <button className="nav-trigger">
+                      {item.label}
+                      <ChevronDown size={13} className="nav-chevron" />
+                    </button>
+                    <div className="dropdown-menu">
+                      <div className="dropdown-menu-inner">
+                        {item.dropdown.map((sub) => (
+                          <Link key={sub.href} href={sub.href} className="dropdown-link">
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <Link key={item.href} href={item.href}>
+                    {item.label}
+                  </Link>
+                )
+              )}
             </nav>
 
             <div className="nav-actions">
@@ -57,13 +91,10 @@ export default function Header() {
         </div>
       </header>
 
+      {/* Mobile drawer */}
       <div className={`mobile-nav${mobileOpen ? " open" : ""}`}>
         <div className="mobile-nav-header">
-          <Link
-            href="/"
-            className="logo"
-            onClick={() => setMobileOpen(false)}
-          >
+          <Link href="/" className="logo" onClick={() => setMobileOpen(false)}>
             <Image
               src="/logo.png"
               alt="Corvanta logo"
@@ -82,15 +113,27 @@ export default function Header() {
           </button>
         </div>
 
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            onClick={() => setMobileOpen(false)}
-          >
-            {link.label}
-          </Link>
-        ))}
+        {navItems.map((item) =>
+          item.dropdown ? (
+            item.dropdown.map((sub) => (
+              <Link
+                key={sub.href}
+                href={sub.href}
+                onClick={() => setMobileOpen(false)}
+              >
+                {sub.label}
+              </Link>
+            ))
+          ) : (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+            >
+              {item.label}
+            </Link>
+          )
+        )}
 
         <Link
           href="/find-a-talent"

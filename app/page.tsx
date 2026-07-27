@@ -67,6 +67,7 @@ export default function HomePage() {
               alt="Virtual assistant working with a business team"
               width={900}
               height={600}
+              style={{ width: "100%", height: "auto" }}
               unoptimized
             />
             <div className="floating-card fc-1">
