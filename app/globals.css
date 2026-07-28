@@ -616,10 +616,7 @@ section { padding: var(--sp-12) 0; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .steps { grid-template-columns: repeat(2, 1fr); }
-  /* Road only looks right with 4 columns — hide below that */
-  .hiw-road-svg { display: none; }
-  .hiw-grid { grid-template-columns: repeat(2, 1fr); }
-  .hiw-badge-row { height: auto; padding: var(--sp-1) 0; justify-content: flex-start; }
+  /* HIW road/grid handled in the dedicated max-width:767px block below */
 }
 
 @media (max-width: 480px) {
@@ -646,23 +643,36 @@ section { padding: var(--sp-12) 0; }
   .hero .hero-actions { flex-wrap: nowrap; gap: var(--sp-1); }
   .hero .hero-actions .btn { flex: 1 1 0; padding: 11px 12px; font-size: 0.85rem; }
 
-  /* How It Works: full-width card stack (matches Services section style) */
-  .hiw-road-svg { display: none; }
-  .hiw-grid { grid-template-columns: 1fr; gap: var(--sp-2); }
+  /* HIW handled in the dedicated max-width:767px block below */
+}
+
+/* ---------- How It Works — mobile (single-column card stack) ---------- */
+@media (max-width: 767px) {
+  /* Hide the desktop-only horizontal arrow */
+  .hiw-road-svg { display: none !important; }
+  /* Single-column grid, matching Services section spacing */
+  .hiw-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: var(--sp-2) !important;
+  }
+  /* Each step becomes a full-width card */
   .hiw-col {
-    display: block;
+    display: block !important;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
     padding: var(--sp-3);
-    cursor: default;
+    min-width: 0;
   }
+  /* Step number badge sits above title/body */
   .hiw-badge-row {
-    height: auto;
+    height: auto !important;
     justify-content: flex-start;
     padding: 0;
     margin-bottom: var(--sp-2);
   }
+  /* Neutralise JS-driven transform and left-align text */
   .hiw-text { transform: none !important; text-align: left; }
   .hiw-text h4 { margin-bottom: 4px; }
 }
