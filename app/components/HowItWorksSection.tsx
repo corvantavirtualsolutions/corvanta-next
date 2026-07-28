@@ -33,16 +33,28 @@ const STEPS = [
   },
 ];
 
-// viewBox: 0 0 900 80 — each step has its own bezier segment ending at its dot
-const DOT_CX = [150, 350, 550, 750] as const;
+/*
+ * viewBox: 0 0 800 64
+ *   • height 64 == .hiw-badge-row height (64px CSS) → no vertical stretch
+ *   • dots at y = 32 (centre) → land exactly on badge centres
+ *   • dots at x = 100, 300, 500, 700 → 12.5%, 37.5%, 62.5%, 87.5%
+ *     ≈ the four 1fr column centres in a repeat(4,1fr) grid with gap:24px
+ *
+ * 4 segments (one per step) — segment N leads INTO step N's dot:
+ *   Seg 0: x   0 → 100  (lead-in to step 1)
+ *   Seg 1: x 100 → 300  (step 1 → step 2)
+ *   Seg 2: x 300 → 500  (step 2 → step 3)
+ *   Seg 3: x 500 → 700  (step 3 → step 4)
+ */
+const DOT_CX = [100, 300, 500, 700] as const;
 const SEGMENTS = [
-  "M 0,40 C 50,10 100,70 150,40",
-  "M 150,40 C 210,10 290,70 350,40",
-  "M 350,40 C 410,10 490,70 550,40",
-  "M 550,40 C 610,10 690,70 750,40",
+  "M 0,32 C 15,10 85,54 100,32",
+  "M 100,32 C 160,10 240,54 300,32",
+  "M 300,32 C 360,10 440,54 500,32",
+  "M 500,32 C 560,10 640,54 700,32",
 ] as const;
-const FULL_PATH =
-  "M 0,40 C 50,10 100,70 150,40 C 210,10 290,70 350,40 C 410,10 490,70 550,40 C 610,10 690,70 750,40";
+const FULL_GHOST =
+  "M 0,32 C 15,10 85,54 100,32 C 160,10 240,54 300,32 C 360,10 440,54 500,32 C 560,10 640,54 700,32";
 
 export default function HowItWorksSection() {
   const [hovered, setHovered] = useState<number>(-1);
@@ -59,24 +71,33 @@ export default function HowItWorksSection() {
           </p>
         </div>
 
-        {/* Interactive road */}
-        <div className="road-wrap" aria-hidden="true">
+        {/*
+         * .hiw-steps — position:relative container
+         *   ↳ SVG road — position:absolute, covers the badge row (top 64 px)
+         *   ↳ .hiw-grid — 4-col grid; each .hiw-col stacks badge + text
+         */}
+        <div className="hiw-steps">
           <svg
-            viewBox="0 0 900 80"
+            className="hiw-road-svg"
+            viewBox="0 0 800 64"
             preserveAspectRatio="none"
-            className="road-svg"
+            aria-hidden="true"
           >
             <defs>
               {ACCENTS.map((_, i) => (
                 <filter
                   key={i}
-                  id={`seg-glow-${i}`}
-                  x="-10%"
-                  y="-60%"
-                  width="120%"
-                  height="220%"
+                  id={`hiw-glow-${i}`}
+                  x="-12%"
+                  y="-80%"
+                  width="124%"
+                  height="260%"
                 >
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur" />
+                  <feGaussianBlur
+                    in="SourceGraphic"
+                    stdDeviation="3"
+                    result="blur"
+                  />
                   <feMerge>
                     <feMergeNode in="blur" />
                     <feMergeNode in="SourceGraphic" />
@@ -87,14 +108,14 @@ export default function HowItWorksSection() {
 
             {/* Ghost base track */}
             <path
-              d={FULL_PATH}
+              d={FULL_GHOST}
               fill="none"
-              stroke="rgba(17,24,39,0.08)"
-              strokeWidth="6"
+              stroke="rgba(17,24,39,0.07)"
+              strokeWidth="5"
               strokeLinecap="round"
             />
 
-            {/* 4 individually coloured segments */}
+            {/* Coloured segments */}
             {SEGMENTS.map((d, i) => {
               const isActive = hovered === i;
               const isDimmed = hovered !== -1 && !isActive;
@@ -104,84 +125,79 @@ export default function HowItWorksSection() {
                   d={d}
                   fill="none"
                   stroke={ACCENTS[i].color}
-                  strokeWidth={isActive ? 6 : 3.5}
+                  strokeWidth={isActive ? 5.5 : 3}
                   strokeLinecap="round"
-                  opacity={isDimmed ? 0.12 : isActive ? 1 : 0.28}
-                  filter={isActive ? `url(#seg-glow-${i})` : undefined}
+                  opacity={isDimmed ? 0.1 : isActive ? 1 : 0.25}
+                  filter={isActive ? `url(#hiw-glow-${i})` : undefined}
                   style={{
-                    transition: "opacity 0.28s ease, stroke-width 0.28s ease",
+                    transition: "opacity 0.25s ease, stroke-width 0.25s ease",
                   }}
                 />
               );
             })}
 
-            {/* Step dots */}
+            {/* Dot halos (appear behind the badge circles) */}
             {DOT_CX.map((cx, i) => {
               const isActive = hovered === i;
               const isDimmed = hovered !== -1 && !isActive;
               return (
-                <g key={i}>
-                  {/* Glow halo — only visible on active */}
-                  <circle
-                    cx={cx}
-                    cy={40}
-                    r={16}
-                    fill={ACCENTS[i].color}
-                    opacity={isActive ? 0.18 : 0}
-                    style={{ transition: "opacity 0.28s ease" }}
-                  />
-                  <circle
-                    cx={cx}
-                    cy={40}
-                    r={7}
-                    fill={ACCENTS[i].color}
-                    opacity={isDimmed ? 0.2 : 1}
-                    style={{
-                      transform: isActive ? "scale(1.35)" : "scale(1)",
-                      transformBox: "fill-box",
-                      transformOrigin: "center",
-                      transition:
-                        "transform 0.28s ease, opacity 0.28s ease",
-                    }}
-                  />
-                </g>
+                <circle
+                  key={i}
+                  cx={cx}
+                  cy={32}
+                  r={22}
+                  fill={ACCENTS[i].color}
+                  opacity={isActive ? 0.15 : 0}
+                  style={{ transition: "opacity 0.25s ease" }}
+                />
               );
             })}
           </svg>
-        </div>
 
-        <div className="steps">
-          {STEPS.map((step, i) => (
-            <div
-              key={step.num}
-              className="step-card"
-              onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(-1)}
-              style={{
-                transform: hovered === i ? "translateY(-4px)" : "translateY(0)",
-                transition: "transform 0.25s ease",
-              }}
-            >
+          {/* Step columns — hover target covers badge + text */}
+          <div className="hiw-grid">
+            {STEPS.map((step, i) => (
               <div
-                className="step-number"
-                style={{
-                  background:
-                    hovered === i ? ACCENTS[i].color : ACCENTS[i].bg,
-                  color: hovered === i ? "#fff" : ACCENTS[i].color,
-                  boxShadow:
-                    hovered === i
-                      ? `0 6px 22px ${ACCENTS[i].color}50`
-                      : "none",
-                  transition:
-                    "background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease",
-                }}
+                key={step.num}
+                className="hiw-col"
+                onMouseEnter={() => setHovered(i)}
+                onMouseLeave={() => setHovered(-1)}
               >
-                {step.num}
+                {/* Badge row — same height as SVG so dot ↔ badge centres align */}
+                <div className="hiw-badge-row">
+                  <div
+                    className="step-number"
+                    style={{
+                      background:
+                        hovered === i ? ACCENTS[i].color : ACCENTS[i].bg,
+                      color: hovered === i ? "#fff" : ACCENTS[i].color,
+                      boxShadow:
+                        hovered === i
+                          ? `0 4px 18px ${ACCENTS[i].color}55`
+                          : "none",
+                      transition:
+                        "background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease",
+                    }}
+                  >
+                    {step.num}
+                  </div>
+                </div>
+
+                {/* Text content */}
+                <div
+                  className="hiw-text"
+                  style={{
+                    transform:
+                      hovered === i ? "translateY(-4px)" : "translateY(0)",
+                    transition: "transform 0.25s ease",
+                  }}
+                >
+                  <h4>{step.title}</h4>
+                  <p>{step.body}</p>
+                </div>
               </div>
-              <h4>{step.title}</h4>
-              <p>{step.body}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         <div className="text-center" style={{ marginTop: "var(--sp-4)" }}>

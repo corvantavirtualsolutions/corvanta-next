@@ -319,10 +319,8 @@ section { padding: var(--sp-12) 0; }
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(248,250,252,0.9);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(229,231,235,0.7);
+  background: #ffffff;
+  border-bottom: 1px solid var(--color-border);
 }
 .navbar .container { display: flex; align-items: center; justify-content: space-between; height: 80px; }
 .logo {
@@ -618,6 +616,10 @@ section { padding: var(--sp-12) 0; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .steps { grid-template-columns: repeat(2, 1fr); }
+  /* Road only looks right with 4 columns — hide below that */
+  .hiw-road-svg { display: none; }
+  .hiw-grid { grid-template-columns: repeat(2, 1fr); }
+  .hiw-badge-row { height: auto; padding: var(--sp-1) 0; justify-content: flex-start; }
 }
 
 @media (max-width: 480px) {
@@ -631,6 +633,7 @@ section { padding: var(--sp-12) 0; }
   .cta-band { padding: var(--sp-6) var(--sp-2); }
   /* Hide floating cards on small phones to prevent overflow */
   .hero-visual .floating-card { display: none; }
+  .hiw-grid { grid-template-columns: 1fr; }
 }
 
 /* ---------- Hero Slider ---------- */
@@ -687,17 +690,44 @@ section { padding: var(--sp-12) 0; }
   margin: 0 auto var(--sp-2);
 }
 
-/* ---------- Wiggly Road ---------- */
-.road-wrap {
-  width: 100%;
-  margin-bottom: calc(-1 * var(--sp-3));
+/* ---------- How It Works — road + steps ---------- */
+.hiw-steps {
+  position: relative;
+  margin-bottom: var(--sp-2);
 }
-.road-svg {
+/*
+ * SVG road: absolutely positioned so it covers exactly the badge row.
+ * viewBox height = 64 == .hiw-badge-row height → no vertical distortion.
+ * preserveAspectRatio=none stretches only horizontally → dot x% stays correct.
+ */
+.hiw-road-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 80px;
-  display: block;
+  height: 64px;   /* matches .hiw-badge-row */
+  pointer-events: none;
+  z-index: 0;
 }
-/* (road-path draw-in and road-dot fade-in moved to interactive HowItWorksSection component) */
+.hiw-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-3);
+}
+.hiw-col {
+  position: relative;
+  z-index: 1;
+  cursor: default;
+}
+.hiw-badge-row {
+  height: 64px;           /* same as SVG height → dot y=32 ≡ badge centre */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--sp-2);
+}
+.hiw-text h4 { margin-bottom: var(--sp-1); }
+.hiw-text p  { margin-bottom: 0; }
 
 /* ---------- Testimonial Confetti ---------- */
 .testimonial-card {
