@@ -35,26 +35,33 @@ const STEPS = [
 
 /*
  * viewBox: 0 0 800 64
- *   • height 64 == .hiw-badge-row height (64px CSS) → no vertical stretch
- *   • dots at y = 32 (centre) → land exactly on badge centres
- *   • dots at x = 100, 300, 500, 700 → 12.5%, 37.5%, 62.5%, 87.5%
- *     ≈ the four 1fr column centres in a repeat(4,1fr) grid with gap:24px
+ *   height 64 == .hiw-badge-row CSS height → no vertical distortion
+ *   preserveAspectRatio="none" → only horizontal stretch; a straight
+ *   horizontal line at y=32 stays perfectly horizontal at any viewport width.
  *
- * 4 segments (one per step) — segment N leads INTO step N's dot:
- *   Seg 0: x   0 → 100  (lead-in to step 1)
- *   Seg 1: x 100 → 300  (step 1 → step 2)
- *   Seg 2: x 300 → 500  (step 2 → step 3)
- *   Seg 3: x 500 → 700  (step 3 → step 4)
+ * Dots at x = 100, 300, 500, 700  →  12.5 / 37.5 / 62.5 / 87.5 %
+ *   ≈ the four 1fr grid column centres with gap:24px.
+ *
+ * 4 straight segments (one per step, each at y = 32):
+ *   Seg 0: x   0 → 100   lead-in  to step 1
+ *   Seg 1: x 100 → 300   step 1 → step 2
+ *   Seg 2: x 300 → 500   step 2 → step 3
+ *   Seg 3: x 500 → 784   step 3 → step 4 (+ arrowhead 784 → 800)
+ *
+ * Hovering step N lights its segment and dims the others.
  */
 const DOT_CX = [100, 300, 500, 700] as const;
-const SEGMENTS = [
-  "M 0,32 C 15,10 85,54 100,32",
-  "M 100,32 C 160,10 240,54 300,32",
-  "M 300,32 C 360,10 440,54 500,32",
-  "M 500,32 C 560,10 640,54 700,32",
-] as const;
-const FULL_GHOST =
-  "M 0,32 C 15,10 85,54 100,32 C 160,10 240,54 300,32 C 360,10 440,54 500,32 C 560,10 640,54 700,32";
+
+// [x1, x2] for each segment line
+const SEG_X: [number, number][] = [
+  [0, 100],
+  [100, 300],
+  [300, 500],
+  [500, 784], // seg 3 stops before the arrowhead base
+];
+
+// Arrowhead tip at x=800, base at x=784, half-height ±8
+const ARROW = "784,24 800,32 784,40";
 
 export default function HowItWorksSection() {
   const [hovered, setHovered] = useState<number>(-1);
@@ -72,9 +79,9 @@ export default function HowItWorksSection() {
         </div>
 
         {/*
-         * .hiw-steps — position:relative container
-         *   ↳ SVG road — position:absolute, covers the badge row (top 64 px)
-         *   ↳ .hiw-grid — 4-col grid; each .hiw-col stacks badge + text
+         * .hiw-steps — position:relative wrapper
+         *   ↳ SVG arrow — position:absolute, top 64 px (badge row height)
+         *   ↳ .hiw-grid — 4-col grid; each .hiw-col = badge + text
          */}
         <div className="hiw-steps">
           <svg
@@ -83,78 +90,58 @@ export default function HowItWorksSection() {
             preserveAspectRatio="none"
             aria-hidden="true"
           >
-            <defs>
-              {ACCENTS.map((_, i) => (
-                <filter
-                  key={i}
-                  id={`hiw-glow-${i}`}
-                  x="-12%"
-                  y="-80%"
-                  width="124%"
-                  height="260%"
-                >
-                  <feGaussianBlur
-                    in="SourceGraphic"
-                    stdDeviation="3"
-                    result="blur"
-                  />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              ))}
-            </defs>
-
-            {/* Ghost base track */}
-            <path
-              d={FULL_GHOST}
-              fill="none"
-              stroke="rgba(17,24,39,0.07)"
-              strokeWidth="5"
+            {/* ── Ghost layer (always dim) ───────────────────────────── */}
+            <line
+              x1="0" y1="32" x2="784" y2="32"
+              stroke="rgba(17,24,39,0.09)"
+              strokeWidth="2.5"
               strokeLinecap="round"
             />
+            <polygon points={ARROW} fill="rgba(17,24,39,0.09)" />
 
-            {/* Coloured segments */}
-            {SEGMENTS.map((d, i) => {
+            {/* ── Coloured segments ─────────────────────────────────── */}
+            {SEG_X.map(([x1, x2], i) => {
               const isActive = hovered === i;
               const isDimmed = hovered !== -1 && !isActive;
+              const opacity = isDimmed ? 0.1 : isActive ? 1 : 0.3;
               return (
-                <path
+                <line
                   key={i}
-                  d={d}
-                  fill="none"
+                  x1={x1} y1="32" x2={x2} y2="32"
                   stroke={ACCENTS[i].color}
-                  strokeWidth={isActive ? 5.5 : 3}
+                  strokeWidth={isActive ? 4 : 2.5}
                   strokeLinecap="round"
-                  opacity={isDimmed ? 0.1 : isActive ? 1 : 0.25}
-                  filter={isActive ? `url(#hiw-glow-${i})` : undefined}
-                  style={{
-                    transition: "opacity 0.25s ease, stroke-width 0.25s ease",
-                  }}
+                  opacity={opacity}
+                  style={{ transition: "opacity 0.25s ease, stroke-width 0.25s ease" }}
                 />
               );
             })}
 
-            {/* Dot halos (appear behind the badge circles) */}
-            {DOT_CX.map((cx, i) => {
-              const isActive = hovered === i;
-              const isDimmed = hovered !== -1 && !isActive;
-              return (
-                <circle
-                  key={i}
-                  cx={cx}
-                  cy={32}
-                  r={22}
-                  fill={ACCENTS[i].color}
-                  opacity={isActive ? 0.15 : 0}
-                  style={{ transition: "opacity 0.25s ease" }}
-                />
-              );
-            })}
+            {/* Arrowhead — belongs to segment 3 */}
+            <polygon
+              points={ARROW}
+              fill={ACCENTS[3].color}
+              opacity={
+                hovered === -1 ? 0.3 : hovered === 3 ? 1 : 0.1
+              }
+              style={{ transition: "opacity 0.25s ease" }}
+            />
+
+            {/* ── Glow halos behind badges (visible on hover only) ──── */}
+            {DOT_CX.map((cx, i) => (
+              <circle
+                key={i}
+                cx={cx}
+                cy={32}
+                r={22}
+                fill={ACCENTS[i].color}
+                opacity={hovered === i ? 0.14 : 0}
+                style={{ transition: "opacity 0.25s ease" }}
+              />
+            ))}
           </svg>
 
-          {/* Step columns — hover target covers badge + text */}
+          {/* Step columns ─ hover target covers badge + text */}
           <div className="hiw-grid">
             {STEPS.map((step, i) => (
               <div
@@ -163,7 +150,7 @@ export default function HowItWorksSection() {
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(-1)}
               >
-                {/* Badge row — same height as SVG so dot ↔ badge centres align */}
+                {/* Badge row — 64 px tall, matching SVG height */}
                 <div className="hiw-badge-row">
                   <div
                     className="step-number"
@@ -183,7 +170,7 @@ export default function HowItWorksSection() {
                   </div>
                 </div>
 
-                {/* Text content */}
+                {/* Title + body */}
                 <div
                   className="hiw-text"
                   style={{
