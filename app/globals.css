@@ -557,6 +557,74 @@ section { padding: var(--sp-12) 0; }
   .cta-band { padding: var(--sp-6) var(--sp-2); }
 }
 
+/* ---------- Hero Slider ---------- */
+.hero-slider {
+  position: relative;
+  border-radius: var(--radius-image);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.hero-slide.active { opacity: 1; }
+.hero-slide img { border-radius: 0 !important; }
+
+/* ---------- Accent Cards ---------- */
+.accent-card {
+  transition: box-shadow 0.25s ease, transform 0.25s ease,
+    background 0.25s ease, border-color 0.25s ease;
+}
+.accent-card:hover {
+  background: var(--card-accent-bg);
+  transform: scale(1.04) translateY(-3px);
+  border-color: var(--card-accent);
+  box-shadow: var(--shadow-md);
+}
+.accent-icon {
+  /* color/background set via inline styles; just ensure it stays centered */
+  margin: 0 auto var(--sp-2);
+}
+
+/* ---------- Wiggly Road ---------- */
+.road-wrap {
+  width: 100%;
+  margin-bottom: calc(-1 * var(--sp-3));
+}
+.road-svg {
+  width: 100%;
+  height: 80px;
+  display: block;
+}
+@keyframes drawRoad {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+.road-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: drawRoad 2s ease-in-out forwards;
+  animation-delay: 0.2s;
+}
+@keyframes fadeInDot {
+  to { opacity: 1; }
+}
+.road-dot {
+  opacity: 0;
+  animation: fadeInDot 0.35s ease forwards;
+}
+
+/* Reduced-motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide { transition: none; }
+  .road-path  { animation: none; stroke-dashoffset: 0; }
+  .road-dot   { animation: none; opacity: 1; }
+}
+
 /* Mobile nav drawer */
 .mobile-nav {
   position: fixed;

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import {
   Sparkles,
   ArrowRight,
@@ -20,12 +19,23 @@ import {
   Scale,
   Star,
 } from "lucide-react";
+import HeroSlider from "./components/HeroSlider";
 
 export const metadata = {
   title: "Corvanta Virtual Solutions | Grow Your Business with Skilled VAs",
   description:
     "Corvanta Virtual Solutions matches you with vetted, experienced Virtual Assistants who handle the busywork — so your team can focus on growth.",
 };
+
+// Accent palette shared across Why Corvanta, Services, Industries, and the road
+const ACCENTS = [
+  { color: "#2EB87C", bg: "#E6F7EF" },
+  { color: "#0F766E", bg: "rgba(15,118,110,0.12)" },
+  { color: "#7C3AED", bg: "rgba(124,58,237,0.10)" },
+  { color: "#EA580C", bg: "rgba(234,88,12,0.10)" },
+  { color: "#DB2777", bg: "rgba(219,39,119,0.10)" },
+  { color: "#2563EB", bg: "rgba(37,99,235,0.10)" },
+];
 
 export default function HomePage() {
   return (
@@ -35,7 +45,7 @@ export default function HomePage() {
         <div className="container hero-split">
           <div>
             <span className="eyebrow">
-              <Sparkles size={14} /> Trusted by 200+ growing businesses
+              <Sparkles size={14} /> Trusted by 100+ growing businesses
             </span>
             <h1>Grow your business with skilled Virtual Assistants</h1>
             <p className="lead">
@@ -62,14 +72,7 @@ export default function HomePage() {
           </div>
 
           <div className="hero-visual">
-            <Image
-              src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=900&q=70"
-              alt="Virtual assistant working with a business team"
-              width={900}
-              height={600}
-              style={{ width: "100%", height: "auto" }}
-              unoptimized
-            />
+            <HeroSlider />
             <div className="floating-card fc-1">
               <div className="icon-circle icon-sm">
                 <TrendingUp size={20} />
@@ -89,7 +92,7 @@ export default function HomePage() {
               </div>
               <div>
                 <div style={{ fontWeight: 700, fontFamily: "var(--font-heading)" }}>
-                  1,200+ VAs
+                  200+ VAs
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "var(--color-text-secondary)" }}>
                   ready to match
@@ -105,8 +108,8 @@ export default function HomePage() {
         <div className="container">
           <div className="grid grid-4">
             {[
-              { value: "1,200+", label: "Vetted Virtual Assistants" },
-              { value: "200+", label: "Businesses Served" },
+              { value: "200+", label: "Vetted Virtual Assistants" },
+              { value: "100+", label: "Businesses Served" },
               { value: "98%", label: "Client Satisfaction" },
               { value: "3 Days", label: "Average Time to Match" },
             ].map((stat) => (
@@ -134,43 +137,54 @@ export default function HomePage() {
             {[
               {
                 icon: <ShieldCheck size={26} />,
-                modifier: "",
                 title: "Rigorously Vetted",
                 body: "Every VA passes a multi-step screening process including skills assessments, background checks, and interviews.",
               },
               {
                 icon: <Zap size={26} />,
-                modifier: "teal",
                 title: "Fast Matching",
                 body: "Tell us what you need and get matched with qualified candidates in as little as 3 business days.",
               },
               {
                 icon: <Headphones size={26} />,
-                modifier: "navy",
                 title: "Dedicated Support",
                 body: "A dedicated success manager stays with you to ensure the partnership keeps delivering results.",
               },
               {
                 icon: <ShieldCheck size={26} />,
-                modifier: "",
                 title: "Flexible Engagements",
                 body: "Scale hours up or down monthly based on your workload — no long-term lock-in required.",
               },
               {
                 icon: <Layers size={26} />,
-                modifier: "teal",
                 title: "Wide Skill Coverage",
                 body: "From admin support to bookkeeping to social media, find specialized talent across every function.",
               },
               {
                 icon: <TrendingUp size={26} />,
-                modifier: "navy",
                 title: "Transparent Pricing",
                 body: "Simple monthly plans with no hidden agency markups or surprise fees.",
               },
-            ].map((card) => (
-              <div key={card.title} className="card feature-card">
-                <div className={`icon-circle${card.modifier ? ` ${card.modifier}` : ""}`}>
+            ].map((card, i) => (
+              <div
+                key={card.title}
+                className="card feature-card accent-card"
+                style={
+                  {
+                    "--card-accent": ACCENTS[i].color,
+                    "--card-accent-bg": ACCENTS[i].bg,
+                  } as React.CSSProperties
+                }
+              >
+                <div
+                  className="icon-circle accent-icon"
+                  style={
+                    {
+                      background: ACCENTS[i].bg,
+                      color: ACCENTS[i].color,
+                    } as React.CSSProperties
+                  }
+                >
                   {card.icon}
                 </div>
                 <h3>{card.title}</h3>
@@ -192,6 +206,55 @@ export default function HomePage() {
               process fast and painless.
             </p>
           </div>
+
+          {/* Wiggly road */}
+          <div className="road-wrap" aria-hidden="true">
+            <svg
+              viewBox="0 0 800 80"
+              preserveAspectRatio="none"
+              className="road-svg"
+            >
+              <defs>
+                <linearGradient id="roadGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor={ACCENTS[0].color} />
+                  <stop offset="33%" stopColor={ACCENTS[1].color} />
+                  <stop offset="66%" stopColor={ACCENTS[2].color} />
+                  <stop offset="100%" stopColor={ACCENTS[3].color} />
+                </linearGradient>
+              </defs>
+              {/* Ghost track */}
+              <path
+                d="M 100,40 C 160,10 240,70 300,40 C 360,10 440,70 500,40 C 560,10 640,70 700,40"
+                fill="none"
+                stroke="rgba(17,24,39,0.07)"
+                strokeWidth="4"
+                strokeLinecap="round"
+              />
+              {/* Animated colored path */}
+              <path
+                d="M 100,40 C 160,10 240,70 300,40 C 360,10 440,70 500,40 C 560,10 640,70 700,40"
+                pathLength="1"
+                fill="none"
+                stroke="url(#roadGrad)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                className="road-path"
+              />
+              {/* Step dots */}
+              {([100, 300, 500, 700] as number[]).map((x, i) => (
+                <circle
+                  key={i}
+                  cx={x}
+                  cy={40}
+                  r={6}
+                  fill={ACCENTS[i].color}
+                  className="road-dot"
+                  style={{ animationDelay: `${0.4 + i * 0.45}s` }}
+                />
+              ))}
+            </svg>
+          </div>
+
           <div className="steps">
             {[
               {
@@ -214,9 +277,19 @@ export default function HomePage() {
                 title: "Start delegating",
                 body: "Onboard your new VA with support from your Corvanta success manager.",
               },
-            ].map((step) => (
+            ].map((step, i) => (
               <div key={step.num} className="step-card">
-                <div className="step-number">{step.num}</div>
+                <div
+                  className="step-number"
+                  style={
+                    {
+                      background: ACCENTS[i].bg,
+                      color: ACCENTS[i].color,
+                    } as React.CSSProperties
+                  }
+                >
+                  {step.num}
+                </div>
                 <h4>{step.title}</h4>
                 <p>{step.body}</p>
               </div>
@@ -263,9 +336,28 @@ export default function HomePage() {
                 title: "Bookkeeping & Accounting",
                 body: "Invoicing, reconciliation, and monthly financial reporting.",
               },
-            ].map((card) => (
-              <div key={card.title} className="card service-card">
-                <div className="icon-circle">{card.icon}</div>
+            ].map((card, i) => (
+              <div
+                key={card.title}
+                className="card service-card accent-card"
+                style={
+                  {
+                    "--card-accent": ACCENTS[i].color,
+                    "--card-accent-bg": ACCENTS[i].bg,
+                  } as React.CSSProperties
+                }
+              >
+                <div
+                  className="icon-circle accent-icon"
+                  style={
+                    {
+                      background: ACCENTS[i].bg,
+                      color: ACCENTS[i].color,
+                    } as React.CSSProperties
+                  }
+                >
+                  {card.icon}
+                </div>
                 <h3>{card.title}</h3>
                 <p>{card.body}</p>
                 <Link href="/services" className="card-link">
@@ -315,9 +407,28 @@ export default function HomePage() {
                 title: "Legal",
                 body: "Document prep, calendaring, and client communications.",
               },
-            ].map((card) => (
-              <div key={card.title} className="card industry-card">
-                <div className="icon-circle teal">{card.icon}</div>
+            ].map((card, i) => (
+              <div
+                key={card.title}
+                className="card industry-card accent-card"
+                style={
+                  {
+                    "--card-accent": ACCENTS[i + 2].color,
+                    "--card-accent-bg": ACCENTS[i + 2].bg,
+                  } as React.CSSProperties
+                }
+              >
+                <div
+                  className="icon-circle accent-icon"
+                  style={
+                    {
+                      background: ACCENTS[i + 2].bg,
+                      color: ACCENTS[i + 2].color,
+                    } as React.CSSProperties
+                  }
+                >
+                  {card.icon}
+                </div>
                 <h3>{card.title}</h3>
                 <p>{card.body}</p>
               </div>
