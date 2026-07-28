@@ -17,9 +17,10 @@ import {
   Home,
   Stethoscope,
   Scale,
-  Star,
 } from "lucide-react";
 import HeroSlider from "./components/HeroSlider";
+import TestimonialsSection from "./components/TestimonialsSection";
+import CTABand from "./components/CTABand";
 
 export const metadata = {
   title: "Corvanta Virtual Solutions | Grow Your Business with Skilled VAs",
@@ -442,120 +443,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="bg-surface">
-        <div className="container">
-          <div className="section-header text-center">
-            <span className="eyebrow">Testimonials</span>
-            <h2>Loved by businesses like yours</h2>
-            <p className="lead">
-              Here&rsquo;s what our clients say about working with Corvanta.
-            </p>
-          </div>
-          <div className="grid grid-3">
-            {[
-              {
-                quote:
-                  "Corvanta matched us with a VA who felt like part of our team within a week. Our response times have never been better.",
-                name: "Maria Chen",
-                role: "Founder, Northstar Retail",
-                avatarBg: "2EB87C",
-              },
-              {
-                quote:
-                  "The vetting process is no joke. Every candidate we met was genuinely qualified — it made hiring easy.",
-                name: "James Whitfield",
-                role: "Operations Lead, Bright Legal Group",
-                avatarBg: "1F2937",
-              },
-              {
-                quote:
-                  "We scaled our support team 3x without adding office overhead. Corvanta made it seamless.",
-                name: "Priya Natarajan",
-                role: "COO, Loop Commerce",
-                avatarBg: "0F766E",
-              },
-            ].map((t) => (
-              <div key={t.name} className="card">
-                <div
-                  className="flex gap-1"
-                  style={{ color: "var(--color-warning)", marginBottom: 12 }}
-                >
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={18} fill="currentColor" />
-                  ))}
-                </div>
-                <p
-                  style={{
-                    color: "var(--color-text-primary)",
-                    fontSize: "1.0625rem",
-                  }}
-                >
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div
-                  className="flex gap-2"
-                  style={{ alignItems: "center", marginTop: 16 }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=${t.avatarBg}&color=fff&size=300&bold=true&font-size=0.38`}
-                    alt={t.name}
-                    style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: "999px",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <div>
-                    <div
-                      style={{
-                        fontWeight: 700,
-                        fontFamily: "var(--font-heading)",
-                      }}
-                    >
-                      {t.name}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: "0.875rem",
-                        color: "var(--color-text-secondary)",
-                      }}
-                    >
-                      {t.role}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Band */}
-      <section>
-        <div className="container">
-          <div className="cta-band">
-            <span
-              className="eyebrow"
-              style={{ background: "rgba(255,255,255,0.12)", color: "#fff" }}
-            >
-              Ready when you are
-            </span>
-            <h2>Start delegating the work that&rsquo;s holding you back</h2>
-            <p className="lead">
-              Tell us what you need and get matched with qualified Virtual
-              Assistants this week.
-            </p>
-            <div className="hero-actions">
-              <Link href="/find-a-talent" className="btn btn-primary btn-lg">
-                Find a Talent <ArrowRight size={18} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <TestimonialsSection />
+      <CTABand />
     </>
   );
 }

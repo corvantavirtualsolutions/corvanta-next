@@ -220,10 +220,11 @@ section { padding: var(--sp-12) 0; }
 }
 .card-flat { border: 1px solid var(--color-border); box-shadow: none; }
 
+.feature-card { text-align: center; }
 .feature-card h3 { margin-bottom: var(--sp-1); }
 .feature-card p { margin-bottom: 0; }
 
-.service-card, .industry-card { display: flex; flex-direction: column; }
+.service-card, .industry-card { display: flex; flex-direction: column; text-align: center; }
 .service-card .icon-circle, .industry-card .icon-circle { margin-bottom: var(--sp-2); }
 .card-link {
   margin-top: var(--sp-2);
@@ -451,6 +452,79 @@ section { padding: var(--sp-12) 0; }
 .cta-band p { color: rgba(255,255,255,0.75); }
 .cta-band .hero-actions { justify-content: center; }
 
+/* Enhanced CTA band */
+.cta-band-enhanced {
+  position: relative;
+  overflow: hidden;
+  padding: var(--sp-12) var(--sp-8);
+}
+.cta-content { position: relative; z-index: 2; }
+.cta-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  animation: blobDrift 8s ease-in-out infinite alternate;
+}
+.cta-blob-1 {
+  width: 420px; height: 420px;
+  background: rgba(46,184,124,0.22);
+  top: -140px; left: -100px;
+}
+.cta-blob-2 {
+  width: 320px; height: 320px;
+  background: rgba(124,58,237,0.15);
+  bottom: -100px; right: -80px;
+  animation-delay: 3s;
+}
+.cta-blob-3 {
+  width: 200px; height: 200px;
+  background: rgba(234,88,12,0.12);
+  top: 50%; right: 20%;
+  transform: translateY(-50%);
+  animation-delay: 5s;
+}
+@keyframes blobDrift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(25px, 18px) scale(1.12); }
+}
+.cta-blob-3 { animation-name: blobDrift3; }
+@keyframes blobDrift3 {
+  from { transform: translateY(-50%) translate(0, 0) scale(1); }
+  to   { transform: translateY(-50%) translate(-20px, 15px) scale(1.08); }
+}
+.cta-btn-glow {
+  animation: ctaBtnPulse 2.8s ease-in-out infinite;
+}
+@keyframes ctaBtnPulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(46,184,124,0.4); }
+  50%       { box-shadow: 0 4px 32px rgba(46,184,124,0.7), 0 0 0 10px rgba(46,184,124,0.1); }
+}
+.cta-perks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+}
+.cta-perk {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.875rem;
+}
+.cta-perk svg { flex-shrink: 0; color: var(--color-primary); }
+.cta-br { display: block; }
+@media (max-width: 480px) {
+  .cta-band-enhanced { padding: var(--sp-8) var(--sp-3); }
+  .cta-br { display: none; }
+  .cta-perks { gap: var(--sp-2); }
+  .cta-blob-1 { width: 260px; height: 260px; }
+  .cta-blob-2 { width: 180px; height: 180px; }
+  .cta-blob-3 { display: none; }
+}
+
 /* ---------- FAQ Accordion ---------- */
 .accordion-item {
   background: var(--color-surface);
@@ -555,6 +629,8 @@ section { padding: var(--sp-12) 0; }
   .hero { padding: var(--sp-6) 0 var(--sp-4); }
   .navbar .container { height: 68px; }
   .cta-band { padding: var(--sp-6) var(--sp-2); }
+  /* Hide floating cards on small phones to prevent overflow */
+  .hero-visual .floating-card { display: none; }
 }
 
 /* ---------- Hero Slider ---------- */
@@ -569,10 +645,31 @@ section { padding: var(--sp-12) 0; }
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: opacity 0.9s ease;
 }
 .hero-slide.active { opacity: 1; }
 .hero-slide img { border-radius: 0 !important; }
+
+/* Slide indicators */
+.hero-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
+  z-index: 5;
+}
+.hero-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.45);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.hero-dot.active {
+  background: #fff;
+  transform: scale(1.35);
+}
 
 /* ---------- Accent Cards ---------- */
 .accent-card {
@@ -618,11 +715,37 @@ section { padding: var(--sp-12) 0; }
   animation: fadeInDot 0.35s ease forwards;
 }
 
+/* ---------- Testimonial Confetti ---------- */
+.testimonial-card {
+  position: relative;
+  overflow: hidden;
+}
+.confetti-stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+.confetti-bit {
+  position: absolute;
+  bottom: 35%;
+  display: block;
+  animation: confettiBurst var(--duration, 1s) ease-out forwards;
+}
+@keyframes confettiBurst {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { transform: translate(var(--tx, 0px), var(--ty, -80px)) rotate(600deg); opacity: 0; }
+}
+
 /* Reduced-motion overrides */
 @media (prefers-reduced-motion: reduce) {
   .hero-slide { transition: none; }
   .road-path  { animation: none; stroke-dashoffset: 0; }
   .road-dot   { animation: none; opacity: 1; }
+  .confetti-bit { animation: none; display: none; }
+  .cta-blob   { animation: none; }
+  .cta-btn-glow { animation: none; }
 }
 
 /* Mobile nav drawer */
