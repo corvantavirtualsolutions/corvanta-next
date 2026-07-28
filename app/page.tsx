@@ -108,7 +108,7 @@ export default function HomePage() {
       {/* Stats */}
       <section className="section-tight">
         <div className="container">
-          <div className="grid grid-4">
+          <div className="grid grid-4 stats-grid">
             {[
               { value: "200+", label: "Vetted Virtual Assistants" },
               { value: "100+", label: "Businesses Served" },
