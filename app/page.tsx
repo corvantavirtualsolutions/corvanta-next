@@ -19,6 +19,7 @@ import {
   Scale,
 } from "lucide-react";
 import HeroSlider from "./components/HeroSlider";
+import HowItWorksSection from "./components/HowItWorksSection";
 import TestimonialsSection from "./components/TestimonialsSection";
 import CTABand from "./components/CTABand";
 
@@ -196,113 +197,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section>
-        <div className="container">
-          <div className="section-header text-center">
-            <span className="eyebrow">How It Works</span>
-            <h2>Get matched in four simple steps</h2>
-            <p className="lead">
-              Whether you&rsquo;re hiring or applying, Corvanta makes the
-              process fast and painless.
-            </p>
-          </div>
-
-          {/* Wiggly road */}
-          <div className="road-wrap" aria-hidden="true">
-            <svg
-              viewBox="0 0 800 80"
-              preserveAspectRatio="none"
-              className="road-svg"
-            >
-              <defs>
-                <linearGradient id="roadGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor={ACCENTS[0].color} />
-                  <stop offset="33%" stopColor={ACCENTS[1].color} />
-                  <stop offset="66%" stopColor={ACCENTS[2].color} />
-                  <stop offset="100%" stopColor={ACCENTS[3].color} />
-                </linearGradient>
-              </defs>
-              {/* Ghost track */}
-              <path
-                d="M 100,40 C 160,10 240,70 300,40 C 360,10 440,70 500,40 C 560,10 640,70 700,40"
-                fill="none"
-                stroke="rgba(17,24,39,0.07)"
-                strokeWidth="4"
-                strokeLinecap="round"
-              />
-              {/* Animated colored path */}
-              <path
-                d="M 100,40 C 160,10 240,70 300,40 C 360,10 440,70 500,40 C 560,10 640,70 700,40"
-                pathLength="1"
-                fill="none"
-                stroke="url(#roadGrad)"
-                strokeWidth="4"
-                strokeLinecap="round"
-                className="road-path"
-              />
-              {/* Step dots */}
-              {([100, 300, 500, 700] as number[]).map((x, i) => (
-                <circle
-                  key={i}
-                  cx={x}
-                  cy={40}
-                  r={6}
-                  fill={ACCENTS[i].color}
-                  className="road-dot"
-                  style={{ animationDelay: `${0.4 + i * 0.45}s` }}
-                />
-              ))}
-            </svg>
-          </div>
-
-          <div className="steps">
-            {[
-              {
-                num: "01",
-                title: "Tell us your needs",
-                body: "Share the skills, hours, and outcomes you're looking for in a short intake call.",
-              },
-              {
-                num: "02",
-                title: "Get matched",
-                body: "We shortlist pre-vetted VAs suited to your business within days.",
-              },
-              {
-                num: "03",
-                title: "Meet & select",
-                body: "Interview your top matches and choose the one that fits best.",
-              },
-              {
-                num: "04",
-                title: "Start delegating",
-                body: "Onboard your new VA with support from your Corvanta success manager.",
-              },
-            ].map((step, i) => (
-              <div key={step.num} className="step-card">
-                <div
-                  className="step-number"
-                  style={
-                    {
-                      background: ACCENTS[i].bg,
-                      color: ACCENTS[i].color,
-                    } as React.CSSProperties
-                  }
-                >
-                  {step.num}
-                </div>
-                <h4>{step.title}</h4>
-                <p>{step.body}</p>
-              </div>
-            ))}
-          </div>
-          <div className="text-center" style={{ marginTop: "var(--sp-4)" }}>
-            <Link href="/how-it-works" className="btn btn-outline">
-              See the full process
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HowItWorksSection />
 
       {/* Services */}
       <section className="bg-surface">

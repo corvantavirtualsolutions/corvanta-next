@@ -28,9 +28,7 @@ export default function CTABand() {
             </span>
 
             <h2>
-              Start delegating the work
-              <br className="cta-br" />
-              that&rsquo;s holding you back
+              Start delegating the work that&rsquo;s holding you back
             </h2>
 
             <p className="lead">
@@ -40,7 +38,7 @@ export default function CTABand() {
 
             <div
               className="hero-actions"
-              style={{ justifyContent: "center", marginBottom: "var(--sp-5)" }}
+              style={{ justifyContent: "center", marginTop: "var(--sp-4)", marginBottom: "var(--sp-4)" }}
             >
               <Link
                 href="/find-a-talent"
