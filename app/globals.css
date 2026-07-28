@@ -646,27 +646,24 @@ section { padding: var(--sp-12) 0; }
   .hero .hero-actions { flex-wrap: nowrap; gap: var(--sp-1); }
   .hero .hero-actions .btn { flex: 1 1 0; padding: 11px 12px; font-size: 0.85rem; }
 
-  /* How It Works: vertical stack with badge on left, text on right */
+  /* How It Works: full-width card stack (matches Services section style) */
   .hiw-road-svg { display: none; }
-  .hiw-grid { grid-template-columns: 1fr; gap: 0; }
+  .hiw-grid { grid-template-columns: 1fr; gap: var(--sp-2); }
   .hiw-col {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--sp-2);
-    padding: var(--sp-2) 0;
-    border-bottom: 1px solid var(--color-border);
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--sp-3);
+    cursor: default;
   }
-  .hiw-col:last-child { border-bottom: none; }
   .hiw-badge-row {
     height: auto;
-    width: auto;
-    flex-shrink: 0;
-    padding: 0;
-    margin-bottom: 0;
     justify-content: flex-start;
+    padding: 0;
+    margin-bottom: var(--sp-2);
   }
-  .hiw-text { flex: 1; text-align: left; transform: none !important; }
+  .hiw-text { transform: none !important; text-align: left; }
   .hiw-text h4 { margin-bottom: 4px; }
 }
 
