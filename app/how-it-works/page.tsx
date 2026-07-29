@@ -113,7 +113,7 @@ export default function HowItWorksPage() {
       <CTABand
         eyebrow="NOW YOU KNOW THE PROCESS"
         headline="Ready to build your team?"
-        subtext="Now that you\u2019ve seen how it works, tell us what you need \u2014 and we\u2019ll match you with the right Virtual Assistant."
+        subtext="Now that you've seen how it works, tell us what you need - and we'll match you with the right Virtual Assistant."
       />
     </>
   );
