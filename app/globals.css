@@ -955,6 +955,30 @@ section { padding: var(--sp-12) 0; }
 .hiw-v-text h4 { margin-bottom: var(--sp-1); font-size: 1.05rem; }
 .hiw-v-text p  { margin-bottom: 0; }
 
+/* ---------- Service Sub-pages ---------- */
+.svc-who-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-2);
+  max-width: 600px;
+  margin: 0 auto var(--sp-4);
+}
+.svc-who-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: var(--sp-2) var(--sp-3);
+}
+@media (max-width: 767px) {
+  .svc-who-grid { grid-template-columns: 1fr; }
+}
+
 /* ---------- Testimonial Confetti ---------- */
 .testimonial-card {
   position: relative;
