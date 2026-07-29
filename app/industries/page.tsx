@@ -11,6 +11,7 @@ import {
   GraduationCap,
   ArrowRight,
 } from "lucide-react";
+import CTABand from "../components/CTABand";
 
 export const metadata: Metadata = {
   title: "Industries | Corvanta Virtual Solutions",
@@ -137,23 +138,11 @@ export default function IndustriesPage() {
         </div>
       </section>
 
-      {/* CTA Band */}
-      <section>
-        <div className="container">
-          <div className="cta-band">
-            <h2>Find talent that knows your industry</h2>
-            <p className="lead">
-              Get matched with a Virtual Assistant who already understands how
-              your business works.
-            </p>
-            <div className="hero-actions">
-              <Link href="/find-a-talent" className="btn btn-primary btn-lg">
-                Find a Talent <ArrowRight size={18} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CTABand
+        eyebrow="INDUSTRY EXPERTISE"
+        headline="Every industry, expertly supported"
+        subtext="Whatever field you're in, we'll match you with a Virtual Assistant who already speaks your language."
+      />
     </>
   );
 }
