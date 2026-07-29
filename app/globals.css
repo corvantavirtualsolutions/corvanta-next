@@ -979,6 +979,84 @@ section { padding: var(--sp-12) 0; }
   .svc-who-grid { grid-template-columns: 1fr; }
 }
 
+/* ---------- Service Include Cards (hover icon swap) ---------- */
+.svc-include-card {
+  border-top: 3px solid var(--svc-color, #2EB87C);
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+}
+.svc-include-card:hover {
+  background: var(--svc-bg, #E6F7EF);
+  transform: scale(1.04) translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+}
+
+/* Icon wrapper — fixed size, relative so children stack */
+.svc-icon-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--sp-2);
+}
+
+/* Both icons positioned on top of each other */
+.svc-icon-check,
+.svc-icon-unique {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--svc-color, #2EB87C);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Resting state: checkmark visible, unique hidden */
+.svc-icon-check  { opacity: 1;  transform: scale(1)   rotate(0deg); }
+.svc-icon-unique { opacity: 0;  transform: scale(0.6) rotate(20deg); }
+
+/* Hover state: checkmark out, unique in */
+.svc-include-card:hover .svc-icon-check  { opacity: 0;  transform: scale(0.6) rotate(-20deg); }
+.svc-include-card:hover .svc-icon-unique { opacity: 1;  transform: scale(1)   rotate(0deg); }
+
+/* Reduced-motion: skip the icon animation but keep hover bg/zoom */
+@media (prefers-reduced-motion: reduce) {
+  .svc-icon-check,
+  .svc-icon-unique { transition: none; }
+}
+
+/* ---------- Blog Featured Card ---------- */
+.blog-featured-card {
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 600px) {
+  .blog-featured-card {
+    grid-template-columns: 1fr !important;
+  }
+  .blog-featured-card img {
+    height: 220px;
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+/* ---------- Find-a-Talent Quick Filter ---------- */
+@media (max-width: 600px) {
+  .quick-filter-row {
+    flex-direction: column;
+  }
+  .quick-filter-row > * {
+    width: 100%;
+    min-width: 0 !important;
+    flex: none !important;
+  }
+  .quick-filter-row .btn {
+    width: 100%;
+    justify-content: center;
+    height: auto !important;
+  }
+}
+
 /* ---------- Testimonial Confetti ---------- */
 .testimonial-card {
   position: relative;

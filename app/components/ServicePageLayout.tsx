@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import ScrollToTop from "./ScrollToTop";
 import CTABand from "./CTABand";
+import ServiceIncludeCard from "./ServiceIncludeCard";
 
 interface ServicePageProps {
   title: string;
@@ -71,18 +72,13 @@ export default function ServicePageLayout({
           </div>
           <div className="grid grid-3">
             {includes.map((item) => (
-              <div
+              <ServiceIncludeCard
                 key={item.title}
-                className="card feature-card"
-                style={{ borderTop: `3px solid ${color}`, textAlign: "center" }}
-              >
-                <CheckCircle2
-                  size={24}
-                  style={{ color, margin: "0 auto var(--sp-2)" }}
-                />
-                <h4>{item.title}</h4>
-                <p>{item.body}</p>
-              </div>
+                title={item.title}
+                body={item.body}
+                color={color}
+                bg={bg}
+              />
             ))}
           </div>
         </div>

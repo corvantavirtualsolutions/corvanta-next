@@ -87,12 +87,11 @@ export default function BlogPage() {
         <div className="container">
           <Link
             href="/blog"
-            className="card"
+            className="card blog-featured-card"
             style={{
               padding: 0,
               overflow: "hidden",
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
               gap: 0,
             }}
           >

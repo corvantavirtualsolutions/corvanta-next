@@ -85,7 +85,7 @@ export default function FindATalentPage() {
         <div className="container">
           <div className="card" style={{ padding: "var(--sp-3)" }}>
             <div
-              className="flex flex-wrap gap-2"
+              className="flex flex-wrap gap-2 quick-filter-row"
               style={{ alignItems: "flex-end" }}
             >
               <div
