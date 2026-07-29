@@ -696,11 +696,14 @@ section { padding: var(--sp-12) 0; }
   /* Always show badge at top even when it's after text in DOM (right-badge rows) */
   .hiw-v-row--r .hiw-v-badgecol { order: -1; }
   .hiw-v-badgecol { width: 100% !important; justify-content: center; }
+  /* Fill card width on mobile — override the desktop max-width cap */
+  .hiw-v-text,
   .hiw-v-text--r,
   .hiw-v-text--l {
-    padding: 0 !important;
-    text-align: center;
+    flex: none !important;
+    max-width: none !important;
     width: 100%;
+    text-align: center;
   }
 }
 
@@ -856,18 +859,18 @@ section { padding: var(--sp-12) 0; }
   transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Text block — fills remaining 80% */
-.hiw-v-text {
-  flex: 1;
-  min-width: 0;
-}
-/* Text on the RIGHT of a left-badge row */
-.hiw-v-text--r {
-  padding: var(--sp-1) var(--sp-5) var(--sp-1) var(--sp-3);
-}
-/* Text on the LEFT of a right-badge row */
+/*
+ * Text block — centered within the non-badge side, capped for readability.
+ * flex-grow:0 keeps the block at ≤340px; margin:auto absorbs the remaining
+ * free space on both sides, centering the block within the available 80%.
+ */
+.hiw-v-text,
+.hiw-v-text--r,
 .hiw-v-text--l {
-  padding: var(--sp-1) var(--sp-3) var(--sp-1) var(--sp-5);
+  flex: 0 1 340px;
+  max-width: 340px;
+  text-align: center;
+  margin: 0 auto;
 }
 .hiw-v-text h4 { margin-bottom: var(--sp-1); font-size: 1.05rem; }
 .hiw-v-text p  { margin-bottom: 0; }
