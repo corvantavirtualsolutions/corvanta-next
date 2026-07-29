@@ -60,9 +60,9 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* Our Story */}
-      <section>
-        <div className="container about-story-grid">
+      {/* Our Story — full-bleed: no container, image reaches right viewport edge */}
+      <section className="about-story-section">
+        <div className="about-story-grid">
           <div className="about-story-text">
             <span className="eyebrow">Our Story</span>
             <h2>Built to make hiring support simple again</h2>

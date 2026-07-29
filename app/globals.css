@@ -747,45 +747,82 @@ section { padding: var(--sp-12) 0; }
 
 /* ---------- Story Slider (About Us) ---------- */
 /*
- * Same visual treatment as .hero-slider but WITHOUT aspect-ratio so it
- * stretches to fill the full height of its flex-column parent.
+ * No aspect-ratio — fills whatever height the flex-column parent gives it.
+ * No border-radius — image bleeds flush to the right viewport edge.
  */
 .story-slider {
   position: relative;
-  border-radius: var(--radius-image);
-  box-shadow: var(--shadow-lg);
   overflow: hidden;
-  /* height is controlled by the parent .story-img-col flex container */
+  /* height driven by .story-img-col */
 }
 
-/* About Us — Our Story two-column layout */
+/*
+ * About Us — Our Story full-bleed section.
+ *
+ * The section itself is the grid (no .container wrapper), so the right
+ * image column can reach the viewport edge.  The left text column uses
+ * a max() left-padding that mirrors the container centering:
+ *   max(--sp-3,  (100vw − --container-max) / 2  +  --sp-3)
+ * This keeps the text flush with the rest of the page's content margin
+ * on any viewport width, with no extra math needed in JS.
+ */
+.about-story-section {
+  padding: 0;          /* section default removed; text col owns its padding */
+  overflow: hidden;
+}
+
 .about-story-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--sp-6);
-  align-items: stretch;   /* both columns grow to the same height */
+  align-items: stretch;
+  /* No gap — left col's right-padding creates the visual breathing room */
 }
 
 .about-story-text {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  /* Vertical padding matches default section padding */
+  padding-top: var(--sp-12);
+  padding-bottom: var(--sp-12);
+  /* Left: aligns with rest of page content regardless of viewport width */
+  padding-left: max(var(--sp-3), calc((100vw - var(--container-max)) / 2 + var(--sp-3)));
+  /* Right: breathing room between text and image */
+  padding-right: var(--sp-8);
 }
 
-/* Flex column so story-slider fills full height without an aspect-ratio */
+/*
+ * Eyebrow badge and CTA button are display:inline-flex, but a flex-column
+ * parent's default align-items:stretch would widen them to fill the column.
+ * Reset to flex-start so they hug their content width.
+ */
+.about-story-text .eyebrow,
+.about-story-text .btn {
+  align-self: flex-start;
+}
+
+/* Image column — no padding; fills right half flush to screen edge */
 .story-img-col {
   display: flex;
   flex-direction: column;
-  min-height: 380px;
+  min-height: 500px;
 }
 
 .story-img-col .story-slider {
-  flex: 1;                /* grow to fill the column */
+  flex: 1;
 }
 
+/* Mobile: stack text above image, both full width */
 @media (max-width: 767px) {
-  .about-story-grid { grid-template-columns: 1fr; }
-  .story-img-col    { min-height: 260px; }
+  .about-story-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-story-text {
+    padding: var(--sp-8) var(--sp-3);
+  }
+  .story-img-col {
+    min-height: 260px;
+  }
 }
 
 /* ---------- Accent Cards ---------- */
