@@ -676,6 +676,32 @@ section { padding: var(--sp-12) 0; }
   /* Neutralise JS-driven transform and centre text */
   .hiw-text { transform: none !important; text-align: center; }
   .hiw-text h4 { margin-bottom: 4px; }
+
+  /* ── Vertical winding road (HiringStepsSection) — mobile ── */
+  /* Hide the decorative SVG; show plain card stack instead */
+  .hiw-winding-svg { display: none !important; }
+  .hiw-vertical { margin-bottom: var(--sp-2); }
+  .hiw-v-row {
+    height: auto !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: var(--sp-2);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--sp-3);
+    margin-bottom: var(--sp-2);
+    text-align: center;
+  }
+  /* Always show badge at top even when it's after text in DOM (right-badge rows) */
+  .hiw-v-row--r .hiw-v-badgecol { order: -1; }
+  .hiw-v-badgecol { width: 100% !important; justify-content: center; }
+  .hiw-v-text--r,
+  .hiw-v-text--l {
+    padding: 0 !important;
+    text-align: center;
+    width: 100%;
+  }
 }
 
 /* ---------- Hero Slider ---------- */
@@ -770,6 +796,81 @@ section { padding: var(--sp-12) 0; }
 }
 .hiw-text h4 { margin-bottom: var(--sp-1); }
 .hiw-text p  { margin-bottom: 0; }
+
+/* ---------- Hiring Steps — vertical winding road ---------- */
+/*
+ * Container is position:relative; the SVG fills it absolutely.
+ * Each .hiw-v-row is height:160px → 4 rows = 640px total.
+ * SVG viewBox "0 0 100 640" with preserveAspectRatio="none":
+ *   x=10 → 10% of container width  (left badge centre)
+ *   x=90 → 90% of container width  (right badge centre)
+ *   y=80  → 80px  (row 1 mid)
+ *   y=240 → 240px (row 2 mid)  …etc.
+ * Badge column is 20% wide; badge is flex-centred → sits exactly at x=10% or x=90%.
+ */
+.hiw-vertical {
+  position: relative;
+  margin-bottom: var(--sp-2);
+}
+
+.hiw-winding-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+.hiw-v-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 160px;
+  cursor: default;
+}
+
+/* Badge column — 20% wide, centres the badge at x=10% (left) or x=90% (right) */
+.hiw-v-badgecol {
+  width: 20%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Number badge */
+.hiw-v-num {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1rem;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Text block — fills remaining 80% */
+.hiw-v-text {
+  flex: 1;
+  min-width: 0;
+}
+/* Text on the RIGHT of a left-badge row */
+.hiw-v-text--r {
+  padding: var(--sp-1) var(--sp-5) var(--sp-1) var(--sp-3);
+}
+/* Text on the LEFT of a right-badge row */
+.hiw-v-text--l {
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) var(--sp-5);
+}
+.hiw-v-text h4 { margin-bottom: var(--sp-1); font-size: 1.05rem; }
+.hiw-v-text p  { margin-bottom: 0; }
 
 /* ---------- Testimonial Confetti ---------- */
 .testimonial-card {

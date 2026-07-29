@@ -32,97 +32,163 @@ const STEPS = [
   },
 ];
 
-// Same geometry as HowItWorksSection — 4 badges at x=100,300,500,700
-const CONNECTORS = [
-  [120, 260, 260, 280],
-  [320, 460, 460, 480],
-  [520, 660, 660, 680],
-] as const;
+/*
+ * Layout geometry (desktop):
+ *   Container: position:relative, height = 4 × ROW_H = 640px
+ *   SVG: position:absolute, fills container, viewBox="0 0 100 640"
+ *        preserveAspectRatio="none" → SVG x=10 ≡ 10% of container width
+ *
+ * Badge positions (alternating left / right):
+ *   Step 01 → x=10  (badge col = left 20%)
+ *   Step 02 → x=90  (badge col = right 20%)
+ *   Step 03 → x=10
+ *   Step 04 → x=90
+ *
+ * Badge y-centres (row centres at 80, 240, 400, 560 in a 640-unit tall viewBox):
+ *   Each row is 160 SVG units tall; badge sits at mid-row (row_start + 80).
+ *
+ * Winding path (S-curves between adjacent badge positions):
+ *   M 10,0
+ *   L 10,80    — arrive at badge 1
+ *   C 10,160 90,160 90,240   — S-curve to badge 2
+ *   C 90,320 10,320 10,400   — S-curve to badge 3
+ *   C 10,480 90,480 90,560   — S-curve to badge 4
+ *   L 90,640   — exit below
+ */
 
-const DOT_CX = [100, 300, 500, 700] as const;
+const ROW_H = 160; // px — must match CSS .hiw-v-row height
+const TOTAL_H = ROW_H * STEPS.length; // 640
+
+const BADGE_X = [10, 90, 10, 90] as const;
+const BADGE_Y = STEPS.map((_, i) => ROW_H * i + ROW_H / 2); // [80,240,400,560]
+
+const ROAD =
+  `M 10,0 L 10,${BADGE_Y[0]}` +
+  ` C 10,${ROW_H} 90,${ROW_H} 90,${BADGE_Y[1]}` +
+  ` C 90,${ROW_H * 2} 10,${ROW_H * 2} 10,${BADGE_Y[2]}` +
+  ` C 10,${ROW_H * 3} 90,${ROW_H * 3} 90,${BADGE_Y[3]}` +
+  ` L 90,${TOTAL_H}`;
 
 export default function HiringStepsSection() {
-  const [hovered, setHovered] = useState<number>(-1);
+  const [hovered, setHovered] = useState(-1);
 
   return (
-    <div className="hiw-steps">
+    <div className="hiw-vertical">
+      {/* ── Winding road SVG (desktop only; hidden on mobile) ─────────── */}
       <svg
-        className="hiw-road-svg"
-        viewBox="0 0 800 64"
+        className="hiw-winding-svg"
+        viewBox={`0 0 100 ${TOTAL_H}`}
         preserveAspectRatio="none"
         aria-hidden="true"
       >
-        {CONNECTORS.map(([lx1, lx2, ax1, ax2], i) => {
-          const isActive = hovered === i || (i === 2 && hovered === 3);
-          const isDimmed = hovered !== -1 && !isActive;
-          const opacity = isDimmed ? 0.08 : isActive ? 1 : 0.3;
-          const color = ACCENTS[i].color;
-          const sw = isActive ? 2.5 : 2;
-          return (
-            <g key={i} style={{ transition: "opacity 0.25s ease" }}>
-              <line
-                x1={lx1} y1="32" x2={lx2} y2="32"
-                stroke={color}
-                strokeWidth={sw}
-                strokeLinecap="round"
-                opacity={opacity}
-                style={{ transition: "opacity 0.25s ease, stroke-width 0.25s ease" }}
-              />
-              <polygon
-                points={`${ax1},26 ${ax2},32 ${ax1},38`}
-                fill={color}
-                opacity={opacity}
-                style={{ transition: "opacity 0.25s ease" }}
-              />
-            </g>
-          );
-        })}
+        <defs>
+          {/* Gradient flows top-to-bottom: green → teal → purple → orange */}
+          <linearGradient
+            id="hiw-road-grad"
+            x1="0" y1="0"
+            x2="0" y2={TOTAL_H}
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0%"   stopColor="#2EB87C" />
+            <stop offset="33%"  stopColor="#0F766E" />
+            <stop offset="66%"  stopColor="#7C3AED" />
+            <stop offset="100%" stopColor="#EA580C" />
+          </linearGradient>
+        </defs>
 
-        {DOT_CX.map((cx, i) => (
+        {/* Road shoulder — wide, faint glow */}
+        <path
+          d={ROAD}
+          stroke="url(#hiw-road-grad)"
+          strokeWidth="10"
+          fill="none"
+          strokeLinecap="round"
+          opacity="0.13"
+        />
+        {/* Main road stripe */}
+        <path
+          d={ROAD}
+          stroke="url(#hiw-road-grad)"
+          strokeWidth="3.5"
+          fill="none"
+          strokeLinecap="round"
+        />
+        {/* Dashed centre line — road feel */}
+        <path
+          d={ROAD}
+          stroke="white"
+          strokeWidth="0.9"
+          fill="none"
+          strokeDasharray="3 8"
+          strokeLinecap="round"
+          opacity="0.55"
+        />
+
+        {/* Hover halos behind each badge */}
+        {BADGE_Y.map((cy, i) => (
           <circle
             key={i}
-            cx={cx} cy={32} r={20}
+            cx={BADGE_X[i]}
+            cy={cy}
+            r={hovered === i ? 7.5 : 5}
             fill={ACCENTS[i].color}
-            opacity={hovered === i ? 0.13 : 0}
-            style={{ transition: "opacity 0.25s ease" }}
+            opacity={hovered === i ? 0.22 : 0.1}
+            style={{ transition: "r 0.25s ease, opacity 0.25s ease" }}
           />
         ))}
       </svg>
 
-      <div className="hiw-grid">
-        {STEPS.map((step, i) => (
+      {/* ── Step rows ─────────────────────────────────────────────────── */}
+      {STEPS.map((step, i) => {
+        const isLeft = i % 2 === 0; // badge on left side for even steps
+        const acc = ACCENTS[i];
+        const active = hovered === i;
+
+        const badge = (
+          <div
+            className="hiw-v-num"
+            style={{
+              background: active ? acc.color : acc.bg,
+              color: active ? "#fff" : acc.color,
+              boxShadow: active ? `0 6px 22px ${acc.color}50` : "none",
+            }}
+          >
+            {step.num}
+          </div>
+        );
+
+        const text = (
+          <div className={`hiw-v-text${isLeft ? " hiw-v-text--r" : " hiw-v-text--l"}`}>
+            <h4 style={{ color: acc.color, marginBottom: "var(--sp-1)" }}>
+              {step.title}
+            </h4>
+            <p style={{ marginBottom: 0, color: "var(--color-text-muted)" }}>
+              {step.body}
+            </p>
+          </div>
+        );
+
+        return (
           <div
             key={step.num}
-            className="hiw-col"
+            className={`hiw-v-row${isLeft ? " hiw-v-row--l" : " hiw-v-row--r"}`}
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(-1)}
           >
-            <div className="hiw-badge-row">
-              <div
-                className="step-number"
-                style={{
-                  background: hovered === i ? ACCENTS[i].color : ACCENTS[i].bg,
-                  color: hovered === i ? "#fff" : ACCENTS[i].color,
-                  boxShadow: hovered === i ? `0 4px 18px ${ACCENTS[i].color}55` : "none",
-                  transition: "background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease",
-                }}
-              >
-                {step.num}
-              </div>
-            </div>
-            <div
-              className="hiw-text"
-              style={{
-                transform: hovered === i ? "translateY(-4px)" : "translateY(0)",
-                transition: "transform 0.25s ease",
-              }}
-            >
-              <h4>{step.title}</h4>
-              <p>{step.body}</p>
-            </div>
+            {isLeft ? (
+              <>
+                <div className="hiw-v-badgecol">{badge}</div>
+                {text}
+              </>
+            ) : (
+              <>
+                {text}
+                <div className="hiw-v-badgecol">{badge}</div>
+              </>
+            )}
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }
