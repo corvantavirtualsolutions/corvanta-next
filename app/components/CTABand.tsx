@@ -9,7 +9,17 @@ const PERKS = [
   { icon: TrendingUp, text: "No long-term contracts" },
 ];
 
-export default function CTABand() {
+interface CTABandProps {
+  eyebrow?: string;
+  headline?: string;
+  subtext?: string;
+}
+
+export default function CTABand({
+  eyebrow = "Ready when you are",
+  headline = "Start delegating the work that\u2019s holding you back",
+  subtext = "Tell us what you need and get matched with qualified Virtual Assistants this week.",
+}: CTABandProps = {}) {
   return (
     <section>
       <div className="container">
@@ -24,17 +34,12 @@ export default function CTABand() {
               className="eyebrow"
               style={{ background: "rgba(255,255,255,0.12)", color: "#fff" }}
             >
-              Ready when you are
+              {eyebrow}
             </span>
 
-            <h2>
-              Start delegating the work that&rsquo;s holding you back
-            </h2>
+            <h2>{headline}</h2>
 
-            <p className="lead">
-              Tell us what you need and get matched with qualified Virtual
-              Assistants this week.
-            </p>
+            <p className="lead">{subtext}</p>
 
             <div
               className="hero-actions"

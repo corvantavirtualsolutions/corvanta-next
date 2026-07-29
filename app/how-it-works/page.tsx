@@ -109,8 +109,12 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* CTA — matches homepage exactly */}
-      <CTABand />
+      {/* CTA — same design as homepage, page-specific text */}
+      <CTABand
+        eyebrow="NOW YOU KNOW THE PROCESS"
+        headline="Ready to build your team?"
+        subtext="Now that you\u2019ve seen how it works, tell us what you need \u2014 and we\u2019ll match you with the right Virtual Assistant."
+      />
     </>
   );
 }
