@@ -52,7 +52,8 @@ export default function Footer() {
             <h5>Company</h5>
             <ul>
               <li><Link href="/about-us">About Us</Link></li>
-              <li><Link href="/about-us#leadership">Leadership</Link></li>
+              {/* Leadership link hidden until Meet the Team section is restored */}
+              {/* <li><Link href="/about-us#leadership">Leadership</Link></li> */}
               <li><Link href="/contact">Contact</Link></li>
             </ul>
           </div>

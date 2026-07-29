@@ -1,16 +1,51 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { ShieldCheck, Star, Handshake, Lightbulb, ArrowRight, Mail } from "lucide-react";
+import { ShieldCheck, Star, Handshake, Lightbulb, ArrowRight } from "lucide-react";
+import ScrollToTop from "../components/ScrollToTop";
+import StorySlider from "../components/StorySlider";
+import CTABand from "../components/CTABand";
 
 export const metadata: Metadata = {
   title: "About Us | Corvanta Virtual Solutions",
   description: "Learn about Corvanta's mission, values, and leadership team.",
 };
 
+const VALUE_CARDS = [
+  {
+    icon: <ShieldCheck size={26} />,
+    title: "Trust",
+    body: "We earn trust through transparency, rigorous vetting, and consistent follow-through.",
+    color: "#2EB87C",
+    bg: "#E6F7EF",
+  },
+  {
+    icon: <Star size={26} />,
+    title: "Excellence",
+    body: "We hold ourselves and our VAs to a high standard of quality and professionalism.",
+    color: "#0F766E",
+    bg: "rgba(15,118,110,0.12)",
+  },
+  {
+    icon: <Handshake size={26} />,
+    title: "Partnership",
+    body: "We succeed when our clients and VAs succeed - it's a long-term relationship, not a transaction.",
+    color: "#7C3AED",
+    bg: "rgba(124,58,237,0.10)",
+  },
+  {
+    icon: <Lightbulb size={26} />,
+    title: "Innovation",
+    body: "We continuously improve how we match talent using better tools and processes.",
+    color: "#EA580C",
+    bg: "rgba(234,88,12,0.10)",
+  },
+];
+
 export default function AboutUsPage() {
   return (
     <>
+      <ScrollToTop />
+
       {/* Page Hero */}
       <section className="page-hero text-white">
         <div className="container text-center">
@@ -55,17 +90,11 @@ export default function AboutUsPage() {
               Get in Touch <ArrowRight size={18} />
             </Link>
           </div>
-          <Image
-            src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=900&q=70"
-            alt="Corvanta team collaborating"
-            width={900}
-            height={600}
-            unoptimized
-          />
+          <StorySlider />
         </div>
       </section>
 
-      {/* Values */}
+      {/* Our Values */}
       <section className="bg-surface">
         <div className="container">
           <div className="section-header text-center">
@@ -77,34 +106,22 @@ export default function AboutUsPage() {
             </p>
           </div>
           <div className="grid grid-4">
-            {[
-              {
-                icon: <ShieldCheck size={26} />,
-                modifier: "",
-                title: "Trust",
-                body: "We earn trust through transparency, rigorous vetting, and consistent follow-through.",
-              },
-              {
-                icon: <Star size={26} />,
-                modifier: "teal",
-                title: "Excellence",
-                body: "We hold ourselves and our VAs to a high standard of quality and professionalism.",
-              },
-              {
-                icon: <Handshake size={26} />,
-                modifier: "navy",
-                title: "Partnership",
-                body: "We succeed when our clients and VAs succeed — it's a long-term relationship, not a transaction.",
-              },
-              {
-                icon: <Lightbulb size={26} />,
-                modifier: "",
-                title: "Innovation",
-                body: "We continuously improve how we match talent using better tools and processes.",
-              },
-            ].map((card) => (
-              <div key={card.title} className="card feature-card">
-                <div className={`icon-circle${card.modifier ? ` ${card.modifier}` : ""}`}>
+            {VALUE_CARDS.map((card) => (
+              <div
+                key={card.title}
+                className="card feature-card accent-card"
+                style={
+                  {
+                    "--card-accent": card.color,
+                    "--card-accent-bg": card.bg,
+                    textAlign: "center",
+                  } as React.CSSProperties
+                }
+              >
+                <div
+                  className="icon-circle accent-icon"
+                  style={{ background: card.bg, color: card.color }}
+                >
                   {card.icon}
                 </div>
                 <h3>{card.title}</h3>
@@ -116,14 +133,14 @@ export default function AboutUsPage() {
       </section>
 
       {/* Stats */}
-      <section>
+      <section className="section-tight">
         <div className="container">
-          <div className="grid grid-4">
+          <div className="grid grid-4 stats-grid">
             {[
-              { value: "2021", label: "Founded" },
-              { value: "200+", label: "Businesses Served" },
-              { value: "1,200+", label: "Vetted VAs" },
-              { value: "15+", label: "Countries Represented" },
+              { value: "2026", label: "Founded" },
+              { value: "100+", label: "Businesses Served" },
+              { value: "200+", label: "Vetted Virtual Assistants" },
+              { value: "10+", label: "Countries Represented" },
             ].map((stat) => (
               <div key={stat.label} className="stat-card">
                 <div className="stat-value">{stat.value}</div>
@@ -134,7 +151,8 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* Leadership */}
+      {/* Leadership — hidden until team section is ready; restore by uncommenting */}
+      {/*
       <section id="leadership" className="bg-surface">
         <div className="container">
           <div className="section-header text-center">
@@ -173,7 +191,6 @@ export default function AboutUsPage() {
               },
             ].map((member) => (
               <div key={member.name} className="card team-card">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=${member.bg}&color=fff&size=300&bold=true&font-size=0.38`}
                   alt={member.name}
@@ -183,10 +200,12 @@ export default function AboutUsPage() {
                 <p>{member.bio}</p>
                 <div className="team-social">
                   <a href="#" aria-label={`${member.name} on LinkedIn`} className="team-social-link">
-                    <svg width={16} height={16} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    <svg width={16} height={16} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
                   </a>
                   <a href="#" aria-label={`Email ${member.name}`} className="team-social-link">
-                    <Mail size={16} />
+                    Mail icon
                   </a>
                 </div>
               </div>
@@ -194,24 +213,14 @@ export default function AboutUsPage() {
           </div>
         </div>
       </section>
+      */}
 
-      {/* CTA Band */}
-      <section>
-        <div className="container">
-          <div className="cta-band">
-            <h2>Ready to grow your business?</h2>
-            <p className="lead">
-              Tell us what you need and we&rsquo;ll match you with the right
-              talent.
-            </p>
-            <div className="hero-actions">
-              <Link href="/find-a-talent" className="btn btn-primary btn-lg">
-                Find a Talent <ArrowRight size={18} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* CTA Band — About Us specific text, same design as homepage */}
+      <CTABand
+        eyebrow="TAKE THE NEXT STEP"
+        headline="Sounds like a good fit? Let's talk."
+        subtext="We're selective about who we work with - on both sides. If our values align with yours, we're ready when you are."
+      />
     </>
   );
 }
