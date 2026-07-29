@@ -62,11 +62,8 @@ export default function AboutUsPage() {
 
       {/* Our Story */}
       <section>
-        <div
-          className="container grid grid-2"
-          style={{ alignItems: "center", gap: "var(--sp-6)" }}
-        >
-          <div>
+        <div className="container about-story-grid">
+          <div className="about-story-text">
             <span className="eyebrow">Our Story</span>
             <h2>Built to make hiring support simple again</h2>
             <p>
@@ -77,10 +74,9 @@ export default function AboutUsPage() {
               with businesses that need their exact skills.
             </p>
             <p>
-              Today, Corvanta supports hundreds of businesses across e-commerce,
-              real estate, healthcare, legal, and more &mdash; while giving
-              skilled professionals around the world flexible, well-paid remote
-              careers.
+              Today, Corvanta supports businesses across e-commerce, real
+              estate, healthcare, legal, and more &mdash; while giving skilled
+              professionals around the world flexible, well-paid remote careers.
             </p>
             <Link
               href="/contact"
@@ -90,7 +86,9 @@ export default function AboutUsPage() {
               Get in Touch <ArrowRight size={18} />
             </Link>
           </div>
-          <StorySlider />
+          <div className="story-img-col">
+            <StorySlider />
+          </div>
         </div>
       </section>
 

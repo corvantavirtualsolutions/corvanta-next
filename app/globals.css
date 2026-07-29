@@ -745,6 +745,49 @@ section { padding: var(--sp-12) 0; }
   transform: scale(1.35);
 }
 
+/* ---------- Story Slider (About Us) ---------- */
+/*
+ * Same visual treatment as .hero-slider but WITHOUT aspect-ratio so it
+ * stretches to fill the full height of its flex-column parent.
+ */
+.story-slider {
+  position: relative;
+  border-radius: var(--radius-image);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  /* height is controlled by the parent .story-img-col flex container */
+}
+
+/* About Us — Our Story two-column layout */
+.about-story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-6);
+  align-items: stretch;   /* both columns grow to the same height */
+}
+
+.about-story-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Flex column so story-slider fills full height without an aspect-ratio */
+.story-img-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 380px;
+}
+
+.story-img-col .story-slider {
+  flex: 1;                /* grow to fill the column */
+}
+
+@media (max-width: 767px) {
+  .about-story-grid { grid-template-columns: 1fr; }
+  .story-img-col    { min-height: 260px; }
+}
+
 /* ---------- Accent Cards ---------- */
 .accent-card {
   transition: box-shadow 0.25s ease, transform 0.25s ease,
