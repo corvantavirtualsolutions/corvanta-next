@@ -24,8 +24,11 @@ export const metadata: Metadata = {
     "Corvanta Virtual Solutions connects growing businesses with vetted, skilled Virtual Assistants — so you can focus on what matters most.",
   icons: {
     icon: [
-      { url: "/favicon.ico" },
-      { url: "/logo.png", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
 };
