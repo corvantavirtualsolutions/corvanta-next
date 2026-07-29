@@ -18,6 +18,17 @@ export const metadata: Metadata = {
     "See the industries Corvanta's Virtual Assistants specialize in supporting.",
 };
 
+const ACCENTS = [
+  { color: "#2EB87C", bg: "#E6F7EF" },
+  { color: "#0F766E", bg: "rgba(15,118,110,0.12)" },
+  { color: "#7C3AED", bg: "rgba(124,58,237,0.10)" },
+  { color: "#EA580C", bg: "rgba(234,88,12,0.10)" },
+  { color: "#2EB87C", bg: "#E6F7EF" },
+  { color: "#0F766E", bg: "rgba(15,118,110,0.12)" },
+  { color: "#7C3AED", bg: "rgba(124,58,237,0.10)" },
+  { color: "#EA580C", bg: "rgba(234,88,12,0.10)" },
+];
+
 const industries = [
   {
     icon: <ShoppingBag size={26} />,
@@ -82,9 +93,23 @@ export default function IndustriesPage() {
       <section>
         <div className="container">
           <div className="grid grid-3">
-            {industries.map((ind) => (
-              <div key={ind.title} className="card industry-card">
-                <div className="icon-circle teal">{ind.icon}</div>
+            {industries.map((ind, i) => (
+              <div
+                key={ind.title}
+                className="card industry-card"
+                style={
+                  {
+                    "--ind-color": ACCENTS[i].color,
+                    "--ind-bg": ACCENTS[i].bg,
+                  } as React.CSSProperties
+                }
+              >
+                <div
+                  className="icon-circle"
+                  style={{ background: ACCENTS[i].bg, color: ACCENTS[i].color }}
+                >
+                  {ind.icon}
+                </div>
                 <h3>{ind.title}</h3>
                 <p>{ind.body}</p>
               </div>
