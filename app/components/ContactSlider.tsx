@@ -45,7 +45,7 @@ export default function ContactSlider() {
             alt={img.alt}
             width={900}
             height={600}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 0 }}
             unoptimized
             priority={i === 0}
           />

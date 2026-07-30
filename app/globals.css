@@ -836,38 +836,61 @@ section { padding: var(--sp-12) 0; }
 }
 
 /* ---------- Contact Page Layout ---------- */
-.contact-form-grid {
+
+/*
+ * Cards row: align-items start so Email/Call cards don't stretch to fill
+ * the taller Visit Us card (which contains a map), eliminating empty space.
+ */
+.contact-cards-row { align-items: start; }
+
+/*
+ * Full-bleed message section — mirrors .about-story-section.
+ * No .container wrapper; left col uses the same padding math as the rest of
+ * the page, right col runs flush to the right viewport edge.
+ */
+.contact-message-section {
+  padding: 0;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.contact-message-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "form slider" "hours slider";
-  gap: var(--sp-4) var(--sp-6);
-  align-items: start;
+  align-items: stretch;
 }
-.contact-form-col  { grid-area: form; }
-.contact-hours-col { grid-area: hours; }
-.contact-slider-col {
-  grid-area: slider;
+.contact-left-col {
   display: flex;
   flex-direction: column;
-  min-height: 560px;
+  padding-top: var(--sp-12);
+  padding-bottom: var(--sp-12);
+  padding-left: max(var(--sp-3), calc((100vw - var(--container-max)) / 2 + var(--sp-3)));
+  padding-right: var(--sp-8);
+}
+.contact-left-col .eyebrow,
+.contact-left-col .btn { align-self: flex-start; }
+
+/* Right column: flex column so slider can flex:1 to fill */
+.contact-right-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 600px;
 }
 
-/* Contact slider: fills height of its grid area */
+/* Slider fills the full right column, no rounding, flush to edge */
 .contact-slider {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-image);
-  box-shadow: var(--shadow-lg);
   flex: 1;
-  min-height: 300px;
 }
 
 @media (max-width: 767px) {
-  .contact-form-grid {
+  .contact-message-grid {
     grid-template-columns: 1fr;
-    grid-template-areas: "form" "slider" "hours";
   }
-  .contact-slider-col {
+  .contact-left-col {
+    padding: var(--sp-8) var(--sp-3);
+  }
+  .contact-right-col {
     min-height: 260px;
   }
 }
