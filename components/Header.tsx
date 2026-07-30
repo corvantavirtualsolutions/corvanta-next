@@ -78,7 +78,7 @@ export default function Header({ user }: { user: AuthUser }) {
             </nav>
 
             <div className="nav-actions">
-              {user ? (
+              {user && (
                 <div className="nav-auth-user">
                   <span className="nav-user-email" title={user.email}>
                     {user.email}
@@ -89,17 +89,11 @@ export default function Header({ user }: { user: AuthUser }) {
                     </button>
                   </form>
                 </div>
-              ) : (
-                <div className="nav-auth-links">
-                  <Link href="/login" className="nav-auth-link">
-                    Log in
-                  </Link>
-                  <Link href="/signup" className="btn btn-primary btn-sm">
-                    Sign up
-                  </Link>
-                </div>
               )}
-              <Link href="/find-a-talent" className="btn btn-primary btn-sm">
+              <Link
+                href={user ? "/find-a-talent" : "/login"}
+                className={`btn ${user ? "btn-primary-dark" : "btn-primary"} btn-sm`}
+              >
                 Find a Talent
               </Link>
             </div>
@@ -159,7 +153,7 @@ export default function Header({ user }: { user: AuthUser }) {
           )
         )}
 
-        {user ? (
+        {user && (
           <>
             <span className="mobile-nav-email">{user.email}</span>
             <form action={logout}>
@@ -172,28 +166,11 @@ export default function Header({ user }: { user: AuthUser }) {
               </button>
             </form>
           </>
-        ) : (
-          <>
-            <Link
-              href="/login"
-              className="btn btn-outline btn-block"
-              onClick={() => setMobileOpen(false)}
-            >
-              Log in
-            </Link>
-            <Link
-              href="/signup"
-              className="btn btn-primary btn-block"
-              onClick={() => setMobileOpen(false)}
-            >
-              Sign up
-            </Link>
-          </>
         )}
 
         <Link
-          href="/find-a-talent"
-          className="btn btn-primary btn-block"
+          href={user ? "/find-a-talent" : "/login"}
+          className={`btn ${user ? "btn-primary-dark" : "btn-primary"} btn-block`}
           onClick={() => setMobileOpen(false)}
         >
           Find a Talent
