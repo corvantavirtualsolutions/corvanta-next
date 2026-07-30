@@ -58,7 +58,10 @@ export default function ContactPage() {
         <div className="container">
           <div className="grid grid-2 contact-info-cards">
 
-            <div className="card text-center">
+            <div
+              className="card text-center accent-card"
+              style={{ "--card-accent": "#2EB87C", "--card-accent-bg": "#E6F7EF" } as React.CSSProperties}
+            >
               <div className="icon-circle" style={{ margin: "0 auto var(--sp-2)" }}>
                 <Mail size={24} />
               </div>
@@ -70,7 +73,10 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="card text-center">
+            <div
+              className="card text-center accent-card"
+              style={{ "--card-accent": "#0F766E", "--card-accent-bg": "rgba(15,118,110,0.12)" } as React.CSSProperties}
+            >
               <div className="icon-circle teal" style={{ margin: "0 auto var(--sp-2)" }}>
                 <Phone size={24} />
               </div>
@@ -80,17 +86,24 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="card text-center">
+            <div
+              className="card text-center accent-card"
+              style={{ "--card-accent": "#7C3AED", "--card-accent-bg": "rgba(124,58,237,0.10)" } as React.CSSProperties}
+            >
               <div className="icon-circle navy" style={{ margin: "0 auto var(--sp-2)" }}>
                 <MapPin size={24} />
               </div>
               <h4>Visit Us</h4>
               <p style={{ marginBottom: 0 }}>
-                1800 N Meridian Suite 400b, Indianapolis, IN 46202
+                1800 N Meridian Suite 400b<br />
+                Indianapolis, IN 46202
               </p>
             </div>
 
-            <div className="card text-center">
+            <div
+              className="card text-center accent-card"
+              style={{ "--card-accent": "#EA580C", "--card-accent-bg": "rgba(234,88,12,0.10)" } as React.CSSProperties}
+            >
               <div className="icon-circle" style={{ margin: "0 auto var(--sp-2)", background: "rgba(15,118,110,0.1)", color: "var(--color-accent)" }}>
                 <Clock size={24} />
               </div>
