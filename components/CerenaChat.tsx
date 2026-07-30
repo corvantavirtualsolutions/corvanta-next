@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { X, Send } from "lucide-react";
 
@@ -138,7 +139,9 @@ export default function CerenaChat() {
       >
         {/* Header */}
         <div className="cerena-header">
-          <div className="cerena-avatar" aria-hidden="true">C</div>
+          <div className="cerena-avatar">
+          <Image src="/cerena.png" alt="Cerena" width={36} height={36} />
+        </div>
           <div className="cerena-header-info">
             <span className="cerena-name">Cerena</span>
             <span className="cerena-status">Corvanta Assistant</span>
@@ -226,7 +229,18 @@ export default function CerenaChat() {
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Close chat" : "Chat with Cerena"}
       >
-        {open ? <X size={24} /> : <span className="cerena-coconut" aria-hidden="true">🥥</span>}
+        {open ? (
+          <X size={24} />
+        ) : (
+          <Image
+            src="/cerena.png"
+            alt="Cerena"
+            width={40}
+            height={40}
+            className="cerena-coconut"
+            priority
+          />
+        )}
       </button>
     </>
   );
