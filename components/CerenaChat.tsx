@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { MessageCircle, X, Send } from "lucide-react";
 
 /* ---------- Scripted responses ---------- */
@@ -62,8 +63,7 @@ const REPLIES: Reply[] = [
   },
 ];
 
-const FALLBACK =
-  "I'm not sure about that one - you can reach our team at corvantavirtualsolutions@gmail.com and we'll be happy to help!";
+const FALLBACK = "I'm not sure about that one - please visit our Contact page and our team will be happy to help!";
 
 const SUGGESTIONS = [
   "What services do you offer?",
@@ -72,17 +72,18 @@ const SUGGESTIONS = [
   "What does it cost?",
 ];
 
-function getReply(text: string): string {
+function getReply(text: string): { response: string; hasContactLink?: boolean } {
   for (const r of REPLIES) {
-    if (r.pattern.test(text)) return r.response;
+    if (r.pattern.test(text)) return { response: r.response };
   }
-  return FALLBACK;
+  return { response: FALLBACK, hasContactLink: true };
 }
 
 /* ---------- Types ---------- */
 interface Message {
   from: "user" | "cerena";
   text: string;
+  hasContactLink?: boolean;
 }
 
 /* ---------- Component ---------- */
@@ -116,9 +117,10 @@ export default function CerenaChat() {
     setTyping(true);
     setTimeout(() => {
       setTyping(false);
+      const { response, hasContactLink } = getReply(trimmed);
       setMessages((prev) => [
         ...prev,
-        { from: "cerena", text: getReply(trimmed) },
+        { from: "cerena", text: response, hasContactLink },
       ]);
     }, 900);
   }
@@ -157,7 +159,17 @@ export default function CerenaChat() {
               key={i}
               className={`cerena-bubble cerena-bubble--${msg.from}`}
             >
-              {msg.text}
+              {msg.hasContactLink ? (
+                <>
+                  I'm not sure about that one - please visit our{" "}
+                  <Link href="/contact" className="cerena-link">
+                    Contact page
+                  </Link>{" "}
+                  and our team will be happy to help!
+                </>
+              ) : (
+                msg.text
+              )}
             </div>
           ))}
           {typing && (
