@@ -56,7 +56,7 @@ export default function ContactPage() {
       {/* Four equal info cards */}
       <section className="section-tight bg-surface">
         <div className="container">
-          <div className="grid grid-4 contact-info-cards">
+          <div className="grid grid-2 contact-info-cards">
 
             <div className="card text-center">
               <div className="icon-circle" style={{ margin: "0 auto var(--sp-2)" }}>
