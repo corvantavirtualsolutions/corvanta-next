@@ -838,59 +838,15 @@ section { padding: var(--sp-12) 0; }
 /* ---------- Contact Page ---------- */
 
 /*
- * Channel strip — email / phone / address inline with vertical dividers.
- * No cards means no height-mismatch between items.
+ * Info cards: 4-column grid (Email / Phone / Address / Support Hours).
+ * Long email addresses wrap cleanly via overflow-wrap.
  */
-.contact-channels {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sp-6);
-  flex-wrap: wrap;
-}
-.contact-channel {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--sp-2);
-}
-.contact-channel-text {
-  display: flex;
-  flex-direction: column;
-}
-.contact-channel-label {
-  font-family: var(--font-heading);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  margin-bottom: 3px;
-}
-.contact-channel-value {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  color: var(--color-secondary);
-  line-height: 1.45;
-}
-.contact-channel-value a {
-  color: var(--color-secondary);
-  transition: color 0.2s ease;
-}
-.contact-channel-value a:hover { color: var(--color-primary); }
-.contact-channel-divider {
-  width: 1px;
-  height: 48px;
-  background: var(--color-border);
-  flex-shrink: 0;
-  align-self: center;
-}
+.contact-info-cards .card { overflow-wrap: break-word; }
 
 /*
  * Main section — full-bleed two-column.
- * Left: form + hours bar. Right: image slider (flex:1) + map pinned at bottom.
- * Left col uses the same padding-left math as the rest of the page so text
- * aligns with other sections; right col bleeds flush to the viewport edge.
+ * Left: form only. Right: image slider flush to right viewport edge.
+ * Left col uses the same padding-left math so content aligns with the site.
  */
 .contact-main-section {
   padding: 0;
@@ -912,31 +868,7 @@ section { padding: var(--sp-12) 0; }
 .contact-form-side .eyebrow,
 .contact-form-side .btn { align-self: flex-start; }
 
-/* Support hours — tinted green bar below the form */
-.contact-hours-bar {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--sp-2);
-  margin-top: var(--sp-3);
-  padding: var(--sp-3);
-  background: var(--color-primary-light);
-  border-radius: var(--radius-card);
-}
-.contact-hours-bar .hours-label {
-  font-family: var(--font-heading);
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--color-secondary);
-  margin-bottom: 4px;
-}
-.contact-hours-bar p {
-  margin: 0;
-  font-size: 0.9375rem;
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-}
-
-/* Right column: slider fills top, map pinned at bottom */
+/* Right column: slider fills full column height, no rounding, flush to edge */
 .contact-media-side {
   display: flex;
   flex-direction: column;
@@ -945,30 +877,13 @@ section { padding: var(--sp-12) 0; }
   position: relative;
   overflow: hidden;
   flex: 1;
-  min-height: 340px;
-}
-.contact-map {
-  height: 220px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.contact-map iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
+  min-height: 400px;
 }
 
 @media (max-width: 767px) {
-  .contact-channels {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--sp-3);
-  }
-  .contact-channel-divider { display: none; }
   .contact-main-grid { grid-template-columns: 1fr; }
   .contact-form-side { padding: var(--sp-8) var(--sp-3); }
-  .contact-media-side { min-height: 420px; }
+  .contact-media-side { min-height: 280px; }
 }
 
 /* ---------- Accent Cards ---------- */

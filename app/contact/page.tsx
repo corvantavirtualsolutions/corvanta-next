@@ -53,62 +53,60 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Channel strip — email, phone, address as horizontal inline items.
-          No card height-matching issues; dividers create clean visual rhythm. */}
+      {/* Four equal info cards */}
       <section className="section-tight bg-surface">
         <div className="container">
-          <div className="contact-channels">
-            <div className="contact-channel">
-              <div className="icon-circle icon-sm">
-                <Mail size={20} />
+          <div className="grid grid-4 contact-info-cards">
+
+            <div className="card text-center">
+              <div className="icon-circle" style={{ margin: "0 auto var(--sp-2)" }}>
+                <Mail size={24} />
               </div>
-              <div className="contact-channel-text">
-                <span className="contact-channel-label">Email</span>
-                <span className="contact-channel-value">
-                  <a href="mailto:corvantavirtualsolutions@gmail.com">
-                    corvantavirtualsolutions@gmail.com
-                  </a>
-                </span>
-              </div>
+              <h4>Email Us</h4>
+              <p style={{ marginBottom: 0 }}>
+                <a href="mailto:corvantavirtualsolutions@gmail.com">
+                  corvantavirtualsolutions@gmail.com
+                </a>
+              </p>
             </div>
 
-            <div className="contact-channel-divider" aria-hidden="true" />
-
-            <div className="contact-channel">
-              <div className="icon-circle icon-sm teal">
-                <Phone size={20} />
+            <div className="card text-center">
+              <div className="icon-circle teal" style={{ margin: "0 auto var(--sp-2)" }}>
+                <Phone size={24} />
               </div>
-              <div className="contact-channel-text">
-                <span className="contact-channel-label">Phone</span>
-                <span className="contact-channel-value">
-                  <a href="tel:4632239883">(463) 223-9883</a>
-                </span>
-              </div>
+              <h4>Call Us</h4>
+              <p style={{ marginBottom: 0 }}>
+                <a href="tel:4632239883">(463) 223-9883</a>
+              </p>
             </div>
 
-            <div className="contact-channel-divider" aria-hidden="true" />
-
-            <div className="contact-channel">
-              <div className="icon-circle icon-sm navy">
-                <MapPin size={20} />
+            <div className="card text-center">
+              <div className="icon-circle navy" style={{ margin: "0 auto var(--sp-2)" }}>
+                <MapPin size={24} />
               </div>
-              <div className="contact-channel-text">
-                <span className="contact-channel-label">Address</span>
-                <span className="contact-channel-value">
-                  1800 N Meridian Suite 400b<br />
-                  Indianapolis, IN 46202
-                </span>
-              </div>
+              <h4>Visit Us</h4>
+              <p style={{ marginBottom: 0 }}>
+                1800 N Meridian Suite 400b, Indianapolis, IN 46202
+              </p>
             </div>
+
+            <div className="card text-center">
+              <div className="icon-circle" style={{ margin: "0 auto var(--sp-2)", background: "rgba(15,118,110,0.1)", color: "var(--color-accent)" }}>
+                <Clock size={24} />
+              </div>
+              <h4>Support Hours</h4>
+              <p style={{ marginBottom: 4 }}>Monday - Friday, 8:00 AM - 6:00 PM ET</p>
+              <p style={{ marginBottom: 0 }}>Avg. response: under 4 hours</p>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Full-bleed two-column: form+hours left, slider+map right */}
+      {/* Full-bleed two-column: form left, image slider right */}
       <section className="contact-main-section">
         <div className="contact-main-grid">
 
-          {/* LEFT: eyebrow, heading, form, support hours */}
           <div className="contact-form-side">
             <span className="eyebrow">Get in Touch</span>
             <h2>Send us a message</h2>
@@ -155,48 +153,22 @@ export default function ContactPage() {
                 Send Message <ArrowRight size={18} />
               </button>
             </form>
-
-            {/* Support hours - tinted bar directly below form */}
-            <div className="contact-hours-bar">
-              <div className="icon-circle icon-sm" style={{ flexShrink: 0 }}>
-                <Clock size={18} />
-              </div>
-              <div>
-                <div className="hours-label">Support Hours</div>
-                <p>
-                  Monday - Friday, 8:00 AM - 6:00 PM ET<br />
-                  Average response time: under 4 hours
-                </p>
-              </div>
-            </div>
           </div>
 
-          {/* RIGHT: slider fills top, map pinned at bottom — both flush to edge */}
           <div className="contact-media-side">
             <ContactSlider />
-            <div className="contact-map">
-              <iframe
-                src="https://maps.google.com/maps?q=1800+N+Meridian+St,+Indianapolis,+IN+46202&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                title="Corvanta office location"
-                loading="lazy"
-                allowFullScreen
-              />
-            </div>
           </div>
 
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq">
+      {/* FAQ — bg-surface creates a clear visual break from the section above */}
+      <section id="faq" className="bg-surface">
         <div className="container">
           <div className="section-header text-center">
             <span className="eyebrow">FAQs</span>
             <h2>Frequently asked questions</h2>
-            <p className="lead">
-              Quick answers to common questions from businesses and Virtual
-              Assistants.
-            </p>
+            <p className="lead">Quick answers to common questions from businesses and Virtual Assistants.</p>
           </div>
           <Accordion items={faqItems} />
         </div>
