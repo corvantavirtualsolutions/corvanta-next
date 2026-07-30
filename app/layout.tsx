@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CerenaChat from "@/components/CerenaChat";
+import { createClient } from "@/lib/supabase/server";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -34,11 +35,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const authUser = user ? { email: user.email ?? "" } : null;
+
   return (
     <html
       lang="en"
@@ -51,7 +59,7 @@ export default function RootLayout({
       }
     >
       <body>
-        <Header />
+        <Header user={authUser} />
         <main>{children}</main>
         <Footer />
         <CerenaChat />

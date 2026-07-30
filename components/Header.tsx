@@ -4,11 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { logout } from "@/app/auth/actions";
 
 type DropdownItem = { label: string; href: string };
 type NavItem =
   | { label: string; href: string; dropdown?: never }
   | { label: string; href?: never; dropdown: DropdownItem[] };
+
+type AuthUser = { email: string } | null;
 
 const navItems: NavItem[] = [
   { label: "How It Works", href: "/how-it-works" },
@@ -28,7 +31,7 @@ const navItems: NavItem[] = [
   },
 ];
 
-export default function Header() {
+export default function Header({ user }: { user: AuthUser }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -75,6 +78,27 @@ export default function Header() {
             </nav>
 
             <div className="nav-actions">
+              {user ? (
+                <div className="nav-auth-user">
+                  <span className="nav-user-email" title={user.email}>
+                    {user.email}
+                  </span>
+                  <form action={logout}>
+                    <button type="submit" className="btn btn-outline btn-sm">
+                      Log out
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div className="nav-auth-links">
+                  <Link href="/login" className="nav-auth-link">
+                    Log in
+                  </Link>
+                  <Link href="/signup" className="btn btn-primary btn-sm">
+                    Sign up
+                  </Link>
+                </div>
+              )}
               <Link href="/find-a-talent" className="btn btn-primary btn-sm">
                 Find a Talent
               </Link>
@@ -133,6 +157,38 @@ export default function Header() {
               {item.label}
             </Link>
           )
+        )}
+
+        {user ? (
+          <>
+            <span className="mobile-nav-email">{user.email}</span>
+            <form action={logout}>
+              <button
+                type="submit"
+                className="btn btn-outline btn-block"
+                onClick={() => setMobileOpen(false)}
+              >
+                Log out
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="btn btn-outline btn-block"
+              onClick={() => setMobileOpen(false)}
+            >
+              Log in
+            </Link>
+            <Link
+              href="/signup"
+              className="btn btn-primary btn-block"
+              onClick={() => setMobileOpen(false)}
+            >
+              Sign up
+            </Link>
+          </>
         )}
 
         <Link
