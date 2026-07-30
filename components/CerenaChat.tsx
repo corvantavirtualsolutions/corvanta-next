@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { MessageCircle, X, Send } from "lucide-react";
+import { X, Send } from "lucide-react";
 
 /* ---------- Scripted responses ---------- */
 interface Reply {
@@ -226,7 +226,7 @@ export default function CerenaChat() {
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Close chat" : "Chat with Cerena"}
       >
-        {open ? <X size={24} /> : <MessageCircle size={24} />}
+        {open ? <X size={24} /> : <span className="cerena-coconut" aria-hidden="true">🥥</span>}
       </button>
     </>
   );
