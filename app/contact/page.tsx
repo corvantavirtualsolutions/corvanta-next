@@ -39,7 +39,7 @@ export default function ContactPage() {
     <>
       <ContactScrollReset />
 
-      {/* Page Hero */}
+      {/* Page Hero — untouched */}
       <section className="page-hero text-white">
         <div className="container text-center">
           <div className="breadcrumb">
@@ -53,68 +53,63 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Contact Cards — align-items:start prevents Email/Call from stretching
-          to match the taller Visit Us card that contains a map */}
-      <section className="section-tight">
+      {/* Channel strip — email, phone, address as horizontal inline items.
+          No card height-matching issues; dividers create clean visual rhythm. */}
+      <section className="section-tight bg-surface">
         <div className="container">
-          <div className="grid grid-3 contact-cards-row">
-            <div className="card text-center">
-              <div className="icon-circle" style={{ margin: "0 auto var(--sp-2)" }}>
-                <Mail size={26} />
+          <div className="contact-channels">
+            <div className="contact-channel">
+              <div className="icon-circle icon-sm">
+                <Mail size={20} />
               </div>
-              <h4>Email Us</h4>
-              <p>
-                <a href="mailto:corvantavirtualsolutions@gmail.com">
-                  corvantavirtualsolutions@gmail.com
-                </a>
-              </p>
+              <div className="contact-channel-text">
+                <span className="contact-channel-label">Email</span>
+                <span className="contact-channel-value">
+                  <a href="mailto:corvantavirtualsolutions@gmail.com">
+                    corvantavirtualsolutions@gmail.com
+                  </a>
+                </span>
+              </div>
             </div>
 
-            <div className="card text-center">
-              <div className="icon-circle teal" style={{ margin: "0 auto var(--sp-2)" }}>
-                <Phone size={26} />
+            <div className="contact-channel-divider" aria-hidden="true" />
+
+            <div className="contact-channel">
+              <div className="icon-circle icon-sm teal">
+                <Phone size={20} />
               </div>
-              <h4>Call Us</h4>
-              <p>
-                <a href="tel:4632239883">(463) 223-9883</a>
-              </p>
+              <div className="contact-channel-text">
+                <span className="contact-channel-label">Phone</span>
+                <span className="contact-channel-value">
+                  <a href="tel:4632239883">(463) 223-9883</a>
+                </span>
+              </div>
             </div>
 
-            <div className="card text-center">
-              <div className="icon-circle navy" style={{ margin: "0 auto var(--sp-2)" }}>
-                <MapPin size={26} />
+            <div className="contact-channel-divider" aria-hidden="true" />
+
+            <div className="contact-channel">
+              <div className="icon-circle icon-sm navy">
+                <MapPin size={20} />
               </div>
-              <h4>Visit Us</h4>
-              <p>1800 N Meridian Suite 400b, Indianapolis, IN 46202</p>
-              <div
-                style={{
-                  marginTop: "var(--sp-2)",
-                  borderRadius: "var(--radius-md)",
-                  overflow: "hidden",
-                }}
-              >
-                <iframe
-                  src="https://maps.google.com/maps?q=1800+N+Meridian+St,+Indianapolis,+IN+46202&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                  width="100%"
-                  height="150"
-                  style={{ border: 0, display: "block" }}
-                  loading="lazy"
-                  allowFullScreen
-                  title="Corvanta office location"
-                />
+              <div className="contact-channel-text">
+                <span className="contact-channel-label">Address</span>
+                <span className="contact-channel-value">
+                  1800 N Meridian Suite 400b<br />
+                  Indianapolis, IN 46202
+                </span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Send a Message — full-bleed two-column.
-          No .container wrapper: left col aligns via padding math,
-          right slider column bleeds flush to the right screen edge. */}
-      <section className="contact-message-section">
-        <div className="contact-message-grid">
-          {/* LEFT: eyebrow + heading + form + support hours */}
-          <div className="contact-left-col">
+      {/* Full-bleed two-column: form+hours left, slider+map right */}
+      <section className="contact-main-section">
+        <div className="contact-main-grid">
+
+          {/* LEFT: eyebrow, heading, form, support hours */}
+          <div className="contact-form-side">
             <span className="eyebrow">Get in Touch</span>
             <h2>Send us a message</h2>
             <p className="lead">
@@ -161,23 +156,34 @@ export default function ContactPage() {
               </button>
             </form>
 
-            {/* Support Hours sits directly below the form, left column */}
-            <div className="card" style={{ marginTop: "var(--sp-3)" }}>
-              <h4 style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <Clock size={18} /> Support Hours
-              </h4>
-              <p>
-                Monday - Friday, 8:00 AM - 6:00 PM ET
-                <br />
-                Average response time: under 4 hours
-              </p>
+            {/* Support hours - tinted bar directly below form */}
+            <div className="contact-hours-bar">
+              <div className="icon-circle icon-sm" style={{ flexShrink: 0 }}>
+                <Clock size={18} />
+              </div>
+              <div>
+                <div className="hours-label">Support Hours</div>
+                <p>
+                  Monday - Friday, 8:00 AM - 6:00 PM ET<br />
+                  Average response time: under 4 hours
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* RIGHT: image slider, full height, flush to right edge */}
-          <div className="contact-right-col">
+          {/* RIGHT: slider fills top, map pinned at bottom — both flush to edge */}
+          <div className="contact-media-side">
             <ContactSlider />
+            <div className="contact-map">
+              <iframe
+                src="https://maps.google.com/maps?q=1800+N+Meridian+St,+Indianapolis,+IN+46202&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                title="Corvanta office location"
+                loading="lazy"
+                allowFullScreen
+              />
+            </div>
           </div>
+
         </div>
       </section>
 

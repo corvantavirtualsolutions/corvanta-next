@@ -835,30 +835,73 @@ section { padding: var(--sp-12) 0; }
   }
 }
 
-/* ---------- Contact Page Layout ---------- */
+/* ---------- Contact Page ---------- */
 
 /*
- * Cards row: align-items start so Email/Call cards don't stretch to fill
- * the taller Visit Us card (which contains a map), eliminating empty space.
+ * Channel strip — email / phone / address inline with vertical dividers.
+ * No cards means no height-mismatch between items.
  */
-.contact-cards-row { align-items: start; }
+.contact-channels {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+}
+.contact-channel {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+}
+.contact-channel-text {
+  display: flex;
+  flex-direction: column;
+}
+.contact-channel-label {
+  font-family: var(--font-heading);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 3px;
+}
+.contact-channel-value {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-secondary);
+  line-height: 1.45;
+}
+.contact-channel-value a {
+  color: var(--color-secondary);
+  transition: color 0.2s ease;
+}
+.contact-channel-value a:hover { color: var(--color-primary); }
+.contact-channel-divider {
+  width: 1px;
+  height: 48px;
+  background: var(--color-border);
+  flex-shrink: 0;
+  align-self: center;
+}
 
 /*
- * Full-bleed message section — mirrors .about-story-section.
- * No .container wrapper; left col uses the same padding math as the rest of
- * the page, right col runs flush to the right viewport edge.
+ * Main section — full-bleed two-column.
+ * Left: form + hours bar. Right: image slider (flex:1) + map pinned at bottom.
+ * Left col uses the same padding-left math as the rest of the page so text
+ * aligns with other sections; right col bleeds flush to the viewport edge.
  */
-.contact-message-section {
+.contact-main-section {
   padding: 0;
   overflow: hidden;
-  background: var(--color-surface);
 }
-.contact-message-grid {
+.contact-main-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: stretch;
 }
-.contact-left-col {
+.contact-form-side {
   display: flex;
   flex-direction: column;
   padding-top: var(--sp-12);
@@ -866,33 +909,66 @@ section { padding: var(--sp-12) 0; }
   padding-left: max(var(--sp-3), calc((100vw - var(--container-max)) / 2 + var(--sp-3)));
   padding-right: var(--sp-8);
 }
-.contact-left-col .eyebrow,
-.contact-left-col .btn { align-self: flex-start; }
+.contact-form-side .eyebrow,
+.contact-form-side .btn { align-self: flex-start; }
 
-/* Right column: flex column so slider can flex:1 to fill */
-.contact-right-col {
+/* Support hours — tinted green bar below the form */
+.contact-hours-bar {
   display: flex;
-  flex-direction: column;
-  min-height: 600px;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--color-primary-light);
+  border-radius: var(--radius-card);
+}
+.contact-hours-bar .hours-label {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin-bottom: 4px;
+}
+.contact-hours-bar p {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
 }
 
-/* Slider fills the full right column, no rounding, flush to edge */
+/* Right column: slider fills top, map pinned at bottom */
+.contact-media-side {
+  display: flex;
+  flex-direction: column;
+}
 .contact-slider {
   position: relative;
   overflow: hidden;
   flex: 1;
+  min-height: 340px;
+}
+.contact-map {
+  height: 220px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.contact-map iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
 }
 
 @media (max-width: 767px) {
-  .contact-message-grid {
-    grid-template-columns: 1fr;
+  .contact-channels {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-3);
   }
-  .contact-left-col {
-    padding: var(--sp-8) var(--sp-3);
-  }
-  .contact-right-col {
-    min-height: 260px;
-  }
+  .contact-channel-divider { display: none; }
+  .contact-main-grid { grid-template-columns: 1fr; }
+  .contact-form-side { padding: var(--sp-8) var(--sp-3); }
+  .contact-media-side { min-height: 420px; }
 }
 
 /* ---------- Accent Cards ---------- */
