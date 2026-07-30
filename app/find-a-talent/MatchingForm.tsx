@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Search, Upload, Star } from "lucide-react";
+import { Search, Upload, Star, Users } from "lucide-react";
 
 const HELP_OPTIONS = [
   "Admin Support",
@@ -29,7 +29,7 @@ const BUDGET_OPTIONS = [
   "Other",
 ];
 
-type Phase = "form" | "loading" | "success";
+type Phase = "form" | "loading" | "results";
 
 const SAMPLE_REVIEWS = [
   {
@@ -100,7 +100,7 @@ export default function MatchingForm() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
     setPhase("loading");
-    setTimeout(() => setPhase("success"), 3200);
+    setTimeout(() => setPhase("results"), 3200);
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -117,12 +117,231 @@ export default function MatchingForm() {
     setReviewSubmitted(true);
   }
 
-  // Loading state
-  if (phase === "loading") {
-    return (
-      <>
-        <section className="fat-matching-section">
-          <div className="container">
+  return (
+    <>
+      {/* ── Matching Section ── */}
+      <section className="fat-matching-section">
+        <div className="container">
+
+          {/* Header stays visible across all phases */}
+          <div className="fat-matching-header text-center">
+            <span className="eyebrow">Get Matched</span>
+            <h2 className="fat-matching-title">Find your perfect Virtual Assistant</h2>
+            {phase === "form" && (
+              <p className="lead fat-matching-sub">
+                Answer a few quick questions and we'll hand-pick vetted VAs that fit your needs - often within days.
+              </p>
+            )}
+          </div>
+
+          {/* Phase: form */}
+          {phase === "form" && (
+            <div className="matching-card">
+              {/* Fields row */}
+              <div className="matching-fields-row">
+                {/* What do you need help with */}
+                <div className="matching-field">
+                  <label className="form-label">
+                    What do you need help with?
+                    <span className="req-star"> *</span>
+                  </label>
+                  <select
+                    className={`form-select${errors.helpWith ? " input-error" : ""}`}
+                    value={helpWith}
+                    onChange={(e) => {
+                      setHelpWith(e.target.value);
+                      setErrors((prev) => ({ ...prev, helpWith: "" }));
+                    }}
+                  >
+                    <option value="">Select a category...</option>
+                    {HELP_OPTIONS.map((o) => (
+                      <option key={o} value={o}>
+                        {o}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.helpWith && (
+                    <span className="field-error">{errors.helpWith}</span>
+                  )}
+                  {helpWith === "Other" && (
+                    <>
+                      <input
+                        type="text"
+                        className={`form-input field-reveal${
+                          errors.helpOther ? " input-error" : ""
+                        }`}
+                        placeholder="Describe what you need..."
+                        value={helpOther}
+                        onChange={(e) => {
+                          setHelpOther(e.target.value);
+                          setErrors((prev) => ({ ...prev, helpOther: "" }));
+                        }}
+                      />
+                      {errors.helpOther && (
+                        <span className="field-error">{errors.helpOther}</span>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Hours per week */}
+                <div className="matching-field">
+                  <label className="form-label">
+                    Hours per week
+                    <span className="req-star"> *</span>
+                  </label>
+                  <select
+                    className={`form-select${errors.hours ? " input-error" : ""}`}
+                    value={hours}
+                    onChange={(e) => {
+                      setHours(e.target.value);
+                      setErrors((prev) => ({ ...prev, hours: "" }));
+                    }}
+                  >
+                    <option value="">Select hours...</option>
+                    {HOURS_OPTIONS.map((o) => (
+                      <option key={o} value={o}>
+                        {o}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.hours && (
+                    <span className="field-error">{errors.hours}</span>
+                  )}
+                  {hours === "Other" && (
+                    <>
+                      <input
+                        type="number"
+                        className={`form-input field-reveal${
+                          errors.hoursCustom ? " input-error" : ""
+                        }`}
+                        placeholder="e.g. 25"
+                        min={1}
+                        value={hoursCustom}
+                        onChange={(e) => {
+                          setHoursCustom(e.target.value);
+                          setErrors((prev) => ({ ...prev, hoursCustom: "" }));
+                        }}
+                      />
+                      {errors.hoursCustom && (
+                        <span className="field-error">{errors.hoursCustom}</span>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Budget range */}
+                <div className="matching-field">
+                  <label className="form-label">
+                    Budget range
+                    <span className="req-star"> *</span>
+                  </label>
+                  <select
+                    className={`form-select${
+                      errors.budget ? " input-error" : ""
+                    }`}
+                    value={budget}
+                    onChange={(e) => {
+                      setBudget(e.target.value);
+                      setErrors((prev) => ({ ...prev, budget: "" }));
+                    }}
+                  >
+                    <option value="">Select budget...</option>
+                    {BUDGET_OPTIONS.map((o) => (
+                      <option key={o} value={o}>
+                        {o}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.budget && (
+                    <span className="field-error">{errors.budget}</span>
+                  )}
+                  {budget === "Other" && (
+                    <>
+                      <input
+                        type="text"
+                        className={`form-input field-reveal${
+                          errors.budgetCustom ? " input-error" : ""
+                        }`}
+                        placeholder="e.g. $3,500/mo"
+                        value={budgetCustom}
+                        onChange={(e) => {
+                          setBudgetCustom(e.target.value);
+                          setErrors((prev) => ({ ...prev, budgetCustom: "" }));
+                        }}
+                      />
+                      {errors.budgetCustom && (
+                        <span className="field-error">
+                          {errors.budgetCustom}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Divider */}
+              <hr className="matching-divider" />
+
+              {/* Project details + file upload */}
+              <div className="matching-details-row">
+                <div className="matching-details-left">
+                  <label className="form-label">
+                    Project details / What you're looking for{" "}
+                    <span className="optional-tag">(optional)</span>
+                  </label>
+                  <textarea
+                    className="form-textarea matching-textarea"
+                    placeholder="Describe the job, skills, or experience level you're looking for..."
+                    value={details}
+                    onChange={(e) => setDetails(e.target.value)}
+                  />
+                </div>
+
+                <div className="matching-details-right">
+                  <label className="form-label">
+                    Attach sample projects{" "}
+                    <span className="optional-tag">(optional)</span>
+                  </label>
+                  <button
+                    type="button"
+                    className="file-upload-btn"
+                    onClick={() => fileRef.current?.click()}
+                  >
+                    <Upload size={20} />
+                    <span>
+                      {fileName ? fileName : "Click to upload a file"}
+                    </span>
+                  </button>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                  <p className="upload-hint">PDF, DOC, or image - up to 10 MB</p>
+                </div>
+              </div>
+
+              {/* Submit */}
+              <div className="matching-submit-row">
+                <button
+                  type="button"
+                  className="btn btn-primary btn-lg matching-cta"
+                  onClick={handleSubmit}
+                >
+                  <Search size={20} />
+                  Get Matched
+                </button>
+                <p className="matching-footnote">
+                  No cost to get matched - our team will follow up within one business day.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Phase: loading */}
+          {phase === "loading" && (
             <div className="matching-loader-wrap">
               <div className="matching-loader-face">&#128522;</div>
               <p className="matching-loader-text">
@@ -134,268 +353,25 @@ export default function MatchingForm() {
                 <span />
               </div>
             </div>
-          </div>
-        </section>
-        <ReviewsSection
-          rating={rating}
-          hoverRating={hoverRating}
-          setHoverRating={setHoverRating}
-          setRating={setRating}
-          comment={comment}
-          setComment={setComment}
-          reviewSubmitted={reviewSubmitted}
-          reviewError={reviewError}
-          handleReviewSubmit={handleReviewSubmit}
-        />
-      </>
-    );
-  }
+          )}
 
-  // Success state
-  if (phase === "success") {
-    return (
-      <>
-        <section className="fat-matching-section">
-          <div className="container">
-            <div className="matching-loader-wrap matching-success-wrap">
-              <div className="matching-loader-face">&#127881;</div>
-              <h2 className="matching-success-title">You're all set!</h2>
-              <p className="lead matching-success-lead">
-                Thanks! We're building your matches - our team will be in touch soon.
-              </p>
-            </div>
-          </div>
-        </section>
-        <ReviewsSection
-          rating={rating}
-          hoverRating={hoverRating}
-          setHoverRating={setHoverRating}
-          setRating={setRating}
-          comment={comment}
-          setComment={setComment}
-          reviewSubmitted={reviewSubmitted}
-          reviewError={reviewError}
-          handleReviewSubmit={handleReviewSubmit}
-        />
-      </>
-    );
-  }
-
-  return (
-    <>
-      {/* ── Matching Section ── */}
-      <section className="fat-matching-section">
-        <div className="container">
-          <div className="fat-matching-header text-center">
-            <span className="eyebrow">Get Matched</span>
-            <h2 className="fat-matching-title">Find your perfect Virtual Assistant</h2>
-            <p className="lead fat-matching-sub">
-              Answer a few quick questions and we'll hand-pick vetted VAs that fit your needs - often within days.
-            </p>
-          </div>
-
-          <div className="matching-card">
-            {/* Fields row */}
-            <div className="matching-fields-row">
-              {/* What do you need help with */}
-              <div className="matching-field">
-                <label className="form-label">
-                  What do you need help with?
-                  <span className="req-star"> *</span>
-                </label>
-                <select
-                  className={`form-select${errors.helpWith ? " input-error" : ""}`}
-                  value={helpWith}
-                  onChange={(e) => {
-                    setHelpWith(e.target.value);
-                    setErrors((prev) => ({ ...prev, helpWith: "" }));
-                  }}
-                >
-                  <option value="">Select a category...</option>
-                  {HELP_OPTIONS.map((o) => (
-                    <option key={o} value={o}>
-                      {o}
-                    </option>
-                  ))}
-                </select>
-                {errors.helpWith && (
-                  <span className="field-error">{errors.helpWith}</span>
-                )}
-                {helpWith === "Other" && (
-                  <>
-                    <input
-                      type="text"
-                      className={`form-input field-reveal${
-                        errors.helpOther ? " input-error" : ""
-                      }`}
-                      placeholder="Describe what you need..."
-                      value={helpOther}
-                      onChange={(e) => {
-                        setHelpOther(e.target.value);
-                        setErrors((prev) => ({ ...prev, helpOther: "" }));
-                      }}
-                    />
-                    {errors.helpOther && (
-                      <span className="field-error">{errors.helpOther}</span>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* Hours per week */}
-              <div className="matching-field">
-                <label className="form-label">
-                  Hours per week
-                  <span className="req-star"> *</span>
-                </label>
-                <select
-                  className={`form-select${errors.hours ? " input-error" : ""}`}
-                  value={hours}
-                  onChange={(e) => {
-                    setHours(e.target.value);
-                    setErrors((prev) => ({ ...prev, hours: "" }));
-                  }}
-                >
-                  <option value="">Select hours...</option>
-                  {HOURS_OPTIONS.map((o) => (
-                    <option key={o} value={o}>
-                      {o}
-                    </option>
-                  ))}
-                </select>
-                {errors.hours && (
-                  <span className="field-error">{errors.hours}</span>
-                )}
-                {hours === "Other" && (
-                  <>
-                    <input
-                      type="number"
-                      className={`form-input field-reveal${
-                        errors.hoursCustom ? " input-error" : ""
-                      }`}
-                      placeholder="e.g. 25"
-                      min={1}
-                      value={hoursCustom}
-                      onChange={(e) => {
-                        setHoursCustom(e.target.value);
-                        setErrors((prev) => ({ ...prev, hoursCustom: "" }));
-                      }}
-                    />
-                    {errors.hoursCustom && (
-                      <span className="field-error">{errors.hoursCustom}</span>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* Budget range */}
-              <div className="matching-field">
-                <label className="form-label">
-                  Budget range
-                  <span className="req-star"> *</span>
-                </label>
-                <select
-                  className={`form-select${
-                    errors.budget ? " input-error" : ""
-                  }`}
-                  value={budget}
-                  onChange={(e) => {
-                    setBudget(e.target.value);
-                    setErrors((prev) => ({ ...prev, budget: "" }));
-                  }}
-                >
-                  <option value="">Select budget...</option>
-                  {BUDGET_OPTIONS.map((o) => (
-                    <option key={o} value={o}>
-                      {o}
-                    </option>
-                  ))}
-                </select>
-                {errors.budget && (
-                  <span className="field-error">{errors.budget}</span>
-                )}
-                {budget === "Other" && (
-                  <>
-                    <input
-                      type="text"
-                      className={`form-input field-reveal${
-                        errors.budgetCustom ? " input-error" : ""
-                      }`}
-                      placeholder="e.g. $3,500/mo"
-                      value={budgetCustom}
-                      onChange={(e) => {
-                        setBudgetCustom(e.target.value);
-                        setErrors((prev) => ({ ...prev, budgetCustom: "" }));
-                      }}
-                    />
-                    {errors.budgetCustom && (
-                      <span className="field-error">
-                        {errors.budgetCustom}
-                      </span>
-                    )}
-                  </>
-                )}
+          {/* Phase: results */}
+          {phase === "results" && (
+            <div className="matching-results-wrap">
+              <h3 className="matching-results-title">
+                Here are the VAs aligned to your needs
+              </h3>
+              <div className="matching-empty-state">
+                <div className="matching-empty-icon">
+                  <Users size={52} strokeWidth={1.25} />
+                </div>
+                <p className="matching-empty-msg">
+                  Sorry, no matches available right now - we're growing our talent pool and will be in touch soon.
+                </p>
               </div>
             </div>
+          )}
 
-            {/* Divider */}
-            <hr className="matching-divider" />
-
-            {/* Project details + file upload */}
-            <div className="matching-details-row">
-              <div className="matching-details-left">
-                <label className="form-label">
-                  Project details / What you're looking for{" "}
-                  <span className="optional-tag">(optional)</span>
-                </label>
-                <textarea
-                  className="form-textarea matching-textarea"
-                  placeholder="Describe the job, skills, or experience level you're looking for..."
-                  value={details}
-                  onChange={(e) => setDetails(e.target.value)}
-                />
-              </div>
-
-              <div className="matching-details-right">
-                <label className="form-label">
-                  Attach sample projects{" "}
-                  <span className="optional-tag">(optional)</span>
-                </label>
-                <button
-                  type="button"
-                  className="file-upload-btn"
-                  onClick={() => fileRef.current?.click()}
-                >
-                  <Upload size={20} />
-                  <span>
-                    {fileName ? fileName : "Click to upload a file"}
-                  </span>
-                </button>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={handleFileChange}
-                />
-                <p className="upload-hint">PDF, DOC, or image - up to 10 MB</p>
-              </div>
-            </div>
-
-            {/* Submit */}
-            <div className="matching-submit-row">
-              <button
-                type="button"
-                className="btn btn-primary btn-lg matching-cta"
-                onClick={handleSubmit}
-              >
-                <Search size={20} />
-                Get Matched
-              </button>
-              <p className="matching-footnote">
-                No cost to get matched - our team will follow up within one business day.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
