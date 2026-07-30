@@ -131,7 +131,7 @@ export default function ServicesPage() {
                   </div>
                   <h3>{s.title}</h3>
                   <p>{s.body}</p>
-                  <Link href={`/services-${s.slug}`} className="card-link">
+                  <Link href={`/services/${s.slug}`} className="card-link">
                     Learn more <ArrowRight size={16} />
                   </Link>
                 </div>

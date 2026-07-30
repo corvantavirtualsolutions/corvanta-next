@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ServicePageLayout from "../components/ServicePageLayout";
+import ServicePageLayout from "../../components/ServicePageLayout";
 
 export const metadata: Metadata = {
   title: "Content & Copywriting | Corvanta Virtual Solutions",
