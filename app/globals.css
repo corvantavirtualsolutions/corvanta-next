@@ -1582,10 +1582,11 @@ section { padding: var(--sp-12) 0; }
   height: 36px;
   border-radius: 50%;
   background: var(--color-primary);
-  overflow: hidden;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.2rem;
   flex-shrink: 0;
 }
 .cerena-header-info {
@@ -1763,8 +1764,9 @@ section { padding: var(--sp-12) 0; }
 
 /* Coconut FAB icon */
 .cerena-coconut {
+  font-size: 1.5rem;
+  line-height: 1;
   display: block;
-  border-radius: 50%;
   animation: cerenaCoconutSway 3.2s ease-in-out infinite;
   transform-origin: center bottom;
 }
