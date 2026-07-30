@@ -1101,21 +1101,303 @@ section { padding: var(--sp-12) 0; }
   }
 }
 
-/* ---------- Find-a-Talent Quick Filter ---------- */
-@media (max-width: 600px) {
-  .quick-filter-row {
-    flex-direction: column;
+/* ---------- Find-a-Talent Matching Form ---------- */
+
+/* Section wrapper */
+.fat-matching-section {
+  padding: var(--sp-12) 0;
+  background: linear-gradient(160deg, var(--color-primary-light) 0%, rgba(230,247,239,0.25) 60%, var(--color-bg) 100%);
+}
+
+/* Header copy above the card */
+.fat-matching-header { margin-bottom: var(--sp-6); }
+.fat-matching-title { margin-top: var(--sp-2); }
+.fat-matching-sub { max-width: 540px; margin-left: auto; margin-right: auto; }
+
+/* The main card */
+.matching-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  padding: var(--sp-6);
+  box-shadow: 0 8px 40px rgba(17,24,39,0.09), 0 2px 8px rgba(17,24,39,0.05);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Three-column select row */
+.matching-fields-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+
+/* Individual field within the row */
+.matching-field { display: flex; flex-direction: column; gap: 6px; }
+.matching-field .form-label { margin-bottom: 0; }
+
+/* Input that slides in below a select when "Other" is chosen */
+.field-reveal { margin-top: 8px; }
+
+/* Divider between selects and details */
+.matching-divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--sp-3) 0;
+}
+
+/* Details + upload row */
+.matching-details-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-4);
+}
+.matching-details-left,
+.matching-details-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.matching-details-left .form-label,
+.matching-details-right .form-label { margin-bottom: 0; }
+.matching-textarea { min-height: 130px; }
+
+/* Optional tag */
+.optional-tag {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-family: var(--font-body);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* File upload button */
+.file-upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-input);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  text-align: left;
+}
+.file-upload-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+.file-upload-btn svg { flex-shrink: 0; }
+.upload-hint { font-size: 0.8125rem; color: var(--color-text-secondary); margin: 4px 0 0; }
+
+/* Submit row */
+.matching-submit-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.matching-cta { min-width: 200px; font-size: 1rem; }
+.matching-footnote {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  text-align: center;
+}
+
+/* Required star */
+.req-star { color: var(--color-error); }
+
+/* Inline field error */
+.field-error {
+  font-size: 0.8125rem;
+  color: var(--color-error);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Input error highlight */
+.input-error {
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important;
+}
+
+/* Loading state */
+.matching-loader-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  gap: var(--sp-3);
+}
+.matching-loader-face {
+  font-size: 4rem;
+  animation: faceBounce 1.2s ease-in-out infinite;
+}
+@keyframes faceBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-10px) scale(1.06); }
+}
+.matching-loader-text {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin: 0;
+  text-align: center;
+  max-width: 360px;
+}
+.matching-dots {
+  display: flex;
+  gap: 8px;
+}
+.matching-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  animation: dotPulse 1.2s ease-in-out infinite;
+}
+.matching-dots span:nth-child(2) { animation-delay: 0.2s; }
+.matching-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+  40%            { transform: scale(1);   opacity: 1; }
+}
+
+/* Success state */
+.matching-success-wrap { gap: var(--sp-2); }
+.matching-success-title { color: var(--color-secondary); margin: 0; }
+.matching-success-lead { max-width: 420px; text-align: center; margin: 0; }
+
+/* ---------- Reviews Section ---------- */
+.reviews-section { padding: var(--sp-12) 0; }
+
+.reviews-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--sp-6);
+  align-items: start;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* Sample reviews column */
+.sample-reviews {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.sample-review-card {
+  padding: var(--sp-3);
+  cursor: default;
+}
+
+.sample-stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: var(--sp-1);
+}
+.star-filled { color: #F59E0B; fill: #F59E0B; }
+.star-empty  { color: var(--color-border); fill: var(--color-border); }
+
+.sample-review-text {
+  color: var(--color-secondary);
+  font-size: 1rem;
+  line-height: 1.65;
+  margin-bottom: var(--sp-2);
+}
+
+.sample-review-author {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sample-review-author strong { font-size: 0.9375rem; color: var(--color-secondary); }
+.sample-review-author span  { font-size: 0.8125rem; color: var(--color-text-secondary); }
+
+/* Leave a review card */
+.review-form-card {
+  position: sticky;
+  top: 100px;
+}
+.review-form-title { margin-bottom: var(--sp-3); }
+
+/* Star rating input */
+.star-row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.star-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  color: var(--color-border);
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+  border-radius: 6px;
+}
+.star-btn:hover,
+.star-btn.star-active { color: #F59E0B; }
+.star-btn svg { fill: currentColor; display: block; }
+.star-btn:hover { transform: scale(1.15); }
+
+/* Review success */
+.review-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-2);
+  padding: var(--sp-4) 0;
+}
+.review-success-icon { font-size: 3rem; }
+.review-success h3 { margin: 0; }
+.review-success p  { margin: 0; color: var(--color-text-secondary); }
+
+/* ---------- Responsive: Find-a-Talent ---------- */
+@media (max-width: 900px) {
+  .reviews-layout {
+    grid-template-columns: 1fr;
   }
-  .quick-filter-row > * {
-    width: 100%;
-    min-width: 0 !important;
-    flex: none !important;
+  .review-form-card { position: static; }
+  /* Reviews: form first on mobile */
+  .reviews-layout .review-form-card { order: -1; }
+}
+
+@media (max-width: 700px) {
+  .matching-fields-row {
+    grid-template-columns: 1fr;
   }
-  .quick-filter-row .btn {
-    width: 100%;
-    justify-content: center;
-    height: auto !important;
+  .matching-details-row {
+    grid-template-columns: 1fr;
   }
+  .matching-card {
+    padding: var(--sp-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .fat-matching-section {
+    padding: var(--sp-8) 0;
+  }
+  .matching-card { border-radius: var(--radius-card); }
+}
+
+/* Reduced-motion: disable face bounce and dot pulse */
+@media (prefers-reduced-motion: reduce) {
+  .matching-loader-face { animation: none; }
+  .matching-dots span   { animation: none; opacity: 1; transform: scale(1); }
 }
 
 /* ---------- Testimonial Confetti ---------- */
