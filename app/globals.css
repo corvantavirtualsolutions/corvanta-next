@@ -1769,16 +1769,18 @@ section { padding: var(--sp-12) 0; }
   font-size: 1.5rem;
   line-height: 1;
   display: block;
-  animation: cerenaCoconutWiggle 2.8s ease-in-out infinite;
+  animation: cerenaCoconutSway 3.2s ease-in-out infinite;
   transform-origin: center bottom;
 }
-@keyframes cerenaCoconutWiggle {
-  0%          { transform: rotate(-10deg) scale(1); }
-  12%         { transform: rotate(10deg) scale(1.06) translateY(-4px); }
-  24%         { transform: rotate(-8deg) scale(1); }
-  36%         { transform: rotate(8deg) scale(1.04) translateY(-3px); }
-  48%         { transform: rotate(0deg) scale(1); }
-  100%        { transform: rotate(0deg) scale(1); }
+@keyframes cerenaCoconutSway {
+  0%   { transform: translateX(0px)   translateY(0px)   rotate(0deg)   scale(1); }
+  15%  { transform: translateX(-5px)  translateY(-3px)  rotate(-8deg)  scale(1.05); }
+  30%  { transform: translateX(0px)   translateY(-5px)  rotate(0deg)   scale(1.07); }
+  45%  { transform: translateX(5px)   translateY(-3px)  rotate(8deg)   scale(1.05); }
+  60%  { transform: translateX(0px)   translateY(0px)   rotate(0deg)   scale(1); }
+  75%  { transform: translateX(-3px)  translateY(-2px)  rotate(-5deg)  scale(1.03); }
+  88%  { transform: translateX(3px)   translateY(-2px)  rotate(5deg)   scale(1.03); }
+  100% { transform: translateX(0px)   translateY(0px)   rotate(0deg)   scale(1); }
 }
 .cerena-fab:hover .cerena-coconut {
   animation-play-state: paused;
