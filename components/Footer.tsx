@@ -42,7 +42,7 @@ export default function Footer() {
                   <line x1="17.5" y1="6.5" x2="17.5" y2="6.5" />
                 </svg>
               </a>
-              <a href="mailto:hello@corvanta.com" aria-label="Email">
+              <a href="mailto:corvantavirtualsolutions@gmail.com" aria-label="Email">
                 <Mail size={18} />
               </a>
             </div>

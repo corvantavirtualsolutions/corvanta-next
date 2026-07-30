@@ -45,7 +45,7 @@ const sections = [
   },
   {
     heading: "10. Contact Us",
-    body: "Questions about these Terms can be sent to hello@corvanta.com.",
+    body: "Questions about these Terms can be sent to corvantavirtualsolutions@gmail.com.",
   },
 ];
 

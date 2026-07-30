@@ -835,6 +835,43 @@ section { padding: var(--sp-12) 0; }
   }
 }
 
+/* ---------- Contact Page Layout ---------- */
+.contact-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "form slider" "hours slider";
+  gap: var(--sp-4) var(--sp-6);
+  align-items: start;
+}
+.contact-form-col  { grid-area: form; }
+.contact-hours-col { grid-area: hours; }
+.contact-slider-col {
+  grid-area: slider;
+  display: flex;
+  flex-direction: column;
+  min-height: 560px;
+}
+
+/* Contact slider: fills height of its grid area */
+.contact-slider {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-image);
+  box-shadow: var(--shadow-lg);
+  flex: 1;
+  min-height: 300px;
+}
+
+@media (max-width: 767px) {
+  .contact-form-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "form" "slider" "hours";
+  }
+  .contact-slider-col {
+    min-height: 260px;
+  }
+}
+
 /* ---------- Accent Cards ---------- */
 .accent-card {
   transition: box-shadow 0.25s ease, transform 0.25s ease,
