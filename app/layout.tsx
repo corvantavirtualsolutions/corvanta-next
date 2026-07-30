@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CerenaChat from "@/components/CerenaChat";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -53,6 +54,7 @@ export default function RootLayout({
         <Header />
         <main>{children}</main>
         <Footer />
+        <CerenaChat />
       </body>
     </html>
   );
