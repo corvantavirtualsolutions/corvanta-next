@@ -1323,7 +1323,25 @@ section { padding: var(--sp-12) 0; }
 }
 
 /* ---------- Reviews Section ---------- */
-.reviews-section { padding: var(--sp-12) 0; border-top: 2px solid var(--color-border); }
+.reviews-section { padding: var(--sp-12) 0; }
+
+/* Empty state when no reviews exist yet */
+.reviews-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: var(--sp-6) var(--sp-4);
+  text-align: center;
+}
+.reviews-empty p {
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-size: 1rem;
+}
 
 .reviews-layout {
   display: grid;
@@ -1397,11 +1415,11 @@ section { padding: var(--sp-12) 0; }
   border-radius: 8px;
   line-height: 0;
 }
-.star-btn.star-active { color: #F59E0B; }
+.star-btn.star-active { color: var(--color-primary); }
 .star-btn svg { fill: currentColor; display: block; }
 .star-btn:hover {
-  color: #F59E0B;
-  background: rgba(245,158,11,0.1);
+  color: var(--color-primary);
+  background: var(--color-primary-light);
   transform: scale(1.2);
 }
 

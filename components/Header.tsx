@@ -27,6 +27,7 @@ const navItems: NavItem[] = [
     dropdown: [
       { label: "About Us", href: "/about-us" },
       { label: "Contact", href: "/contact" },
+      { label: "Client Reviews", href: "/reviews" },
     ],
   },
 ];

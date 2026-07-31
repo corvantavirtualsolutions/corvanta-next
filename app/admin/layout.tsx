@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminHeader from "@/components/AdminHeader";
+import { AdminSidebarNav } from "@/components/AdminSidebarNav";
 
 const SUPER_ADMIN = "corvantavirtualsolutions@gmail.com";
 
@@ -28,9 +29,7 @@ export default async function AdminLayout({
       <div className="admin-layout">
         <aside className="admin-sidebar">
           <p className="admin-sidebar-title">Admin</p>
-          <a href="/admin" className="admin-nav-link active">
-            Users
-          </a>
+          <AdminSidebarNav />
         </aside>
         <div className="admin-content">{children}</div>
       </div>

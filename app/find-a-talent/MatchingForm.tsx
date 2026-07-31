@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Search, Upload, Star, Users } from "lucide-react";
+import { Search, Upload, Users } from "lucide-react";
 
 const HELP_OPTIONS = [
   "Admin Support",
@@ -31,27 +31,6 @@ const BUDGET_OPTIONS = [
 
 type Phase = "form" | "loading" | "results";
 
-const SAMPLE_REVIEWS = [
-  {
-    name: "Sarah K.",
-    role: "CEO, BrightLeaf Co.",
-    stars: 5,
-    text: "Corvanta found us an amazing VA in just 3 days. She handles our entire inbox and scheduling - I don't know how we managed without her.",
-  },
-  {
-    name: "Marcus T.",
-    role: "Founder, Nomad Labs",
-    stars: 5,
-    text: "The matching process was incredibly smooth. My VA is proactive, organized, and fits perfectly with our team culture.",
-  },
-  {
-    name: "Priya R.",
-    role: "COO, HealthStack",
-    stars: 4,
-    text: "Really impressed with the vetting process. Saved us weeks of hiring headaches. Highly recommend for busy teams.",
-  },
-];
-
 export default function MatchingForm() {
   // Form fields
   const [helpWith, setHelpWith] = useState("");
@@ -66,13 +45,6 @@ export default function MatchingForm() {
   // Form phase
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [phase, setPhase] = useState<Phase>("form");
-
-  // Review state
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [comment, setComment] = useState("");
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const [reviewError, setReviewError] = useState("");
 
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -106,15 +78,6 @@ export default function MatchingForm() {
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) setFileName(file.name);
-  }
-
-  function handleReviewSubmit() {
-    if (!rating) {
-      setReviewError("Please select a star rating before submitting.");
-      return;
-    }
-    setReviewError("");
-    setReviewSubmitted(true);
   }
 
   return (
@@ -375,137 +338,6 @@ export default function MatchingForm() {
         </div>
       </section>
 
-      {/* ── Reviews Section ── */}
-      <ReviewsSection
-        rating={rating}
-        hoverRating={hoverRating}
-        setHoverRating={setHoverRating}
-        setRating={setRating}
-        comment={comment}
-        setComment={setComment}
-        reviewSubmitted={reviewSubmitted}
-        reviewError={reviewError}
-        handleReviewSubmit={handleReviewSubmit}
-      />
     </>
-  );
-}
-
-/* ---------- Reviews sub-component ---------- */
-interface ReviewsProps {
-  rating: number;
-  hoverRating: number;
-  setHoverRating: (n: number) => void;
-  setRating: (n: number) => void;
-  comment: string;
-  setComment: (s: string) => void;
-  reviewSubmitted: boolean;
-  reviewError: string;
-  handleReviewSubmit: () => void;
-}
-
-function ReviewsSection({
-  rating,
-  hoverRating,
-  setHoverRating,
-  setRating,
-  comment,
-  setComment,
-  reviewSubmitted,
-  reviewError,
-  handleReviewSubmit,
-}: ReviewsProps) {
-  return (
-    <section className="bg-surface reviews-section">
-      <div className="container">
-        <div className="section-header text-center">
-          <span className="eyebrow">Client Reviews</span>
-          <h2>What clients are saying</h2>
-          <p className="lead">
-            Real feedback from business owners who found their perfect match through Corvanta.
-          </p>
-        </div>
-
-        <div className="reviews-layout">
-          {/* Sample reviews */}
-          <div className="sample-reviews">
-            {SAMPLE_REVIEWS.map((r) => (
-              <div key={r.name} className="card sample-review-card">
-                <div className="sample-stars">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <Star
-                      key={n}
-                      size={16}
-                      className={
-                        n <= r.stars ? "star-filled" : "star-empty"
-                      }
-                    />
-                  ))}
-                </div>
-                <p className="sample-review-text">"{r.text}"</p>
-                <div className="sample-review-author">
-                  <strong>{r.name}</strong>
-                  <span>{r.role}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Leave a review */}
-          <div className="review-form-card card">
-            {reviewSubmitted ? (
-              <div className="review-success">
-                <div className="review-success-icon">&#127881;</div>
-                <h3>Thank you for your review!</h3>
-                <p>We really appreciate your feedback.</p>
-              </div>
-            ) : (
-              <>
-                <h3 className="review-form-title">Leave a review</h3>
-                <div className="form-group">
-                  <label className="form-label">Your rating</label>
-                  <div className="star-row">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <button
-                        key={n}
-                        type="button"
-                        className={`star-btn${
-                          (hoverRating || rating) >= n ? " star-active" : ""
-                        }`}
-                        onMouseEnter={() => setHoverRating(n)}
-                        onMouseLeave={() => setHoverRating(0)}
-                        onClick={() => setRating(n)}
-                        aria-label={`Rate ${n} star${n !== 1 ? "s" : ""}`}
-                      >
-                        <Star size={30} />
-                      </button>
-                    ))}
-                  </div>
-                  {reviewError && (
-                    <span className="field-error">{reviewError}</span>
-                  )}
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Your feedback</label>
-                  <textarea
-                    className="form-textarea"
-                    placeholder="Tell us about your experience working with Corvanta..."
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                  />
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-primary btn-block"
-                  onClick={handleReviewSubmit}
-                >
-                  Submit Review
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
