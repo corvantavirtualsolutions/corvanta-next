@@ -10,6 +10,35 @@ function callerIsAdmin(email: string | undefined, role: string | undefined): boo
   return email === SUPER_ADMIN || role === "admin";
 }
 
+export async function deleteUser(userId: string): Promise<{ error: string } | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Not authenticated" };
+  if (!callerIsAdmin(user.email, user.user_metadata?.role)) {
+    return { error: "Not authorized" };
+  }
+
+  const adminClient = createAdminClient();
+
+  // Block deletion of the super-admin account
+  const {
+    data: { user: target },
+  } = await adminClient.auth.admin.getUserById(userId);
+
+  if (target?.email === SUPER_ADMIN) {
+    return { error: "The super-admin account cannot be deleted" };
+  }
+
+  const { error } = await adminClient.auth.admin.deleteUser(userId);
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin");
+  return null;
+}
+
 export async function updateUserRole(userId: string, role: "admin" | "user") {
   // Verify the caller is an admin
   const supabase = await createClient();

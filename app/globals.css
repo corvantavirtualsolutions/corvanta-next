@@ -2056,6 +2056,110 @@ section { padding: var(--sp-12) 0; }
   background: rgba(239,68,68,0.08);
 }
 
+/* Actions cell: role toggle + delete button side by side */
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Delete button (idle state) */
+.admin-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border: 1px solid rgba(239,68,68,0.35);
+  background: transparent;
+  color: var(--color-error);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.admin-delete-btn:hover {
+  background: rgba(239,68,68,0.08);
+  border-color: var(--color-error);
+}
+
+/* Inline confirmation panel */
+.admin-delete-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 260px;
+}
+.admin-delete-confirm-text {
+  font-size: 0.8rem;
+  color: var(--color-secondary);
+  line-height: 1.45;
+}
+.admin-delete-confirm-btns {
+  display: flex;
+  gap: 6px;
+}
+.admin-delete-confirm-yes {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border: none;
+  background: var(--color-error);
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+.admin-delete-confirm-yes:hover:not(:disabled) { background: #c53030; }
+.admin-delete-confirm-yes:disabled { opacity: 0.6; cursor: not-allowed; }
+.admin-delete-confirm-cancel {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.admin-delete-confirm-cancel:hover:not(:disabled) {
+  background: var(--color-bg);
+  border-color: var(--color-text-secondary);
+}
+.admin-delete-confirm-cancel:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Success / error inline messages */
+.admin-delete-success {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+.admin-delete-error-msg {
+  font-size: 0.8125rem;
+  color: var(--color-error);
+  font-weight: 500;
+}
+.admin-delete-dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  padding: 0;
+  font-family: inherit;
+}
+.admin-delete-dismiss:hover { color: var(--color-secondary); }
+
 @media (max-width: 768px) {
   .admin-layout { flex-direction: column; }
   .admin-sidebar {

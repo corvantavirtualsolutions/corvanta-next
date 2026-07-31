@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { RoleToggle } from "./RoleToggle";
+import { DeleteUserButton } from "./DeleteUserButton";
 
 const SUPER_ADMIN = "corvantavirtualsolutions@gmail.com";
 
@@ -87,11 +88,17 @@ export default async function AdminUsersPage() {
                     </span>
                   </td>
                   <td>
-                    <RoleToggle
-                      userId={u.id}
-                      currentRole={role}
-                      isSuperAdmin={isSuperAdmin}
-                    />
+                    <div className="admin-actions">
+                      <RoleToggle
+                        userId={u.id}
+                        currentRole={role}
+                        isSuperAdmin={isSuperAdmin}
+                      />
+                      <DeleteUserButton
+                        userId={u.id}
+                        isSuperAdmin={isSuperAdmin}
+                      />
+                    </div>
                   </td>
                 </tr>
               );
