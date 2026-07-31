@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -33,6 +33,18 @@ const navItems: NavItem[] = [
 
 export default function Header({ user }: { user: AuthUser }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [avatarOpen, setAvatarOpen] = useState(false);
+  const avatarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (avatarRef.current && !avatarRef.current.contains(e.target as Node)) {
+        setAvatarOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <>
@@ -79,15 +91,28 @@ export default function Header({ user }: { user: AuthUser }) {
 
             <div className="nav-actions">
               {user && (
-                <div className="nav-auth-user">
-                  <span className="nav-user-email" title={user.email}>
-                    {user.email}
-                  </span>
-                  <form action={logout}>
-                    <button type="submit" className="btn btn-outline btn-sm">
-                      Log out
-                    </button>
-                  </form>
+                <div className="nav-avatar" ref={avatarRef}>
+                  <button
+                    className="nav-avatar-btn"
+                    onClick={() => setAvatarOpen((o) => !o)}
+                    aria-label="Account menu"
+                    aria-expanded={avatarOpen}
+                  >
+                    {user.email[0].toUpperCase()}
+                  </button>
+                  {avatarOpen && (
+                    <div className="nav-avatar-dropdown">
+                      <span className="nav-avatar-email" title={user.email}>
+                        {user.email}
+                      </span>
+                      <div className="nav-avatar-divider" />
+                      <form action={logout}>
+                        <button type="submit" className="nav-avatar-option">
+                          Log out
+                        </button>
+                      </form>
+                    </div>
+                  )}
                 </div>
               )}
               <Link
