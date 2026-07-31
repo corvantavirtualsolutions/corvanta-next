@@ -1842,7 +1842,7 @@ section { padding: var(--sp-12) 0; }
   transition: background 0.18s ease, transform 0.18s ease;
 }
 .nav-avatar-btn:hover {
-  background: var(--color-primary-dark);
+  background: var(--color-error);
   transform: scale(1.06);
 }
 
@@ -2130,6 +2130,34 @@ section { padding: var(--sp-12) 0; }
   display: flex;
   align-items: center;
 }
+
+/* Suppress double margin when form-group lives inside auth-form flex gap */
+.auth-form .form-group { margin-bottom: 0; }
+
+/* Password field with show/hide toggle */
+.auth-password-wrap {
+  position: relative;
+}
+.auth-password-wrap .form-input {
+  padding-right: 48px;
+}
+.auth-eye-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.15s ease;
+  line-height: 0;
+}
+.auth-eye-btn:hover { color: var(--color-secondary); }
 
 /* Responsive */
 @media (max-width: 480px) {

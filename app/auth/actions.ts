@@ -54,6 +54,9 @@ export async function login(prevState: AuthState, formData: FormData): Promise<A
 export async function signup(prevState: AuthState, formData: FormData): Promise<AuthState> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const fullName = (formData.get("full_name") as string | null) ?? "";
+  const position = (formData.get("position") as string | null) ?? "";
+  const company = (formData.get("company") as string | null) ?? "";
 
   const cookieStore = await cookies();
 
@@ -74,7 +77,13 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
     }
   );
 
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { full_name: fullName, position, company },
+    },
+  });
 
   if (error) return { error: friendlyError(error.message) };
 

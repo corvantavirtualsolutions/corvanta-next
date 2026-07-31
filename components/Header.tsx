@@ -90,6 +90,12 @@ export default function Header({ user }: { user: AuthUser }) {
             </nav>
 
             <div className="nav-actions">
+              <Link
+                href={user ? "/find-a-talent" : "/login"}
+                className={`btn ${user ? "btn-primary-dark" : "btn-primary"} btn-sm`}
+              >
+                Find a Talent
+              </Link>
               {user && (
                 <div className="nav-avatar" ref={avatarRef}>
                   <button
@@ -115,12 +121,6 @@ export default function Header({ user }: { user: AuthUser }) {
                   )}
                 </div>
               )}
-              <Link
-                href={user ? "/find-a-talent" : "/login"}
-                className={`btn ${user ? "btn-primary-dark" : "btn-primary"} btn-sm`}
-              >
-                Find a Talent
-              </Link>
             </div>
           </div>
 

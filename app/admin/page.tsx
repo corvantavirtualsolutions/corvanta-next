@@ -17,6 +17,11 @@ function getRole(email: string | undefined, userMeta: Record<string, unknown> | 
   return (userMeta?.role as string) || "user";
 }
 
+function metaStr(meta: Record<string, unknown> | undefined, key: string): string {
+  const val = meta?.[key];
+  return typeof val === "string" && val.trim() ? val : "-";
+}
+
 export default async function AdminUsersPage() {
   const adminClient = createAdminClient();
   const {
@@ -42,25 +47,30 @@ export default async function AdminUsersPage() {
         <table className="admin-table">
           <thead>
             <tr>
+              <th>Full Name</th>
               <th>Email</th>
+              <th>Position / Role</th>
+              <th>Company</th>
               <th>Last Sign-in</th>
               <th>Created</th>
-              <th>Role</th>
+              <th>Account Role</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((u) => {
-              const role = getRole(u.email, u.user_metadata as Record<string, unknown>);
+              const meta = u.user_metadata as Record<string, unknown> | undefined;
+              const role = getRole(u.email, meta);
               const isSuperAdmin = u.email === SUPER_ADMIN;
 
               return (
                 <tr key={u.id}>
-                  <td>
-                    <span style={{ fontWeight: isSuperAdmin ? 700 : 400 }}>
-                      {u.email ?? "-"}
-                    </span>
+                  <td style={{ fontWeight: isSuperAdmin ? 700 : 400 }}>
+                    {metaStr(meta, "full_name")}
                   </td>
+                  <td>{u.email ?? "-"}</td>
+                  <td>{metaStr(meta, "position")}</td>
+                  <td>{metaStr(meta, "company")}</td>
                   <td>{formatDate(u.last_sign_in_at)}</td>
                   <td>{formatDate(u.created_at)}</td>
                   <td>

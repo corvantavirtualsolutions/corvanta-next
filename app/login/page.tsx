@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { useActionState } from "react";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 import { login } from "@/app/auth/actions";
 
 export default function LoginPage() {
   const [state, action, pending] = useActionState(login, null);
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <section className="auth-page">
@@ -47,15 +50,25 @@ export default function LoginPage() {
             <label htmlFor="password" className="form-label">
               Password
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              placeholder="Enter your password"
-              className="form-input"
-            />
+            <div className="auth-password-wrap">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                placeholder="Enter your password"
+                className="form-input"
+              />
+              <button
+                type="button"
+                className="auth-eye-btn"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <div className="auth-remember">
