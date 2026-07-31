@@ -41,7 +41,8 @@ export default async function ReviewsPage() {
   const { data: reviews } = await adminClient
     .from("reviews")
     .select("id, rating, feedback, user_name, company, created_at")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(3);
 
   const list: Review[] = reviews ?? [];
 
