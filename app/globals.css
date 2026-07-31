@@ -2074,6 +2074,51 @@ section { padding: var(--sp-12) 0; }
   background: rgba(239,68,68,0.08);
 }
 
+/* Admin Reviews summary bar */
+.admin-reviews-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: var(--sp-3) var(--sp-4);
+  margin-bottom: var(--sp-3);
+}
+.admin-reviews-summary-empty {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  margin: 0;
+}
+.admin-reviews-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.admin-reviews-avg {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-secondary);
+  line-height: 1;
+}
+.admin-reviews-avg-label {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+.admin-reviews-stars {
+  display: flex;
+  gap: 2px;
+  align-self: center;
+}
+.admin-reviews-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
 /* Actions cell: role toggle + delete button side by side */
 .admin-actions {
   display: flex;

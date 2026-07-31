@@ -10,6 +10,25 @@ function callerIsAdmin(email: string | undefined, role: string | undefined): boo
   return email === SUPER_ADMIN || role === "admin";
 }
 
+export async function deleteReview(reviewId: string): Promise<{ error: string } | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Not authenticated" };
+  if (!callerIsAdmin(user.email, user.user_metadata?.role)) {
+    return { error: "Not authorized" };
+  }
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient.from("reviews").delete().eq("id", reviewId);
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/reviews");
+  return null;
+}
+
 export async function deleteUser(userId: string): Promise<{ error: string } | null> {
   const supabase = await createClient();
   const {
