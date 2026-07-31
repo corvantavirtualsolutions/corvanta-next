@@ -290,6 +290,15 @@ section { padding: var(--sp-12) 0; }
 .blog-card .meta { font-size: 0.8125rem; color: var(--color-text-secondary); margin-bottom: var(--sp-1); }
 .blog-card h3 { font-size: 1.15rem; }
 
+/* ---------- Stats dark band (homepage only) ---------- */
+.stats-dark-band {
+  background: var(--color-secondary);
+  padding: var(--sp-8) 0;
+}
+.stats-dark-band .stat-label {
+  color: rgba(255, 255, 255, 0.65);
+}
+
 .stat-card {
   text-align: center; padding: var(--sp-3);
   border-radius: var(--radius-card);

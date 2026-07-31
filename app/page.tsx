@@ -106,7 +106,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="section-tight">
+      <section className="section-tight stats-dark-band">
         <div className="container">
           <div className="grid grid-4 stats-grid">
             {[
