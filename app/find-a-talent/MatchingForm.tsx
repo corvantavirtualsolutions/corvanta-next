@@ -340,6 +340,9 @@ export default function MatchingForm() {
                           )}
                         </div>
 
+                        {/* Match score badge */}
+                        <span className="va-result-score">{va.score}% match</span>
+
                         {/* Niche badge */}
                         <span className="va-result-niche">{va.niche}</span>
 

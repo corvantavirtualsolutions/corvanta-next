@@ -2694,6 +2694,18 @@ section { padding: var(--sp-12) 0; }
   color: var(--color-text-secondary);
 }
 
+/* Match score badge */
+.va-result-score {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--color-primary);
+  border-radius: 999px;
+  padding: 5px 16px;
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+}
+
 /* Niche badge */
 .va-result-niche {
   font-size: 0.72rem;

@@ -2,11 +2,11 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// Keywords for each niche category
+// ─── Niche keyword map ────────────────────────────────────────────────
 const NICHE_KEYWORDS: Record<string, string[]> = {
   "Admin Support": [
-    "admin", "administrative", "office", "support", "virtual assistant", "general",
-    "clerical", "organization", "scheduling",
+    "admin", "administrative", "office", "support", "virtual assistant",
+    "general", "clerical", "organization", "scheduling",
   ],
   "Customer Service": [
     "customer", "service", "support", "client", "helpdesk", "help desk",
@@ -38,6 +38,42 @@ const NICHE_KEYWORDS: Record<string, string[]> = {
   ],
 };
 
+// ─── Scoring weights — adjust these constants to tune ranking ─────────
+//
+// The five maxima sum to 100, so the raw score IS the 0-100 percentage.
+//
+const WEIGHTS = {
+  /** Points for a matching niche (binary: match or nothing) */
+  NICHE: 50,
+
+  /** Max points from bio/project-details keyword overlap */
+  BIO_MAX: 30,
+  /** Points per keyword found in the VA's bio */
+  BIO_PER_KW: 5,
+
+  /** Max points from years_experience */
+  YEARS_EXP_MAX: 8,
+  /** Experience saturates at this many years */
+  YEARS_EXP_CAP: 10,
+
+  /** Max points from english_score */
+  ENGLISH_MAX: 7,
+
+  /** Max points from IQ */
+  IQ_MAX: 5,
+  /** IQ at or below this baseline contributes 0 points */
+  IQ_BASELINE: 90,
+  /** IQ at or above this ceiling scores the full IQ_MAX */
+  IQ_CEILING: 145,
+} as const;
+
+// Sanity-check: NICHE + BIO_MAX + YEARS_EXP_MAX + ENGLISH_MAX + IQ_MAX = 100
+// 50 + 30 + 8 + 7 + 5 = 100
+
+/** VAs scoring below this threshold are excluded from results */
+const MIN_SCORE = 5;
+
+// ─── Stop-word list for keyword extraction ───────────────────────────
 const STOP_WORDS = new Set([
   "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
   "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
@@ -58,6 +94,54 @@ function extractKeywords(text: string): string[] {
     .filter((w) => w.length >= 4 && !STOP_WORDS.has(w));
 }
 
+// ─── Individual scoring functions ────────────────────────────────────
+
+function scoreNiche(
+  vaNiche: string,
+  helpWith: string,
+  helpOtherText: string
+): number {
+  const nicheLower = vaNiche.toLowerCase();
+  const keywords =
+    helpWith === "Other"
+      ? extractKeywords(helpOtherText)
+      : (NICHE_KEYWORDS[helpWith] ?? []);
+  return keywords.some((kw) => nicheLower.includes(kw)) ? WEIGHTS.NICHE : 0;
+}
+
+function scoreBio(bio: string | null, projectDetails: string): number {
+  if (!bio || !projectDetails.trim()) return 0;
+  const keywords = extractKeywords(projectDetails);
+  if (keywords.length === 0) return 0;
+  const bioLower = bio.toLowerCase();
+  const hits = keywords.filter((kw) => bioLower.includes(kw)).length;
+  return Math.min(WEIGHTS.BIO_MAX, hits * WEIGHTS.BIO_PER_KW);
+}
+
+function scoreYearsExp(years: number | null): number {
+  if (years === null) return 0;
+  const fraction = Math.min(years, WEIGHTS.YEARS_EXP_CAP) / WEIGHTS.YEARS_EXP_CAP;
+  return Math.round(fraction * WEIGHTS.YEARS_EXP_MAX);
+}
+
+function scoreEnglish(englishScore: string | null): number {
+  if (!englishScore) return 0;
+  const raw = parseFloat(englishScore.replace("%", "").trim());
+  if (isNaN(raw)) return 0;
+  // >10 = percentage / large-number scale (0-100); <=10 = IELTS-style (0-10)
+  const normalized = raw > 10 ? Math.min(raw, 100) / 100 : Math.min(raw, 10) / 10;
+  return Math.round(normalized * WEIGHTS.ENGLISH_MAX);
+}
+
+function scoreIQ(iq: number | null): number {
+  if (iq === null || iq <= WEIGHTS.IQ_BASELINE) return 0;
+  const range = WEIGHTS.IQ_CEILING - WEIGHTS.IQ_BASELINE;
+  const fraction = Math.min(iq - WEIGHTS.IQ_BASELINE, range) / range;
+  return Math.round(fraction * WEIGHTS.IQ_MAX);
+}
+
+// ─── Public types ─────────────────────────────────────────────────────
+
 export type MatchedVA = {
   id: string;
   niche: string;
@@ -67,37 +151,11 @@ export type MatchedVA = {
   iq: number | null;
   english_score: string | null;
   profile_image_url: string | null;
+  /** Normalized match score 0-100 */
+  score: number;
 };
 
-function scoreNiche(vaNiche: string, helpWith: string, helpOtherText: string): number {
-  const nicheLower = vaNiche.toLowerCase();
-  if (helpWith === "Other") {
-    const keywords = extractKeywords(helpOtherText);
-    return keywords.some((kw) => nicheLower.includes(kw)) ? 100 : 0;
-  }
-  const keywords = NICHE_KEYWORDS[helpWith] ?? [];
-  return keywords.some((kw) => nicheLower.includes(kw)) ? 100 : 0;
-}
-
-function scoreBio(bio: string | null, projectDetails: string): number {
-  if (!bio || !projectDetails.trim()) return 0;
-  const keywords = extractKeywords(projectDetails);
-  if (keywords.length === 0) return 0;
-  const bioLower = bio.toLowerCase();
-  const matches = keywords.filter((kw) => bioLower.includes(kw)).length;
-  return Math.min(60, matches * 10);
-}
-
-function scoreQuality(va: MatchedVA): number {
-  let s = 0;
-  if (va.years_experience !== null) s += Math.min(va.years_experience * 2, 20);
-  if (va.past_clients !== null) s += Math.min(Math.floor(va.past_clients / 5), 15);
-  if (va.english_score !== null) {
-    const n = parseFloat(va.english_score);
-    if (!isNaN(n)) s += Math.min(n, 10);
-  }
-  return s;
-}
+// ─── Main export ──────────────────────────────────────────────────────
 
 export async function matchVAs(
   helpWith: string,
@@ -114,18 +172,22 @@ export async function matchVAs(
   if (error) return { results: [], error: error.message };
   if (!data || data.length === 0) return { results: [] };
 
-  const scored = (data as MatchedVA[]).map((va) => ({
-    va,
-    total:
+  const scored = (data as Omit<MatchedVA, "score">[]).map((va) => {
+    const raw =
       scoreNiche(va.niche, helpWith, helpOtherText) +
       scoreBio(va.bio, projectDetails) +
-      scoreQuality(va),
-  }));
+      scoreYearsExp(va.years_experience) +
+      scoreEnglish(va.english_score) +
+      scoreIQ(va.iq);
+    // raw already maxes at 100 (weights sum to 100)
+    const score = Math.min(100, raw);
+    return { va: { ...va, score }, score };
+  });
 
-  const matched = scored
-    .filter((s) => s.total > 0)
-    .sort((a, b) => b.total - a.total)
+  const results = scored
+    .filter((s) => s.score >= MIN_SCORE)
+    .sort((a, b) => b.score - a.score)
     .map((s) => s.va);
 
-  return { results: matched };
+  return { results };
 }
