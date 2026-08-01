@@ -6,7 +6,13 @@ import { deleteSeeker } from "./actions";
 
 type Stage = "idle" | "confirming" | "success" | "error";
 
-export function DeleteSeekerButton({ seekerId }: { seekerId: string }) {
+export function DeleteSeekerButton({
+  seekerId,
+  onDeleted,
+}: {
+  seekerId: string;
+  onDeleted?: () => void;
+}) {
   const [isPending, startTransition] = useTransition();
   const [stage, setStage] = useState<Stage>("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -19,6 +25,7 @@ export function DeleteSeekerButton({ seekerId }: { seekerId: string }) {
         setStage("error");
       } else {
         setStage("success");
+        onDeleted?.();
       }
     });
   }

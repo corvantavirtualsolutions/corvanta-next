@@ -2896,3 +2896,114 @@ section { padding: var(--sp-12) 0; }
   margin: 0 0 8px;
   line-height: 1.55;
 }
+
+/* ── Seeker Detail Modal ─────────────────────────────────────────────── */
+.seekers-table-row {
+  cursor: pointer;
+}
+
+.seeker-detail-section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+.seeker-detail-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.seeker-detail-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin: 0 0 14px;
+}
+
+.seeker-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+
+.seeker-detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.seeker-detail-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.seeker-detail-value {
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+.seeker-detail-value--pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--color-bg-alt);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.seeker-match-badge {
+  display: inline-flex;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 3px 12px;
+}
+
+.seeker-detail-agreements {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.seeker-detail-agreement-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.seeker-detail-agreement-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+  background: var(--color-border);
+}
+.seeker-detail-agreement-dot--on {
+  background: var(--color-primary);
+}
+
+.seeker-detail-delete {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 480px) {
+  .seeker-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
