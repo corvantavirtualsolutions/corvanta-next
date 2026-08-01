@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DeleteSeekerButton } from "./DeleteSeekerButton";
+import { EmailedToggle } from "./EmailedToggle";
 import SeekerDetailModal from "./SeekerDetailModal";
 import type { VaSeeker } from "./types";
 
@@ -34,6 +35,7 @@ export default function SeekersTable({ seekers }: { seekers: VaSeeker[] }) {
               <th>Email</th>
               <th>VA Approached</th>
               <th>Date</th>
+              <th>Emailed</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -41,7 +43,7 @@ export default function SeekersTable({ seekers }: { seekers: VaSeeker[] }) {
             {seekers.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   style={{
                     textAlign: "center",
                     color: "var(--color-text-secondary)",
@@ -84,6 +86,9 @@ export default function SeekersTable({ seekers }: { seekers: VaSeeker[] }) {
                     )}
                   </td>
                   <td style={{ whiteSpace: "nowrap" }}>{formatDate(s.created_at)}</td>
+                  <td onClick={(e) => e.stopPropagation()}>
+                    <EmailedToggle seekerId={s.id} initialEmailed={s.emailed} />
+                  </td>
                   {/* Stop click propagation on actions so Delete doesn't also open the modal */}
                   <td onClick={(e) => e.stopPropagation()}>
                     <DeleteSeekerButton

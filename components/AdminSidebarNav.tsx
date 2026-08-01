@@ -8,6 +8,12 @@ export function AdminSidebarNav() {
   return (
     <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <a
+        href="/admin/overview"
+        className={`admin-nav-link${pathname === "/admin/overview" ? " active" : ""}`}
+      >
+        Overview
+      </a>
+      <a
         href="/admin"
         className={`admin-nav-link${pathname === "/admin" ? " active" : ""}`}
       >

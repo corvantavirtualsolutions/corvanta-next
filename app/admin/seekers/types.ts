@@ -16,5 +16,6 @@ export type VaSeeker = {
   hours: string | null;
   budget: string | null;
   project_details: string | null;
+  emailed: boolean;
   created_at: string;
 };
