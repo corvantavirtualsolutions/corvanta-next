@@ -6,12 +6,20 @@ import { submitApproach, type MatchedVA } from "./actions";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+interface SearchContext {
+  category: string;
+  hours: string;
+  budget: string;
+  projectDetails: string;
+}
+
 interface Props {
   va: MatchedVA;
+  searchContext: SearchContext;
   onClose: () => void;
 }
 
-export default function ApproachModal({ va, onClose }: Props) {
+export default function ApproachModal({ va, searchContext, onClose }: Props) {
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
@@ -52,8 +60,13 @@ export default function ApproachModal({ va, onClose }: Props) {
     fd.append("agreed_email_contract", String(agreedEmailContract));
     fd.append("notes", notes);
     fd.append("va_id", va.id);
+    fd.append("va_name", va.name);
     fd.append("va_niche", va.niche);
     fd.append("match_score", String(va.score));
+    fd.append("category", searchContext.category);
+    fd.append("hours", searchContext.hours);
+    fd.append("budget", searchContext.budget);
+    fd.append("project_details", searchContext.projectDetails);
 
     startTransition(async () => {
       const result = await submitApproach(fd);

@@ -9,7 +9,12 @@ export type VaSeeker = {
   agreed_email_contract: boolean;
   notes: string | null;
   va_id: string | null;
+  va_name: string | null;
   va_niche: string | null;
   match_score: number | null;
+  category: string | null;
+  hours: string | null;
+  budget: string | null;
+  project_details: string | null;
   created_at: string;
 };

@@ -47,6 +47,12 @@ export default function MatchingForm() {
   const [phase, setPhase] = useState<Phase>("form");
   const [matchResults, setMatchResults] = useState<MatchedVA[]>([]);
   const [approachTarget, setApproachTarget] = useState<MatchedVA | null>(null);
+  const [searchContext, setSearchContext] = useState<{
+    category: string;
+    hours: string;
+    budget: string;
+    projectDetails: string;
+  } | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const fileRef = useRef<HTMLInputElement>(null);
@@ -395,7 +401,26 @@ export default function MatchingForm() {
                         <button
                           type="button"
                           className="va-result-approach"
-                          onClick={() => setApproachTarget(va)}
+                          onClick={() => {
+                            setApproachTarget(va);
+                            setSearchContext({
+                              category:
+                                helpWith === "Other"
+                                  ? helpOther || "Other"
+                                  : helpWith,
+                              hours:
+                                hours === "Other"
+                                  ? hoursCustom
+                                    ? `${hoursCustom} hrs/week`
+                                    : "Other"
+                                  : hours,
+                              budget:
+                                budget === "Other"
+                                  ? budgetCustom || "Other"
+                                  : budget,
+                              projectDetails: details,
+                            });
+                          }}
                         >
                           Approach
                         </button>
@@ -419,10 +444,11 @@ export default function MatchingForm() {
         </div>
       </section>
 
-      {approachTarget && (
+      {approachTarget && searchContext && (
         <ApproachModal
           va={approachTarget}
-          onClose={() => setApproachTarget(null)}
+          searchContext={searchContext}
+          onClose={() => { setApproachTarget(null); setSearchContext(null); }}
         />
       )}
     </>

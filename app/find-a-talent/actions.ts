@@ -144,6 +144,8 @@ function scoreIQ(iq: number | null): number {
 
 export type MatchedVA = {
   id: string;
+  /** Not displayed on public cards — stored in admin seeker records only */
+  name: string;
   niche: string;
   bio: string | null;
   years_experience: number | null;
@@ -171,9 +173,14 @@ export async function submitApproach(
   const agreedEmailContract = formData.get("agreed_email_contract") === "true";
   const notes = (formData.get("notes") as string | null)?.trim() || null;
   const vaId = (formData.get("va_id") as string | null)?.trim() || null;
+  const vaName = (formData.get("va_name") as string | null)?.trim() || null;
   const vaNiche = (formData.get("va_niche") as string | null)?.trim() || null;
   const matchScoreRaw = formData.get("match_score") as string | null;
   const matchScore = matchScoreRaw ? parseInt(matchScoreRaw, 10) : null;
+  const category = (formData.get("category") as string | null)?.trim() || null;
+  const hours = (formData.get("hours") as string | null)?.trim() || null;
+  const budget = (formData.get("budget") as string | null)?.trim() || null;
+  const projectDetails = (formData.get("project_details") as string | null)?.trim() || null;
 
   if (!name) return { error: "Name is required." };
   if (!company) return { error: "Company name is required." };
@@ -193,8 +200,13 @@ export async function submitApproach(
     agreed_email_contract: agreedEmailContract,
     notes,
     va_id: vaId,
+    va_name: vaName,
     va_niche: vaNiche,
     match_score: matchScore,
+    category,
+    hours,
+    budget,
+    project_details: projectDetails,
   });
 
   if (error) return { error: error.message };
@@ -212,7 +224,7 @@ export async function matchVAs(
   const { data, error } = await adminClient
     .from("vas")
     .select(
-      "id, niche, bio, years_experience, past_clients, iq, english_score, profile_image_url"
+      "id, name, niche, bio, years_experience, past_clients, iq, english_score, profile_image_url"
     );
 
   if (error) return { results: [], error: error.message };

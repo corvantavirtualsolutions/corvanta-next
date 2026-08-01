@@ -10,20 +10,36 @@ function formatDate(iso: string): string {
   });
 }
 
-function AgreementDot({ agreed, title }: { agreed: boolean; title: string }) {
+function AgreementDots({ s }: { s: VaSeeker }) {
+  const dots = [
+    { agreed: s.agreed_payment_terms, title: "Payment terms" },
+    { agreed: s.agreed_accurate_info, title: "Accurate info" },
+    { agreed: s.agreed_contact, title: "Contact consent" },
+    { agreed: s.agreed_email_contract, title: "Email contract" },
+  ];
   return (
-    <span
-      style={{
-        display: "inline-block",
-        width: 10,
-        height: 10,
-        borderRadius: "50%",
-        background: agreed ? "var(--color-primary)" : "var(--color-border)",
-        flexShrink: 0,
-      }}
-      title={title}
-    />
+    <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+      {dots.map((d) => (
+        <span
+          key={d.title}
+          title={d.title}
+          style={{
+            display: "inline-block",
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            flexShrink: 0,
+            background: d.agreed ? "var(--color-primary)" : "var(--color-border)",
+          }}
+        />
+      ))}
+    </div>
   );
+}
+
+function Truncate({ text, max = 120 }: { text: string | null; max?: number }) {
+  if (!text) return <>-</>;
+  return <>{text.length > max ? text.slice(0, max) + "..." : text}</>;
 }
 
 export default async function AdminSeekersPage() {
@@ -60,8 +76,12 @@ export default async function AdminSeekersPage() {
               <th>Name</th>
               <th>Company</th>
               <th>Email</th>
-              <th>VA / Niche</th>
+              <th>VA Approached</th>
               <th>Match</th>
+              <th>Category</th>
+              <th>Hours</th>
+              <th>Budget</th>
+              <th>Project Details</th>
               <th>Notes</th>
               <th>Agreements</th>
               <th>Date</th>
@@ -72,7 +92,7 @@ export default async function AdminSeekersPage() {
             {seekers.length === 0 ? (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={13}
                   style={{
                     textAlign: "center",
                     color: "var(--color-text-secondary)",
@@ -85,25 +105,45 @@ export default async function AdminSeekersPage() {
             ) : (
               seekers.map((s) => (
                 <tr key={s.id}>
-                  <td style={{ fontWeight: 600 }}>{s.name}</td>
-                  <td>{s.company}</td>
-                  <td style={{ color: "var(--color-text-secondary)" }}>
+                  <td style={{ fontWeight: 600, whiteSpace: "nowrap" }}>{s.name}</td>
+                  <td style={{ whiteSpace: "nowrap" }}>{s.company}</td>
+                  <td style={{ color: "var(--color-text-secondary)", whiteSpace: "nowrap" }}>
                     {s.email ?? "-"}
                   </td>
-                  <td>{s.va_niche ?? "-"}</td>
+                  <td style={{ whiteSpace: "nowrap" }}>
+                    {s.va_name ? (
+                      <>
+                        <span style={{ fontWeight: 600 }}>{s.va_name}</span>
+                        {s.va_niche && (
+                          <span
+                            style={{
+                              display: "block",
+                              fontSize: "0.78rem",
+                              color: "var(--color-text-secondary)",
+                            }}
+                          >
+                            {s.va_niche}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      s.va_niche ?? "-"
+                    )}
+                  </td>
                   <td style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
                     {s.match_score !== null ? `${s.match_score}%` : "-"}
                   </td>
-                  <td style={{ maxWidth: 200, color: "var(--color-text-secondary)" }}>
-                    {s.notes ?? "-"}
+                  <td style={{ whiteSpace: "nowrap" }}>{s.category ?? "-"}</td>
+                  <td style={{ whiteSpace: "nowrap" }}>{s.hours ?? "-"}</td>
+                  <td style={{ whiteSpace: "nowrap" }}>{s.budget ?? "-"}</td>
+                  <td style={{ maxWidth: 200 }}>
+                    <Truncate text={s.project_details} />
+                  </td>
+                  <td style={{ maxWidth: 180 }}>
+                    <Truncate text={s.notes} max={80} />
                   </td>
                   <td>
-                    <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
-                      <AgreementDot agreed={s.agreed_payment_terms} title="Payment terms" />
-                      <AgreementDot agreed={s.agreed_accurate_info} title="Accurate info" />
-                      <AgreementDot agreed={s.agreed_contact} title="Contact consent" />
-                      <AgreementDot agreed={s.agreed_email_contract} title="Email contract" />
-                    </div>
+                    <AgreementDots s={s} />
                   </td>
                   <td style={{ whiteSpace: "nowrap" }}>{formatDate(s.created_at)}</td>
                   <td>
