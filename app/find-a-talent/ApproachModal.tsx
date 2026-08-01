@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import { X, CheckCircle2 } from "lucide-react";
 import { submitApproach, type MatchedVA } from "./actions";
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 interface Props {
   va: MatchedVA;
   onClose: () => void;
@@ -13,9 +15,11 @@ export default function ApproachModal({ va, onClose }: Props) {
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
+  const [email, setEmail] = useState("");
   const [agreedPayment, setAgreedPayment] = useState(false);
   const [agreedInfo, setAgreedInfo] = useState(false);
   const [agreedContact, setAgreedContact] = useState(false);
+  const [agreedEmailContract, setAgreedEmailContract] = useState(false);
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -26,15 +30,30 @@ export default function ApproachModal({ va, onClose }: Props) {
 
   function handleSubmit() {
     setError("");
+
+    if (!name.trim()) { setError("Name is required."); return; }
+    if (!company.trim()) { setError("Company name is required."); return; }
+    if (!email.trim() || !EMAIL_RE.test(email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!agreedPayment || !agreedInfo || !agreedContact || !agreedEmailContract) {
+      setError("Please agree to all required terms to continue.");
+      return;
+    }
+
     const fd = new FormData();
-    fd.append("name", name);
-    fd.append("company", company);
+    fd.append("name", name.trim());
+    fd.append("company", company.trim());
+    fd.append("email", email.trim());
     fd.append("agreed_payment_terms", String(agreedPayment));
     fd.append("agreed_accurate_info", String(agreedInfo));
     fd.append("agreed_contact", String(agreedContact));
+    fd.append("agreed_email_contract", String(agreedEmailContract));
     fd.append("notes", notes);
     fd.append("va_id", va.id);
     fd.append("va_niche", va.niche);
+    fd.append("match_score", String(va.score));
 
     startTransition(async () => {
       const result = await submitApproach(fd);
@@ -70,9 +89,11 @@ export default function ApproachModal({ va, onClose }: Props) {
         ) : (
           <>
             <div className="va-modal-body">
+              {/* Dynamic context line */}
               <p className="approach-va-context">
-                You're approaching a <strong>{va.niche}</strong> VA. Our team will
-                follow up within one business day.
+                You're approaching a <strong>{va.niche}</strong> VA with a{" "}
+                <strong>{va.score}% match</strong>. Our team will follow up
+                within one business day.
               </p>
 
               {error && (
@@ -104,6 +125,19 @@ export default function ApproachModal({ va, onClose }: Props) {
                   placeholder="Your company or business name"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  Email <span className="req-star">*</span>
+                </label>
+                <input
+                  className="form-input"
+                  type="email"
+                  placeholder="you@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
@@ -143,9 +177,7 @@ export default function ApproachModal({ va, onClose }: Props) {
                     checked={agreedInfo}
                     onChange={(e) => setAgreedInfo(e.target.checked)}
                   />
-                  <span>
-                    I confirm that the information I've provided is accurate.
-                  </span>
+                  <span>I confirm that the information I've provided is accurate.</span>
                 </label>
 
                 <label className="approach-check-item">
@@ -155,8 +187,20 @@ export default function ApproachModal({ va, onClose }: Props) {
                     onChange={(e) => setAgreedContact(e.target.checked)}
                   />
                   <span>
-                    I agree to be contacted by the Corvanta team regarding this
-                    request.
+                    I agree to be contacted by the Corvanta Virtual Solutions team
+                    regarding this request.
+                  </span>
+                </label>
+
+                <label className="approach-check-item">
+                  <input
+                    type="checkbox"
+                    checked={agreedEmailContract}
+                    onChange={(e) => setAgreedEmailContract(e.target.checked)}
+                  />
+                  <span>
+                    I agree that the formal contract and legal terms will be sent
+                    via email.
                   </span>
                 </label>
               </div>

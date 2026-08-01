@@ -157,33 +157,44 @@ export type MatchedVA = {
 
 // ─── Approach submission ─────────────────────────────────────────────
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export async function submitApproach(
   formData: FormData
 ): Promise<{ error?: string }> {
   const name = (formData.get("name") as string | null)?.trim() ?? "";
   const company = (formData.get("company") as string | null)?.trim() ?? "";
+  const email = (formData.get("email") as string | null)?.trim() ?? "";
   const agreedPayment = formData.get("agreed_payment_terms") === "true";
   const agreedInfo = formData.get("agreed_accurate_info") === "true";
   const agreedContact = formData.get("agreed_contact") === "true";
+  const agreedEmailContract = formData.get("agreed_email_contract") === "true";
   const notes = (formData.get("notes") as string | null)?.trim() || null;
   const vaId = (formData.get("va_id") as string | null)?.trim() || null;
   const vaNiche = (formData.get("va_niche") as string | null)?.trim() || null;
+  const matchScoreRaw = formData.get("match_score") as string | null;
+  const matchScore = matchScoreRaw ? parseInt(matchScoreRaw, 10) : null;
 
   if (!name) return { error: "Name is required." };
   if (!company) return { error: "Company name is required." };
-  if (!agreedPayment || !agreedInfo || !agreedContact)
+  if (!email || !EMAIL_RE.test(email))
+    return { error: "A valid email address is required." };
+  if (!agreedPayment || !agreedInfo || !agreedContact || !agreedEmailContract)
     return { error: "Please agree to all required terms to continue." };
 
   const adminClient = createAdminClient();
   const { error } = await adminClient.from("va_seekers").insert({
     name,
     company,
+    email,
     agreed_payment_terms: agreedPayment,
     agreed_accurate_info: agreedInfo,
     agreed_contact: agreedContact,
+    agreed_email_contract: agreedEmailContract,
     notes,
     va_id: vaId,
     va_niche: vaNiche,
+    match_score: matchScore,
   });
 
   if (error) return { error: error.message };

@@ -10,7 +10,7 @@ function formatDate(iso: string): string {
   });
 }
 
-function AgreementDot({ agreed }: { agreed: boolean }) {
+function AgreementDot({ agreed, title }: { agreed: boolean; title: string }) {
   return (
     <span
       style={{
@@ -21,7 +21,7 @@ function AgreementDot({ agreed }: { agreed: boolean }) {
         background: agreed ? "var(--color-primary)" : "var(--color-border)",
         flexShrink: 0,
       }}
-      title={agreed ? "Agreed" : "Not agreed"}
+      title={title}
     />
   );
 }
@@ -50,7 +50,7 @@ export default async function AdminSeekersPage() {
     <div>
       <h1 className="admin-page-title">VA Seekers</h1>
       <p style={{ color: "var(--color-text-secondary)", marginBottom: 24, fontSize: "0.9rem" }}>
-        {seekers.length} submission{seekers.length !== 1 ? "s" : ""} — most recent first
+        {seekers.length} submission{seekers.length !== 1 ? "s" : ""} - most recent first
       </p>
 
       <div className="admin-table-wrap">
@@ -59,7 +59,9 @@ export default async function AdminSeekersPage() {
             <tr>
               <th>Name</th>
               <th>Company</th>
+              <th>Email</th>
               <th>VA / Niche</th>
+              <th>Match</th>
               <th>Notes</th>
               <th>Agreements</th>
               <th>Date</th>
@@ -70,7 +72,7 @@ export default async function AdminSeekersPage() {
             {seekers.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={9}
                   style={{
                     textAlign: "center",
                     color: "var(--color-text-secondary)",
@@ -85,15 +87,22 @@ export default async function AdminSeekersPage() {
                 <tr key={s.id}>
                   <td style={{ fontWeight: 600 }}>{s.name}</td>
                   <td>{s.company}</td>
+                  <td style={{ color: "var(--color-text-secondary)" }}>
+                    {s.email ?? "-"}
+                  </td>
                   <td>{s.va_niche ?? "-"}</td>
-                  <td style={{ maxWidth: 220, color: "var(--color-text-secondary)" }}>
+                  <td style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
+                    {s.match_score !== null ? `${s.match_score}%` : "-"}
+                  </td>
+                  <td style={{ maxWidth: 200, color: "var(--color-text-secondary)" }}>
                     {s.notes ?? "-"}
                   </td>
                   <td>
-                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                      <AgreementDot agreed={s.agreed_payment_terms} />
-                      <AgreementDot agreed={s.agreed_accurate_info} />
-                      <AgreementDot agreed={s.agreed_contact} />
+                    <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+                      <AgreementDot agreed={s.agreed_payment_terms} title="Payment terms" />
+                      <AgreementDot agreed={s.agreed_accurate_info} title="Accurate info" />
+                      <AgreementDot agreed={s.agreed_contact} title="Contact consent" />
+                      <AgreementDot agreed={s.agreed_email_contract} title="Email contract" />
                     </div>
                   </td>
                   <td style={{ whiteSpace: "nowrap" }}>{formatDate(s.created_at)}</td>
@@ -109,7 +118,7 @@ export default async function AdminSeekersPage() {
 
       {seekers.length > 0 && (
         <p style={{ marginTop: 12, fontSize: "0.78rem", color: "var(--color-text-secondary)" }}>
-          Agreements: payment terms / accurate info / contact consent
+          Agreements (left to right): payment terms / accurate info / contact consent / email contract
         </p>
       )}
     </div>
