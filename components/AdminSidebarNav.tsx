@@ -19,6 +19,12 @@ export function AdminSidebarNav() {
       >
         Reviews
       </a>
+      <a
+        href="/admin/vas"
+        className={`admin-nav-link${pathname === "/admin/vas" ? " active" : ""}`}
+      >
+        Our VAs
+      </a>
     </nav>
   );
 }
