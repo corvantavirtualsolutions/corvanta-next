@@ -343,9 +343,8 @@ export default function MatchingForm() {
                         {/* Niche badge */}
                         <span className="va-result-niche">{va.niche}</span>
 
-                        {/* Stats row */}
+                        {/* Stats row — years exp, IQ, English only (no past clients) */}
                         {(va.years_experience !== null ||
-                          va.past_clients !== null ||
                           va.iq !== null ||
                           va.english_score !== null) && (
                           <div className="va-result-stats">
@@ -354,17 +353,7 @@ export default function MatchingForm() {
                                 <div className="va-result-stat-value">
                                   {va.years_experience}
                                 </div>
-                                <div className="va-result-stat-label">
-                                  Yrs Exp
-                                </div>
-                              </div>
-                            )}
-                            {va.past_clients !== null && (
-                              <div className="va-result-stat">
-                                <div className="va-result-stat-value">
-                                  {va.past_clients}
-                                </div>
-                                <div className="va-result-stat-label">Past Clients</div>
+                                <div className="va-result-stat-label">Yrs Exp</div>
                               </div>
                             )}
                             {va.iq !== null && (
