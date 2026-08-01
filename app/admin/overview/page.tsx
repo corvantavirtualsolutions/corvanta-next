@@ -6,35 +6,42 @@ async function fetchOverviewData() {
   const db = createAdminClient();
 
   const [
-    { count: totalUsers },
-    { count: totalVAs },
-    { count: totalReviews },
-    { count: totalSeekers },
-    { count: emailedSeekers },
-    { data: seekersByDay },
-    { data: usersByDay },
-    { data: vasByNiche },
-    { data: ratings },
+    usersResult,
+    { count: totalVAs, error: vasError },
+    { count: totalReviews, error: reviewsError },
+    { count: totalSeekers, error: seekersError },
+    { count: emailedSeekers, error: emailedError },
+    { data: seekersByDay, error: seekersDayError },
+    { data: vasByNiche, error: nicheError },
+    { data: ratings, error: ratingsError },
   ] = await Promise.all([
-    db.from("users").select("*", { count: "exact", head: true }),
-    db.from("va_profiles").select("*", { count: "exact", head: true }),
+    db.auth.admin.listUsers({ perPage: 1000 }),
+    db.from("vas").select("*", { count: "exact", head: true }),
     db.from("reviews").select("*", { count: "exact", head: true }),
     db.from("va_seekers").select("*", { count: "exact", head: true }),
-    db
-      .from("va_seekers")
-      .select("*", { count: "exact", head: true })
-      .eq("emailed", true),
-    db
-      .from("va_seekers")
-      .select("created_at")
-      .order("created_at", { ascending: true }),
-    db
-      .from("users")
-      .select("created_at")
-      .order("created_at", { ascending: true }),
-    db.from("va_profiles").select("niche"),
+    db.from("va_seekers").select("*", { count: "exact", head: true }).eq("emailed", true),
+    db.from("va_seekers").select("created_at").order("created_at", { ascending: true }),
+    db.from("vas").select("niche"),
     db.from("reviews").select("rating"),
   ]);
+
+  // Surface any errors to the console so they're visible in server logs
+  const errors = [
+    vasError && `vas: ${vasError.message}`,
+    reviewsError && `reviews: ${reviewsError.message}`,
+    seekersError && `va_seekers: ${seekersError.message}`,
+    emailedError && `va_seekers (emailed): ${emailedError.message}`,
+    seekersDayError && `va_seekers (by day): ${seekersDayError.message}`,
+    nicheError && `vas (niche): ${nicheError.message}`,
+    ratingsError && `reviews (rating): ${ratingsError.message}`,
+    usersResult.error && `auth.listUsers: ${usersResult.error.message}`,
+  ].filter(Boolean);
+  if (errors.length > 0) {
+    console.error("[Overview] Query errors:", errors.join(" | "));
+  }
+
+  const authUsers = usersResult.data?.users ?? [];
+  const totalUsers = authUsers.length;
 
   // Group seekers by day
   const seekerDayCounts: Record<string, number> = {};
@@ -46,11 +53,13 @@ async function fetchOverviewData() {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, count]) => ({ date, count }));
 
-  // Group users by day
+  // Group auth users by signup day
   const userDayCounts: Record<string, number> = {};
-  for (const row of usersByDay ?? []) {
-    const day = row.created_at.slice(0, 10);
-    userDayCounts[day] = (userDayCounts[day] ?? 0) + 1;
+  for (const u of authUsers) {
+    if (u.created_at) {
+      const day = u.created_at.slice(0, 10);
+      userDayCounts[day] = (userDayCounts[day] ?? 0) + 1;
+    }
   }
   const usersOverTime = Object.entries(userDayCounts)
     .sort(([a], [b]) => a.localeCompare(b))
@@ -77,7 +86,7 @@ async function fetchOverviewData() {
   }));
 
   return {
-    totalUsers: totalUsers ?? 0,
+    totalUsers,
     totalVAs: totalVAs ?? 0,
     totalReviews: totalReviews ?? 0,
     totalSeekers: totalSeekers ?? 0,
@@ -86,6 +95,7 @@ async function fetchOverviewData() {
     usersOverTime,
     vasByNicheData,
     ratingDistribution,
+    errors,
   };
 }
 
@@ -107,6 +117,17 @@ export default async function AdminOverviewPage() {
   return (
     <div>
       <h1 className="admin-page-title">Overview</h1>
+
+      {data.errors.length > 0 && (
+        <div style={{ marginBottom: 24, padding: "12px 16px", background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 8 }}>
+          <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--color-error)", fontWeight: 600 }}>
+            Some data failed to load:
+          </p>
+          <ul style={{ margin: "6px 0 0", paddingLeft: 18, fontSize: "0.82rem", color: "var(--color-error)" }}>
+            {data.errors.map((e) => <li key={e as string}>{e}</li>)}
+          </ul>
+        </div>
+      )}
 
       <div className="overview-stat-grid">
         {statCards.map((card) => (
