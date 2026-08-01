@@ -155,6 +155,41 @@ export type MatchedVA = {
   score: number;
 };
 
+// ─── Approach submission ─────────────────────────────────────────────
+
+export async function submitApproach(
+  formData: FormData
+): Promise<{ error?: string }> {
+  const name = (formData.get("name") as string | null)?.trim() ?? "";
+  const company = (formData.get("company") as string | null)?.trim() ?? "";
+  const agreedPayment = formData.get("agreed_payment_terms") === "true";
+  const agreedInfo = formData.get("agreed_accurate_info") === "true";
+  const agreedContact = formData.get("agreed_contact") === "true";
+  const notes = (formData.get("notes") as string | null)?.trim() || null;
+  const vaId = (formData.get("va_id") as string | null)?.trim() || null;
+  const vaNiche = (formData.get("va_niche") as string | null)?.trim() || null;
+
+  if (!name) return { error: "Name is required." };
+  if (!company) return { error: "Company name is required." };
+  if (!agreedPayment || !agreedInfo || !agreedContact)
+    return { error: "Please agree to all required terms to continue." };
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient.from("va_seekers").insert({
+    name,
+    company,
+    agreed_payment_terms: agreedPayment,
+    agreed_accurate_info: agreedInfo,
+    agreed_contact: agreedContact,
+    notes,
+    va_id: vaId,
+    va_niche: vaNiche,
+  });
+
+  if (error) return { error: error.message };
+  return {};
+}
+
 // ─── Main export ──────────────────────────────────────────────────────
 
 export async function matchVAs(

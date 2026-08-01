@@ -25,6 +25,12 @@ export function AdminSidebarNav() {
       >
         Our VAs
       </a>
+      <a
+        href="/admin/seekers"
+        className={`admin-nav-link${pathname === "/admin/seekers" ? " active" : ""}`}
+      >
+        VA Seekers
+      </a>
     </nav>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useRef, useTransition } from "react";
 import { Search, Upload, Users } from "lucide-react";
 import { matchVAs, type MatchedVA } from "./actions";
+import ApproachModal from "./ApproachModal";
 
 const HELP_OPTIONS = [
   "Admin Support",
@@ -45,6 +46,7 @@ export default function MatchingForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [phase, setPhase] = useState<Phase>("form");
   const [matchResults, setMatchResults] = useState<MatchedVA[]>([]);
+  const [approachTarget, setApproachTarget] = useState<MatchedVA | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const fileRef = useRef<HTMLInputElement>(null);
@@ -63,6 +65,8 @@ export default function MatchingForm() {
     if (!budget) errs.budget = "Please select a budget range.";
     if (budget === "Other" && !budgetCustom.trim())
       errs.budgetCustom = "Please enter your budget.";
+    if (!details.trim())
+      errs.details = "Please describe your project or what you're looking for.";
     return errs;
   }
 
@@ -234,15 +238,21 @@ export default function MatchingForm() {
               <div className="matching-details-row">
                 <div className="matching-details-left">
                   <label className="form-label">
-                    Project details / What you're looking for{" "}
-                    <span className="optional-tag">(optional)</span>
+                    Project details / What you're looking for
+                    <span className="req-star"> *</span>
                   </label>
                   <textarea
-                    className="form-textarea matching-textarea"
+                    className={`form-textarea matching-textarea${errors.details ? " input-error" : ""}`}
                     placeholder="Describe the job, skills, or experience level you're looking for..."
                     value={details}
-                    onChange={(e) => setDetails(e.target.value)}
+                    onChange={(e) => {
+                      setDetails(e.target.value);
+                      setErrors((prev) => ({ ...prev, details: "" }));
+                    }}
                   />
+                  {errors.details && (
+                    <span className="field-error">{errors.details}</span>
+                  )}
                 </div>
 
                 <div className="matching-details-right">
@@ -381,8 +391,12 @@ export default function MatchingForm() {
                           <p className="va-result-bio">{va.bio}</p>
                         )}
 
-                        {/* Approach button - display only */}
-                        <button type="button" className="va-result-approach" tabIndex={-1} aria-hidden>
+                        {/* Approach button */}
+                        <button
+                          type="button"
+                          className="va-result-approach"
+                          onClick={() => setApproachTarget(va)}
+                        >
                           Approach
                         </button>
                       </div>
@@ -404,6 +418,13 @@ export default function MatchingForm() {
 
         </div>
       </section>
+
+      {approachTarget && (
+        <ApproachModal
+          va={approachTarget}
+          onClose={() => setApproachTarget(null)}
+        />
+      )}
     </>
   );
 }
