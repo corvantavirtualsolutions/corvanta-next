@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { X, ExternalLink, Trash2 } from "lucide-react";
+import { X, ExternalLink, Trash2, Pencil } from "lucide-react";
 import { deleteVA } from "./actions";
 import type { VA } from "./types";
 
@@ -9,9 +9,10 @@ interface Props {
   va: VA;
   onClose: () => void;
   onDeleted: () => void;
+  onEdit: () => void;
 }
 
-export default function VADetailModal({ va, onClose, onDeleted }: Props) {
+export default function VADetailModal({ va, onClose, onDeleted, onEdit }: Props) {
   const [isPending, startTransition] = useTransition();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteError, setDeleteError] = useState("");
@@ -145,6 +146,13 @@ export default function VADetailModal({ va, onClose, onDeleted }: Props) {
               )}
             </div>
           )}
+
+          {/* Edit */}
+          <div style={{ marginBottom: "var(--sp-3)" }}>
+            <button className="btn btn-outline btn-sm" onClick={onEdit}>
+              <Pencil size={14} /> Edit VA
+            </button>
+          </div>
 
           {/* Delete */}
           <div className="va-detail-delete">

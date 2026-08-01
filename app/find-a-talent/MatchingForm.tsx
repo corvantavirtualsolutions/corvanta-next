@@ -344,45 +344,55 @@ export default function MatchingForm() {
                         <span className="va-result-niche">{va.niche}</span>
 
                         {/* Stats row */}
-                        <div className="va-result-stats">
-                          {va.years_experience !== null && (
-                            <div className="va-result-stat">
-                              <div className="va-result-stat-value">
-                                {va.years_experience}
+                        {(va.years_experience !== null ||
+                          va.past_clients !== null ||
+                          va.iq !== null ||
+                          va.english_score !== null) && (
+                          <div className="va-result-stats">
+                            {va.years_experience !== null && (
+                              <div className="va-result-stat">
+                                <div className="va-result-stat-value">
+                                  {va.years_experience}
+                                </div>
+                                <div className="va-result-stat-label">
+                                  Yrs Exp
+                                </div>
                               </div>
-                              <div className="va-result-stat-label">
-                                yr{va.years_experience !== 1 ? "s" : ""} exp
+                            )}
+                            {va.past_clients !== null && (
+                              <div className="va-result-stat">
+                                <div className="va-result-stat-value">
+                                  {va.past_clients}
+                                </div>
+                                <div className="va-result-stat-label">Past Clients</div>
                               </div>
-                            </div>
-                          )}
-                          {va.past_clients !== null && (
-                            <div className="va-result-stat">
-                              <div className="va-result-stat-value">
-                                {va.past_clients}
+                            )}
+                            {va.iq !== null && (
+                              <div className="va-result-stat">
+                                <div className="va-result-stat-value">{va.iq}</div>
+                                <div className="va-result-stat-label">IQ</div>
                               </div>
-                              <div className="va-result-stat-label">clients</div>
-                            </div>
-                          )}
-                          {va.iq !== null && (
-                            <div className="va-result-stat">
-                              <div className="va-result-stat-value">{va.iq}</div>
-                              <div className="va-result-stat-label">IQ</div>
-                            </div>
-                          )}
-                          {va.english_score !== null && (
-                            <div className="va-result-stat">
-                              <div className="va-result-stat-value">
-                                {va.english_score}
+                            )}
+                            {va.english_score !== null && (
+                              <div className="va-result-stat">
+                                <div className="va-result-stat-value">
+                                  {va.english_score}
+                                </div>
+                                <div className="va-result-stat-label">English</div>
                               </div>
-                              <div className="va-result-stat-label">English</div>
-                            </div>
-                          )}
-                        </div>
+                            )}
+                          </div>
+                        )}
 
                         {/* Bio */}
                         {va.bio && (
                           <p className="va-result-bio">{va.bio}</p>
                         )}
+
+                        {/* Approach button - display only */}
+                        <button type="button" className="va-result-approach" tabIndex={-1} aria-hidden>
+                          Approach
+                        </button>
                       </div>
                     ))}
                   </div>

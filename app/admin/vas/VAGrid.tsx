@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import AddVAModal from "./AddVAModal";
+import EditVAModal from "./EditVAModal";
 import VADetailModal from "./VADetailModal";
 import type { VA } from "./types";
 
 export default function VAGrid({ initialVAs }: { initialVAs: VA[] }) {
   const [addOpen, setAddOpen] = useState(false);
   const [detailVA, setDetailVA] = useState<VA | null>(null);
+  const [editVA, setEditVA] = useState<VA | null>(null);
   const router = useRouter();
 
   function handleAdded() {
@@ -19,6 +21,16 @@ export default function VAGrid({ initialVAs }: { initialVAs: VA[] }) {
 
   function handleDeleted() {
     setDetailVA(null);
+    router.refresh();
+  }
+
+  function handleEditOpen() {
+    setEditVA(detailVA);
+    setDetailVA(null);
+  }
+
+  function handleEdited() {
+    setEditVA(null);
     router.refresh();
   }
 
@@ -74,6 +86,15 @@ export default function VAGrid({ initialVAs }: { initialVAs: VA[] }) {
           va={detailVA}
           onClose={() => setDetailVA(null)}
           onDeleted={handleDeleted}
+          onEdit={handleEditOpen}
+        />
+      )}
+
+      {editVA && (
+        <EditVAModal
+          va={editVA}
+          onClose={() => setEditVA(null)}
+          onSuccess={handleEdited}
         />
       )}
     </>
