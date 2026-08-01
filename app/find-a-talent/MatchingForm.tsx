@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useTransition } from "react";
 import { Search, Upload, Users } from "lucide-react";
+import { matchVAs, type MatchedVA } from "./actions";
 
 const HELP_OPTIONS = [
   "Admin Support",
@@ -32,7 +33,6 @@ const BUDGET_OPTIONS = [
 type Phase = "form" | "loading" | "results";
 
 export default function MatchingForm() {
-  // Form fields
   const [helpWith, setHelpWith] = useState("");
   const [helpOther, setHelpOther] = useState("");
   const [hours, setHours] = useState("");
@@ -42,9 +42,10 @@ export default function MatchingForm() {
   const [details, setDetails] = useState("");
   const [fileName, setFileName] = useState("");
 
-  // Form phase
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [phase, setPhase] = useState<Phase>("form");
+  const [matchResults, setMatchResults] = useState<MatchedVA[]>([]);
+  const [isPending, startTransition] = useTransition();
 
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -56,9 +57,7 @@ export default function MatchingForm() {
     if (!hours) errs.hours = "Please select hours per week.";
     if (
       hours === "Other" &&
-      (!hoursCustom ||
-        isNaN(Number(hoursCustom)) ||
-        Number(hoursCustom) <= 0)
+      (!hoursCustom || isNaN(Number(hoursCustom)) || Number(hoursCustom) <= 0)
     )
       errs.hoursCustom = "Please enter a valid number of hours.";
     if (!budget) errs.budget = "Please select a budget range.";
@@ -72,7 +71,11 @@ export default function MatchingForm() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
     setPhase("loading");
-    setTimeout(() => setPhase("results"), 3200);
+    startTransition(async () => {
+      const { results } = await matchVAs(helpWith, helpOther, details);
+      setMatchResults(results);
+      setPhase("results");
+    });
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -82,7 +85,6 @@ export default function MatchingForm() {
 
   return (
     <>
-      {/* ── Matching Section ── */}
       <section className="fat-matching-section">
         <div className="container">
 
@@ -100,8 +102,8 @@ export default function MatchingForm() {
           {/* Phase: form */}
           {phase === "form" && (
             <div className="matching-card">
-              {/* Fields row */}
               <div className="matching-fields-row">
+
                 {/* What do you need help with */}
                 <div className="matching-field">
                   <label className="form-label">
@@ -118,9 +120,7 @@ export default function MatchingForm() {
                   >
                     <option value="">Select a category...</option>
                     {HELP_OPTIONS.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
+                      <option key={o} value={o}>{o}</option>
                     ))}
                   </select>
                   {errors.helpWith && (
@@ -130,9 +130,7 @@ export default function MatchingForm() {
                     <>
                       <input
                         type="text"
-                        className={`form-input field-reveal${
-                          errors.helpOther ? " input-error" : ""
-                        }`}
+                        className={`form-input field-reveal${errors.helpOther ? " input-error" : ""}`}
                         placeholder="Describe what you need..."
                         value={helpOther}
                         onChange={(e) => {
@@ -163,9 +161,7 @@ export default function MatchingForm() {
                   >
                     <option value="">Select hours...</option>
                     {HOURS_OPTIONS.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
+                      <option key={o} value={o}>{o}</option>
                     ))}
                   </select>
                   {errors.hours && (
@@ -175,9 +171,7 @@ export default function MatchingForm() {
                     <>
                       <input
                         type="number"
-                        className={`form-input field-reveal${
-                          errors.hoursCustom ? " input-error" : ""
-                        }`}
+                        className={`form-input field-reveal${errors.hoursCustom ? " input-error" : ""}`}
                         placeholder="e.g. 25"
                         min={1}
                         value={hoursCustom}
@@ -200,9 +194,7 @@ export default function MatchingForm() {
                     <span className="req-star"> *</span>
                   </label>
                   <select
-                    className={`form-select${
-                      errors.budget ? " input-error" : ""
-                    }`}
+                    className={`form-select${errors.budget ? " input-error" : ""}`}
                     value={budget}
                     onChange={(e) => {
                       setBudget(e.target.value);
@@ -211,9 +203,7 @@ export default function MatchingForm() {
                   >
                     <option value="">Select budget...</option>
                     {BUDGET_OPTIONS.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
+                      <option key={o} value={o}>{o}</option>
                     ))}
                   </select>
                   {errors.budget && (
@@ -223,9 +213,7 @@ export default function MatchingForm() {
                     <>
                       <input
                         type="text"
-                        className={`form-input field-reveal${
-                          errors.budgetCustom ? " input-error" : ""
-                        }`}
+                        className={`form-input field-reveal${errors.budgetCustom ? " input-error" : ""}`}
                         placeholder="e.g. $3,500/mo"
                         value={budgetCustom}
                         onChange={(e) => {
@@ -234,19 +222,15 @@ export default function MatchingForm() {
                         }}
                       />
                       {errors.budgetCustom && (
-                        <span className="field-error">
-                          {errors.budgetCustom}
-                        </span>
+                        <span className="field-error">{errors.budgetCustom}</span>
                       )}
                     </>
                   )}
                 </div>
               </div>
 
-              {/* Divider */}
               <hr className="matching-divider" />
 
-              {/* Project details + file upload */}
               <div className="matching-details-row">
                 <div className="matching-details-left">
                   <label className="form-label">
@@ -272,9 +256,7 @@ export default function MatchingForm() {
                     onClick={() => fileRef.current?.click()}
                   >
                     <Upload size={20} />
-                    <span>
-                      {fileName ? fileName : "Click to upload a file"}
-                    </span>
+                    <span>{fileName ? fileName : "Click to upload a file"}</span>
                   </button>
                   <input
                     ref={fileRef}
@@ -286,12 +268,12 @@ export default function MatchingForm() {
                 </div>
               </div>
 
-              {/* Submit */}
               <div className="matching-submit-row">
                 <button
                   type="button"
                   className="btn btn-primary btn-lg matching-cta"
                   onClick={handleSubmit}
+                  disabled={isPending}
                 >
                   <Search size={20} />
                   Get Matched
@@ -321,23 +303,105 @@ export default function MatchingForm() {
           {/* Phase: results */}
           {phase === "results" && (
             <div className="matching-results-wrap">
-              <h3 className="matching-results-title">
-                Here are the VAs aligned to your needs
-              </h3>
-              <div className="matching-empty-state">
-                <div className="matching-empty-icon">
-                  <Users size={52} strokeWidth={1.25} />
+              {matchResults.length > 0 ? (
+                <>
+                  <h3 className="matching-results-title">
+                    Here are the VAs aligned to your needs
+                  </h3>
+                  <div className="va-result-grid">
+                    {matchResults.map((va) => (
+                      <div key={va.id} className="va-result-card">
+                        {/* Image / placeholder */}
+                        <div className="va-result-img-wrap">
+                          {va.profile_image_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={va.profile_image_url}
+                              alt="VA profile"
+                              className="va-result-img"
+                            />
+                          ) : (
+                            <div className="va-result-placeholder" aria-hidden>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="36"
+                                height="36"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Niche badge */}
+                        <span className="va-result-niche">{va.niche}</span>
+
+                        {/* Stats row */}
+                        <div className="va-result-stats">
+                          {va.years_experience !== null && (
+                            <div className="va-result-stat">
+                              <div className="va-result-stat-value">
+                                {va.years_experience}
+                              </div>
+                              <div className="va-result-stat-label">
+                                yr{va.years_experience !== 1 ? "s" : ""} exp
+                              </div>
+                            </div>
+                          )}
+                          {va.past_clients !== null && (
+                            <div className="va-result-stat">
+                              <div className="va-result-stat-value">
+                                {va.past_clients}
+                              </div>
+                              <div className="va-result-stat-label">clients</div>
+                            </div>
+                          )}
+                          {va.iq !== null && (
+                            <div className="va-result-stat">
+                              <div className="va-result-stat-value">{va.iq}</div>
+                              <div className="va-result-stat-label">IQ</div>
+                            </div>
+                          )}
+                          {va.english_score !== null && (
+                            <div className="va-result-stat">
+                              <div className="va-result-stat-value">
+                                {va.english_score}
+                              </div>
+                              <div className="va-result-stat-label">English</div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Bio */}
+                        {va.bio && (
+                          <p className="va-result-bio">{va.bio}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="matching-empty-state">
+                  <div className="matching-empty-icon">
+                    <Users size={52} strokeWidth={1.25} />
+                  </div>
+                  <p className="matching-empty-msg">
+                    Sorry, no matches available right now - we're growing our talent pool and will be in touch soon.
+                  </p>
                 </div>
-                <p className="matching-empty-msg">
-                  Sorry, no matches available right now - we're growing our talent pool and will be in touch soon.
-                </p>
-              </div>
+              )}
             </div>
           )}
 
         </div>
       </section>
-
     </>
   );
 }
