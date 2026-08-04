@@ -132,7 +132,7 @@ export default function ContactForm() {
           <button
             className="btn btn-outline"
             onClick={() => setSuccess(false)}
-            style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+            style={{ display: "inline-flex", alignItems: "center", gap: 8, alignSelf: "center" }}
           >
             <RotateCcw size={15} />
             Send another message
