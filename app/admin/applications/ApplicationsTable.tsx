@@ -197,25 +197,88 @@ function DetailModal({
         <div className="va-modal-body">
           {/* Personal info */}
           <div className="seeker-detail-section">
-            <h4 className="seeker-detail-section-title">Applicant Info</h4>
+            <h4 className="seeker-detail-section-title">Personal</h4>
+            <div style={{ display: "flex", gap: 16, alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap" }}>
+              {app.profile_photo_url && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={app.profile_photo_url}
+                  alt={app.full_name}
+                  style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", flexShrink: 0, border: "2px solid var(--color-border)" }}
+                />
+              )}
+              <div className="seeker-detail-grid" style={{ flex: 1 }}>
+                {[
+                  ["Full Name", app.full_name],
+                  ["Email", app.email],
+                  ["Phone", app.phone],
+                  ["Location", app.location],
+                  ["Submitted", formatDateLong(app.created_at)],
+                ].map(([label, value]) => (
+                  <div key={label} className="seeker-detail-field">
+                    <div className="seeker-detail-label">{label}</div>
+                    <div className="seeker-detail-value">
+                      {label === "Email" && value ? (
+                        <a href={`mailto:${value}`}>{value}</a>
+                      ) : (
+                        value || "-"
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Professional */}
+          <div className="seeker-detail-section">
+            <h4 className="seeker-detail-section-title">Professional</h4>
             <div className="seeker-detail-grid">
               {[
-                ["Full Name", app.full_name],
-                ["Email", app.email],
-                ["Phone", app.phone],
-                ["Location", app.location],
-                ["Experience", app.years_experience],
                 ["Specialization", app.specialization],
-                ["Submitted", formatDateLong(app.created_at)],
+                ["Experience", app.years_experience],
+                ["Past Clients", app.past_clients],
+                ["English", app.english_proficiency],
+              ].map(([label, value]) => (
+                <div key={label} className="seeker-detail-field">
+                  <div className="seeker-detail-label">{label}</div>
+                  <div className="seeker-detail-value">{value || "-"}</div>
+                </div>
+              ))}
+            </div>
+            {app.skills && (
+              <div className="seeker-detail-field" style={{ marginTop: 10 }}>
+                <div className="seeker-detail-label">Skills &amp; Tools</div>
+                <div className="seeker-detail-value seeker-detail-value--pre">{app.skills}</div>
+              </div>
+            )}
+          </div>
+
+          {/* Bio */}
+          {app.bio && (
+            <div className="seeker-detail-section">
+              <h4 className="seeker-detail-section-title">Bio</h4>
+              <div className="seeker-detail-value seeker-detail-value--pre">{app.bio}</div>
+            </div>
+          )}
+
+          {/* Links */}
+          <div className="seeker-detail-section">
+            <h4 className="seeker-detail-section-title">Links</h4>
+            <div className="seeker-detail-grid">
+              {[
+                ["Portfolio", app.portfolio_link],
+                ["LinkedIn", app.linkedin_link],
+                ["Facebook", app.facebook_link],
               ].map(([label, value]) => (
                 <div key={label} className="seeker-detail-field">
                   <div className="seeker-detail-label">{label}</div>
                   <div className="seeker-detail-value">
-                    {label === "Email" && value ? (
-                      <a href={`mailto:${value}`}>{value}</a>
-                    ) : (
-                      value || "-"
-                    )}
+                    {value ? (
+                      <a href={value} target="_blank" rel="noopener noreferrer">
+                        {value}
+                      </a>
+                    ) : "-"}
                   </div>
                 </div>
               ))}

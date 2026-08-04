@@ -7,8 +7,16 @@ export type VAApplication = {
   email: string;
   phone: string | null;
   location: string | null;
-  years_experience: string | null;
+  profile_photo_url: string | null;
   specialization: string | null;
+  years_experience: string | null;
+  past_clients: string | null;
+  english_proficiency: string | null;
+  skills: string | null;
+  bio: string | null;
+  portfolio_link: string | null;
+  linkedin_link: string | null;
+  facebook_link: string | null;
   intro_video_url: string | null;
   skills_video_url: string | null;
   answer_video_url: string | null;
