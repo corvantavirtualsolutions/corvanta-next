@@ -37,6 +37,18 @@ export function AdminSidebarNav() {
       >
         VA Seekers
       </a>
+      <a
+        href="/admin/messages"
+        className={`admin-nav-link${pathname === "/admin/messages" ? " active" : ""}`}
+      >
+        Messages
+      </a>
+      <a
+        href="/admin/docs"
+        className={`admin-nav-link${pathname === "/admin/docs" ? " active" : ""}`}
+      >
+        Company Docs
+      </a>
     </nav>
   );
 }

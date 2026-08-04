@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Mail, Phone, MapPin, Clock, ArrowRight } from "lucide-react";
+import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import Accordion from "@/components/Accordion";
 import ContactSlider from "@/app/components/ContactSlider";
 import ContactScrollReset from "@/app/components/ContactScrollReset";
+import ContactForm from "./ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact | Corvanta Virtual Solutions",
@@ -128,44 +129,7 @@ export default function ContactPage() {
               day.
             </p>
 
-            <form className="card" style={{ marginTop: "var(--sp-3)" }}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Full Name</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Jane Cooper"
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Email Address</label>
-                  <input
-                    type="email"
-                    className="form-input"
-                    placeholder="jane@company.com"
-                  />
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="form-label">I am a...</label>
-                <select className="form-select">
-                  <option>Business looking to hire</option>
-                  <option>Partner / Press</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label className="form-label">Message</label>
-                <textarea
-                  className="form-textarea"
-                  placeholder="How can we help?"
-                />
-              </div>
-              <button type="button" className="btn btn-primary btn-block">
-                Send Message <ArrowRight size={18} />
-              </button>
-            </form>
+            <ContactForm />
           </div>
 
           <div className="contact-media-side">

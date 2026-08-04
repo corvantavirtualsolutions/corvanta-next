@@ -14,6 +14,9 @@ async function fetchOverviewData() {
     { data: seekersByDay, error: seekersDayError },
     { data: vasByNiche, error: nicheError },
     { data: ratings, error: ratingsError },
+    { count: totalMessages, error: messagesError },
+    { count: pendingMessages, error: pendingMessagesError },
+    { count: totalDocs, error: docsError },
   ] = await Promise.all([
     db.auth.admin.listUsers({ perPage: 1000 }),
     db.from("vas").select("*", { count: "exact", head: true }),
@@ -23,6 +26,9 @@ async function fetchOverviewData() {
     db.from("va_seekers").select("created_at").order("created_at", { ascending: true }),
     db.from("vas").select("niche"),
     db.from("reviews").select("rating"),
+    db.from("messages").select("*", { count: "exact", head: true }),
+    db.from("messages").select("*", { count: "exact", head: true }).eq("status", "pending"),
+    db.from("company_docs").select("*", { count: "exact", head: true }),
   ]);
 
   // Surface any errors to the console so they're visible in server logs
@@ -35,6 +41,9 @@ async function fetchOverviewData() {
     nicheError && `vas (niche): ${nicheError.message}`,
     ratingsError && `reviews (rating): ${ratingsError.message}`,
     usersResult.error && `auth.listUsers: ${usersResult.error.message}`,
+    messagesError && `messages: ${messagesError.message}`,
+    pendingMessagesError && `messages (pending): ${pendingMessagesError.message}`,
+    docsError && `company_docs: ${docsError.message}`,
   ].filter(Boolean);
   if (errors.length > 0) {
     console.error("[Overview] Query errors:", errors.join(" | "));
@@ -91,6 +100,9 @@ async function fetchOverviewData() {
     totalReviews: totalReviews ?? 0,
     totalSeekers: totalSeekers ?? 0,
     emailedSeekers: emailedSeekers ?? 0,
+    totalMessages: totalMessages ?? 0,
+    pendingMessages: pendingMessages ?? 0,
+    totalDocs: totalDocs ?? 0,
     seekersOverTime,
     usersOverTime,
     vasByNicheData,
@@ -111,6 +123,17 @@ export default async function AdminOverviewPage() {
       value: data.totalSeekers,
       href: "/admin/seekers",
       sub: `${data.emailedSeekers} emailed · ${data.totalSeekers - data.emailedSeekers} pending`,
+    },
+    {
+      label: "Messages",
+      value: data.totalMessages,
+      href: "/admin/messages",
+      sub: `${data.pendingMessages} pending · ${data.totalMessages - data.pendingMessages} resolved`,
+    },
+    {
+      label: "Company Docs",
+      value: data.totalDocs,
+      href: "/admin/docs",
     },
   ];
 
