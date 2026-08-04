@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import MatchingForm from "./MatchingForm";
 
 export const metadata: Metadata = {
@@ -8,7 +10,16 @@ export const metadata: Metadata = {
     "Get matched with a vetted Virtual Assistant for your business in as little as 3 days.",
 };
 
-export default function FindATalentPage() {
+export default async function FindATalentPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
     <>
       {/* Page Hero */}
