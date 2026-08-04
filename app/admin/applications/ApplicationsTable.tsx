@@ -24,18 +24,28 @@ function formatDateLong(iso: string) {
   });
 }
 
-const STATUS_OPTS = ["new", "reviewing", "accepted", "rejected"] as const;
+const STATUS_OPTS = ["pending", "reviewed", "approved", "rejected"] as const;
 
 const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
+  pending:  { bg: "#EFF6FF", color: "#1D4ED8" },
+  reviewed: { bg: "#FFF7ED", color: "#92400E" },
+  approved: { bg: "#E6F7EF", color: "#166534" },
+  rejected: { bg: "#FEF2F2", color: "#991B1B" },
+  // legacy
   new:       { bg: "#EFF6FF", color: "#1D4ED8" },
   reviewing: { bg: "#FFF7ED", color: "#92400E" },
   accepted:  { bg: "#E6F7EF", color: "#166534" },
-  rejected:  { bg: "#FEF2F2", color: "#991B1B" },
 };
 
 function StatusSelect({ app }: { app: VAApplication }) {
   const [isPending, startTransition] = useTransition();
-  const [status, setStatus] = useState(app.status ?? "new");
+  // Normalize legacy "new" -> "pending" so the dropdown shows correctly
+  const initialStatus =
+    app.status === "new" ? "pending"
+    : app.status === "reviewing" ? "reviewed"
+    : app.status === "accepted" ? "approved"
+    : (app.status ?? "pending");
+  const [status, setStatus] = useState(initialStatus);
   const style = STATUS_STYLE[status] ?? STATUS_STYLE.new;
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -336,8 +346,8 @@ export default function ApplicationsTable({
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Specialization</th>
-              <th>Experience</th>
+              <th>Niche / Specialization</th>
+              <th>Country</th>
               <th>Date</th>
               <th>Status</th>
               <th>Actions</th>
@@ -369,7 +379,7 @@ export default function ApplicationsTable({
                     {a.email}
                   </td>
                   <td>{a.specialization || "-"}</td>
-                  <td>{a.years_experience || "-"}</td>
+                  <td>{a.location || "-"}</td>
                   <td style={{ whiteSpace: "nowrap" }}>
                     {formatDate(a.created_at)}
                   </td>

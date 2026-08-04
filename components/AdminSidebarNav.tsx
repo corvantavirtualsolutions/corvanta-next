@@ -38,6 +38,12 @@ export function AdminSidebarNav() {
         VA Seekers
       </a>
       <a
+        href="/admin/applications"
+        className={`admin-nav-link${pathname === "/admin/applications" ? " active" : ""}`}
+      >
+        VA Applications
+      </a>
+      <a
         href="/admin/messages"
         className={`admin-nav-link${pathname === "/admin/messages" ? " active" : ""}`}
       >
@@ -48,12 +54,6 @@ export function AdminSidebarNav() {
         className={`admin-nav-link${pathname === "/admin/docs" ? " active" : ""}`}
       >
         Company Docs
-      </a>
-      <a
-        href="/admin/applications"
-        className={`admin-nav-link${pathname === "/admin/applications" ? " active" : ""}`}
-      >
-        VA Applications
       </a>
     </nav>
   );

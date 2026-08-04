@@ -28,7 +28,7 @@ export async function saveApplication(
   const db = createAdminClient();
   const { data, error } = await db
     .from("va_applications")
-    .insert(payload)
+    .insert({ ...payload, status: "pending" })
     .select("id")
     .single();
 

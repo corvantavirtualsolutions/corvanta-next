@@ -32,7 +32,7 @@ async function fetchOverviewData() {
     db.from("messages").select("*", { count: "exact", head: true }).eq("status", "pending"),
     db.from("company_docs").select("*", { count: "exact", head: true }),
     db.from("va_applications").select("*", { count: "exact", head: true }),
-    db.from("va_applications").select("*", { count: "exact", head: true }).eq("status", "new"),
+    db.from("va_applications").select("*", { count: "exact", head: true }).eq("status", "pending"),
   ]);
 
   // Surface any errors to the console so they're visible in server logs
@@ -147,7 +147,7 @@ export default async function AdminOverviewPage() {
       label: "VA Applications",
       value: data.totalApplications,
       href: "/admin/applications",
-      sub: `${data.newApplications} new`,
+      sub: `${data.newApplications} pending`,
     },
   ];
 
