@@ -74,6 +74,13 @@ export default function Footer() {
               <li><Link href="/contact#faq">FAQs</Link></li>
             </ul>
           </div>
+
+          <div className="footer-col">
+            <h5>Community</h5>
+            <ul>
+              <li><Link href="#">VA Application</Link></li>
+            </ul>
+          </div>
         </div>
 
         <div className="footer-bottom">
