@@ -17,6 +17,8 @@ async function fetchOverviewData() {
     { count: totalMessages, error: messagesError },
     { count: pendingMessages, error: pendingMessagesError },
     { count: totalDocs, error: docsError },
+    { count: totalApplications, error: appsError },
+    { count: newApplications, error: newAppsError },
   ] = await Promise.all([
     db.auth.admin.listUsers({ perPage: 1000 }),
     db.from("vas").select("*", { count: "exact", head: true }),
@@ -29,6 +31,8 @@ async function fetchOverviewData() {
     db.from("messages").select("*", { count: "exact", head: true }),
     db.from("messages").select("*", { count: "exact", head: true }).eq("status", "pending"),
     db.from("company_docs").select("*", { count: "exact", head: true }),
+    db.from("va_applications").select("*", { count: "exact", head: true }),
+    db.from("va_applications").select("*", { count: "exact", head: true }).eq("status", "new"),
   ]);
 
   // Surface any errors to the console so they're visible in server logs
@@ -44,6 +48,8 @@ async function fetchOverviewData() {
     messagesError && `messages: ${messagesError.message}`,
     pendingMessagesError && `messages (pending): ${pendingMessagesError.message}`,
     docsError && `company_docs: ${docsError.message}`,
+    appsError && `va_applications: ${appsError.message}`,
+    newAppsError && `va_applications (new): ${newAppsError.message}`,
   ].filter(Boolean);
   if (errors.length > 0) {
     console.error("[Overview] Query errors:", errors.join(" | "));
@@ -103,6 +109,8 @@ async function fetchOverviewData() {
     totalMessages: totalMessages ?? 0,
     pendingMessages: pendingMessages ?? 0,
     totalDocs: totalDocs ?? 0,
+    totalApplications: totalApplications ?? 0,
+    newApplications: newApplications ?? 0,
     seekersOverTime,
     usersOverTime,
     vasByNicheData,
@@ -134,6 +142,12 @@ export default async function AdminOverviewPage() {
       label: "Company Docs",
       value: data.totalDocs,
       href: "/admin/docs",
+    },
+    {
+      label: "VA Applications",
+      value: data.totalApplications,
+      href: "/admin/applications",
+      sub: `${data.newApplications} new`,
     },
   ];
 

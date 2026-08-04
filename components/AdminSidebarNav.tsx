@@ -49,6 +49,12 @@ export function AdminSidebarNav() {
       >
         Company Docs
       </a>
+      <a
+        href="/admin/applications"
+        className={`admin-nav-link${pathname === "/admin/applications" ? " active" : ""}`}
+      >
+        VA Applications
+      </a>
     </nav>
   );
 }
