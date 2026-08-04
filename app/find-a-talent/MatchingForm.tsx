@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useTransition } from "react";
+import { useState, useRef, useTransition, useEffect } from "react";
 import { Search, Upload, Users } from "lucide-react";
 import { matchVAs, type MatchedVA } from "./actions";
 import ApproachModal from "./ApproachModal";
@@ -56,6 +56,13 @@ export default function MatchingForm() {
   const [isPending, startTransition] = useTransition();
 
   const fileRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (phase === "results" && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [phase]);
 
   function validate() {
     const errs: Record<string, string> = {};
@@ -318,7 +325,7 @@ export default function MatchingForm() {
 
           {/* Phase: results */}
           {phase === "results" && (
-            <div className="matching-results-wrap">
+            <div ref={resultsRef} className="matching-results-wrap">
               {matchResults.length > 0 ? (
                 <>
                   <h3 className="matching-results-title">

@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CerenaChat from "@/components/CerenaChat";
 import { createClient } from "@/lib/supabase/server";
+import RouteScrollReset from "@/app/components/RouteScrollReset";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -59,6 +60,7 @@ export default async function RootLayout({
       }
     >
       <body>
+        <RouteScrollReset />
         <Header user={authUser} />
         <main>{children}</main>
         <Footer />
