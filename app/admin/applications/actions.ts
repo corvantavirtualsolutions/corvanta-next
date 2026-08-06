@@ -25,9 +25,43 @@ export async function deleteApplication(
   } catch (e) {
     return { error: (e as Error).message };
   }
+
   const db = createAdminClient();
+
+  // Fetch the storage URLs before deleting the row
+  const { data: app } = await db
+    .from("va_applications")
+    .select("profile_photo_url, intro_video_url, skills_video_url, answer_video_url")
+    .eq("id", id)
+    .single();
+
+  // Delete the DB row
   const { error } = await db.from("va_applications").delete().eq("id", id);
   if (error) return { error: error.message };
+
+  // Remove storage files (best-effort — don't fail the delete if this errors)
+  if (app) {
+    const BUCKET = "va-videos";
+    const storagePaths = [
+      app.profile_photo_url,
+      app.intro_video_url,
+      app.skills_video_url,
+      app.answer_video_url,
+    ]
+      .filter(Boolean)
+      .map((url) => {
+        // URLs look like: https://<project>.supabase.co/storage/v1/object/public/va-videos/<path>
+        const marker = `/object/public/${BUCKET}/`;
+        const idx = url!.indexOf(marker);
+        return idx !== -1 ? decodeURIComponent(url!.slice(idx + marker.length)) : null;
+      })
+      .filter(Boolean) as string[];
+
+    if (storagePaths.length > 0) {
+      await db.storage.from(BUCKET).remove(storagePaths);
+    }
+  }
+
   revalidatePath("/admin/applications");
   return {};
 }
