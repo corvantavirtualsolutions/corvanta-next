@@ -459,32 +459,30 @@ export default function VAApplicationWizard() {
         }
       `}</style>
 
-      {/* ── Top bar ── */}
-      <div style={{ background: "#fff", borderBottom: "1px solid var(--color-border)", padding: "12px 20px", position: "sticky", top: 0, zIndex: 10 }}>
-        <div style={{ maxWidth: 640, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: step > 0 ? 12 : 0 }}>
-            <Image src="/logo.png" alt="Corvanta" width={26} height={26} />
-            <span style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--color-text-primary)" }}>
-              Corvanta Virtual Solutions
-            </span>
+      {/* ── Top bar (steps 1-6 only) ── */}
+      {step > 0 && (
+        <div style={{ background: "#fff", borderBottom: "1px solid var(--color-border)", padding: "12px 20px", position: "sticky", top: 0, zIndex: 10 }}>
+          <div style={{ maxWidth: 640, margin: "0 auto" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 12 }}>
+              <Image src="/logo.png" alt="Corvanta" width={26} height={26} />
+              <span style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--color-text-primary)" }}>
+                Corvanta Virtual Solutions
+              </span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
+              <span style={{ fontSize: "0.76rem", fontWeight: 700, color: "var(--color-accent)" }}>
+                Step {displayStep} of {TOTAL_STEPS}
+              </span>
+              <span style={{ fontSize: "0.74rem", color: "var(--color-text-secondary)", fontWeight: 500 }}>
+                {STEP_LABELS[step]}
+              </span>
+            </div>
+            <div style={{ height: 4, background: "var(--color-border)", borderRadius: 3, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${progressPct}%`, background: "var(--color-accent)", borderRadius: 3, transition: "width 0.35s ease" }} />
+            </div>
           </div>
-          {step > 0 && (
-            <>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-                <span style={{ fontSize: "0.76rem", fontWeight: 700, color: "var(--color-accent)" }}>
-                  Step {displayStep} of {TOTAL_STEPS}
-                </span>
-                <span style={{ fontSize: "0.74rem", color: "var(--color-text-secondary)", fontWeight: 500 }}>
-                  {STEP_LABELS[step]}
-                </span>
-              </div>
-              <div style={{ height: 4, background: "var(--color-border)", borderRadius: 3, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${progressPct}%`, background: "var(--color-accent)", borderRadius: 3, transition: "width 0.35s ease" }} />
-              </div>
-            </>
-          )}
         </div>
-      </div>
+      )}
 
       {/* ── Content ── */}
       <div style={{ flex: 1, padding: "24px 16px 40px", display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -502,58 +500,72 @@ export default function VAApplicationWizard() {
           {step === 0 && (
             <div>
               {/* Logo + name + title - centered */}
-              <div style={{ textAlign: "center", marginBottom: 20 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 12 }}>
-                  <Image src="/logo.png" alt="Corvanta" width={34} height={34} />
-                  <span style={{ fontWeight: 800, fontSize: "1rem", color: "var(--color-text-primary)", letterSpacing: "-0.01em" }}>
+              <div style={{ textAlign: "center", marginBottom: 32, paddingTop: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 16 }}>
+                  <Image src="/logo.png" alt="Corvanta" width={38} height={38} />
+                  <span style={{ fontWeight: 800, fontSize: "1.05rem", color: "var(--color-text-primary)", letterSpacing: "-0.01em" }}>
                     Corvanta Virtual Solutions
                   </span>
                 </div>
-                <h1 style={{ fontSize: "clamp(1.3rem, 5vw, 1.7rem)", fontWeight: 800, color: "var(--color-text-primary)", margin: "0 0 8px", letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+                <h1 style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 800, color: "var(--color-text-primary)", margin: "0 0 12px", letterSpacing: "-0.02em", lineHeight: 1.2 }}>
                   Apply to Join the Corvanta VA Network
                 </h1>
-                <p style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem", lineHeight: 1.55, maxWidth: 480, margin: "0 auto" }}>
-                  We vet every applicant so our clients get the best - and our VAs get quality long-term placements with US businesses.
+                <p style={{ color: "var(--color-text-secondary)", fontSize: "1rem", lineHeight: 1.65, maxWidth: 500, margin: "0 auto" }}>
+                  Corvanta Virtual Solutions connects skilled Virtual Assistants with growing businesses across the US. We vet every applicant so our clients get the best - and our VAs get quality long-term placements.
                 </p>
               </div>
 
-              {/* What to expect - compact */}
-              <div className="card" style={{ padding: "16px 18px", marginBottom: 14 }}>
-                <p style={{ fontWeight: 700, fontSize: "0.82rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-accent)", margin: "0 0 10px" }}>
+              {/* What to expect */}
+              <div className="card" style={{ marginBottom: 20 }}>
+                <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "0 0 16px", color: "var(--color-text-primary)" }}>
                   What to expect
-                </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                </h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   {[
-                    { icon: <Upload size={14} />, text: "Personal & professional details - a short background form" },
-                    { icon: <Video size={14} />, text: "3 recorded video questions - 30 sec max, 2 attempts each" },
-                    { icon: <Clock size={14} />, text: "Response within 3 business days via email" },
-                  ].map(({ icon, text }) => (
-                    <div key={text} style={{ display: "flex", alignItems: "flex-start", gap: 9 }}>
-                      <span style={{ color: "var(--color-accent)", flexShrink: 0, marginTop: 2 }}>{icon}</span>
-                      <span style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)", lineHeight: 1.45 }}>{text}</span>
+                    {
+                      icon: <Upload size={18} />,
+                      title: "Personal & professional details",
+                      desc: "A short form covering your background, skills, and links.",
+                    },
+                    {
+                      icon: <Video size={18} />,
+                      title: "3 live-recorded video questions",
+                      desc: "Each video is recorded directly in your browser - 30 seconds max, 2 attempts per question.",
+                    },
+                    {
+                      icon: <Clock size={18} />,
+                      title: "Response within 3 business days",
+                      desc: "Our team reviews every application and emails you your score and status.",
+                    },
+                  ].map(({ icon, title, desc }) => (
+                    <div key={title} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(15,118,110,0.08)", color: "var(--color-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        {icon}
+                      </div>
+                      <div>
+                        <p style={{ fontWeight: 700, fontSize: "0.9rem", margin: "0 0 3px", color: "var(--color-text-primary)" }}>
+                          {title}
+                        </p>
+                        <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", margin: 0, lineHeight: 1.55 }}>
+                          {desc}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Before you start - compact */}
-              <div style={{ background: "rgba(15,118,110,0.05)", border: "1px solid rgba(15,118,110,0.18)", borderRadius: 10, padding: "12px 16px", marginBottom: 22 }}>
-                <p style={{ fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-accent)", margin: "0 0 7px" }}>
-                  Before you start - have ready:
-                </p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 12px" }}>
-                  {[
-                    "Working camera & microphone",
-                    "Good lighting (face a window)",
-                    "Quiet space with no background noise",
-                    "10-15 minutes uninterrupted",
-                  ].map((item) => (
-                    <span key={item} style={{ fontSize: "0.83rem", color: "var(--color-text-secondary)", display: "flex", alignItems: "flex-start", gap: 5 }}>
-                      <span style={{ color: "var(--color-accent)", fontWeight: 700, flexShrink: 0 }}>-</span>
-                      {item}
-                    </span>
-                  ))}
-                </div>
+              {/* Before you start */}
+              <div style={{ background: "rgba(15,118,110,0.05)", border: "1px solid rgba(15,118,110,0.2)", borderRadius: 10, padding: "18px 20px", marginBottom: 28 }}>
+                <h4 style={{ fontSize: "0.875rem", fontWeight: 700, margin: "0 0 10px", color: "var(--color-accent)" }}>
+                  Before you start - make sure you have:
+                </h4>
+                <ul style={{ margin: 0, paddingLeft: 20, fontSize: "0.875rem", color: "var(--color-text-secondary)", lineHeight: 1.8 }}>
+                  <li>A working camera and microphone</li>
+                  <li>Good lighting (face a window or a lamp)</li>
+                  <li>A quiet space with minimal background noise</li>
+                  <li>10-15 minutes of uninterrupted time</li>
+                </ul>
               </div>
             </div>
           )}
