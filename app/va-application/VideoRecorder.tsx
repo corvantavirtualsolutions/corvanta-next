@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Camera, Video, Square, RotateCcw } from "lucide-react";
 
 const MAX_ATTEMPTS = 2;
-const COUNTDOWN_SECS = 5;
+const COUNTDOWN_SECS = 3;
 const MAX_RECORD_SECS = 30;
 
 type RecState =
