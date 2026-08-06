@@ -136,6 +136,22 @@ function DeleteButton({ id, onDeleted }: { id: string; onDeleted: () => void }) 
   );
 }
 
+function englishLabel(score: number): string {
+  if (score >= 27) return "Excellent (C1-C2)";
+  if (score >= 23) return "Advanced (B2)";
+  if (score >= 18) return "Intermediate (B1)";
+  if (score >= 12) return "Basic (A2)";
+  return "Beginner (A1)";
+}
+
+function iqLabel(score: number): string {
+  if (score >= 27) return "Exceptional reasoning ability";
+  if (score >= 24) return "Strong analytical skills";
+  if (score >= 20) return "Above average; suitable for most VA roles";
+  if (score >= 15) return "Average; may require more training";
+  return "Consider additional evaluation";
+}
+
 function VideoPlayer({ label, url }: { label: string; url: string | null | undefined }) {
   if (!url) {
     return (
@@ -302,13 +318,27 @@ function DetailModal({
               <div className="seeker-detail-field">
                 <div className="seeker-detail-label">English MC Score</div>
                 <div className="seeker-detail-value">
-                  {app.english_mc_score != null ? `${app.english_mc_score} / 27` : "-"}
+                  {app.english_mc_score != null ? (
+                    <>
+                      {`${app.english_mc_score} / 27`}
+                      <span style={{ marginLeft: 8, color: "var(--color-text-secondary)", fontSize: "0.82rem", fontWeight: 500 }}>
+                        - {englishLabel(app.english_mc_score)}
+                      </span>
+                    </>
+                  ) : "-"}
                 </div>
               </div>
               <div className="seeker-detail-field">
                 <div className="seeker-detail-label">IQ Score</div>
                 <div className="seeker-detail-value">
-                  {app.iq_score != null ? `${app.iq_score} / 30` : "-"}
+                  {app.iq_score != null ? (
+                    <>
+                      {`${app.iq_score} / 30`}
+                      <span style={{ marginLeft: 8, color: "var(--color-text-secondary)", fontSize: "0.82rem", fontWeight: 500 }}>
+                        - {iqLabel(app.iq_score)}
+                      </span>
+                    </>
+                  ) : "-"}
                 </div>
               </div>
             </div>
