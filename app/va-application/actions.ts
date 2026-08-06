@@ -20,6 +20,11 @@ export interface ApplicationPayload {
   intro_video_url: string;
   skills_video_url: string;
   answer_video_url: string;
+  english_mc_score?: number;
+  english_writing_1?: string;
+  english_writing_2?: string;
+  english_writing_3?: string;
+  iq_score?: number;
 }
 
 export async function saveApplication(

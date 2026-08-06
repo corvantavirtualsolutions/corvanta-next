@@ -295,6 +295,41 @@ function DetailModal({
             </div>
           </div>
 
+          {/* Test Scores */}
+          <div className="seeker-detail-section">
+            <h4 className="seeker-detail-section-title">Test Scores</h4>
+            <div className="seeker-detail-grid">
+              <div className="seeker-detail-field">
+                <div className="seeker-detail-label">English MC Score</div>
+                <div className="seeker-detail-value">
+                  {app.english_mc_score != null ? `${app.english_mc_score} / 27` : "-"}
+                </div>
+              </div>
+              <div className="seeker-detail-field">
+                <div className="seeker-detail-label">IQ Score</div>
+                <div className="seeker-detail-value">
+                  {app.iq_score != null ? `${app.iq_score} / 30` : "-"}
+                </div>
+              </div>
+            </div>
+            {(app.english_writing_1 || app.english_writing_2 || app.english_writing_3) && (
+              <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
+                {[
+                  ["Writing Answer 1", app.english_writing_1],
+                  ["Writing Answer 2", app.english_writing_2],
+                  ["Writing Answer 3", app.english_writing_3],
+                ].map(([label, value]) =>
+                  value ? (
+                    <div key={label} className="seeker-detail-field">
+                      <div className="seeker-detail-label">{label}</div>
+                      <div className="seeker-detail-value seeker-detail-value--pre">{value}</div>
+                    </div>
+                  ) : null
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Videos */}
           <div className="seeker-detail-section">
             <h4 className="seeker-detail-section-title">Recorded Videos</h4>

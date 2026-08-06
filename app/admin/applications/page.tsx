@@ -20,6 +20,11 @@ export type VAApplication = {
   intro_video_url: string | null;
   skills_video_url: string | null;
   answer_video_url: string | null;
+  english_mc_score: number | null;
+  english_writing_1: string | null;
+  english_writing_2: string | null;
+  english_writing_3: string | null;
+  iq_score: number | null;
   status: string;
   created_at: string;
 };

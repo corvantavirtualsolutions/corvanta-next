@@ -2,10 +2,12 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { ArrowRight, ArrowLeft, CheckCircle, Loader2, Video, Clock, AlertCircle, Camera, Upload, Square } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle, Loader2, Video, Clock, AlertCircle, Camera, Upload } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import VideoRecorder from "./VideoRecorder";
 import { saveApplication } from "./actions";
+import TestModal from "./TestModal";
+import type { TestQuestion, EnglishTestResult, IQTestResult } from "./testTypes";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
@@ -127,95 +129,16 @@ function BlobPreview({ blob, onClear }: { blob: Blob; onClear: () => void }) {
   );
 }
 
-// ─── TestModal (blank placeholder) ───────────────────────────────────────────
+// ─── Props ───────────────────────────────────────────────────────────────────
 
-function TestModal({ title, onClose }: { title: string; onClose: () => void }) {
-  function handleOverlay(e: React.MouseEvent<HTMLDivElement>) {
-    if (e.target === e.currentTarget) onClose();
-  }
-  return (
-    <div
-      onClick={handleOverlay}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.5)",
-        backdropFilter: "blur(2px)",
-        zIndex: 1000,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: 16,
-          width: "100%",
-          maxWidth: 520,
-          maxHeight: "80vh",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.18)",
-        }}
-      >
-        <div
-          style={{
-            padding: "20px 24px",
-            borderBottom: "1px solid var(--color-border)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <h2 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 800, color: "var(--color-text-primary)" }}>
-            {title}
-          </h2>
-        </div>
-        <div
-          style={{
-            flex: 1,
-            padding: "32px 24px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 12,
-            color: "var(--color-text-secondary)",
-            minHeight: 220,
-          }}
-        >
-          <Clock size={40} strokeWidth={1.5} color="var(--color-border)" />
-          <p style={{ margin: 0, fontSize: "0.95rem", textAlign: "center" }}>
-            Test content coming soon.
-          </p>
-        </div>
-        <div
-          style={{
-            padding: "16px 24px",
-            borderTop: "1px solid var(--color-border)",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={onClose}
-          >
-            Done
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+interface Props {
+  englishQuestions: TestQuestion[];
+  iqQuestions: TestQuestion[];
 }
 
 // ─── Main Wizard ─────────────────────────────────────────────────────────────
 
-export default function VAApplicationWizard() {
+export default function VAApplicationWizard({ englishQuestions, iqQuestions }: Props) {
   const [step, setStep] = useState(0);
   const [stepError, setStepError] = useState("");
 
@@ -237,10 +160,19 @@ export default function VAApplicationWizard() {
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>(new Set());
   const [otherSkillChecked, setOtherSkillChecked] = useState(false);
   const [otherSkillText, setOtherSkillText] = useState("");
+
+  // Test state
   const [englishDone, setEnglishDone] = useState(false);
   const [iqDone, setIqDone] = useState(false);
   const [showEnglishModal, setShowEnglishModal] = useState(false);
   const [showIqModal, setShowIqModal] = useState(false);
+
+  // Test results (saved, sent to DB on submit)
+  const [englishMcScore, setEnglishMcScore] = useState(0);
+  const [englishWriting1, setEnglishWriting1] = useState("");
+  const [englishWriting2, setEnglishWriting2] = useState("");
+  const [englishWriting3, setEnglishWriting3] = useState("");
+  const [iqScore, setIqScore] = useState(0);
 
   // Profile & Links
   const [bio, setBio] = useState("");
@@ -282,6 +214,24 @@ export default function VAApplicationWizard() {
       else next.add(skill);
       return next;
     });
+  }
+
+  // ── Test completion handlers
+  function handleEnglishComplete(result: EnglishTestResult | IQTestResult) {
+    const r = result as EnglishTestResult;
+    setEnglishMcScore(r.mcScore);
+    setEnglishWriting1(r.writing1);
+    setEnglishWriting2(r.writing2);
+    setEnglishWriting3(r.writing3);
+    setEnglishDone(true);
+    setShowEnglishModal(false);
+  }
+
+  function handleIqComplete(result: EnglishTestResult | IQTestResult) {
+    const r = result as IQTestResult;
+    setIqScore(r.iqScore);
+    setIqDone(true);
+    setShowIqModal(false);
   }
 
   // ── Validation
@@ -396,6 +346,11 @@ export default function VAApplicationWizard() {
         intro_video_url: introUrl,
         skills_video_url: skillsUrl,
         answer_video_url: answerUrl,
+        english_mc_score: englishMcScore,
+        english_writing_1: englishWriting1,
+        english_writing_2: englishWriting2,
+        english_writing_3: englishWriting3,
+        iq_score: iqScore,
       });
 
       if (result.error) throw new Error(result.error);
@@ -433,18 +388,7 @@ export default function VAApplicationWizard() {
 
   const displayStep = step + 1;
   const progressPct = Math.round((displayStep / TOTAL_STEPS) * 100);
-
   const fieldStyle = { marginBottom: 20 };
-
-  const labelStyle: React.CSSProperties = {
-    display: "block",
-    fontSize: "0.82rem",
-    fontWeight: 700,
-    color: "var(--color-text-primary)",
-    marginBottom: 5,
-    textTransform: "uppercase",
-    letterSpacing: "0.04em",
-  };
 
   return (
     <div style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
@@ -488,7 +432,6 @@ export default function VAApplicationWizard() {
       <div style={{ flex: 1, padding: "24px 16px 40px", display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ width: "100%", maxWidth: 620, animation: "wizardFadeIn 0.3s ease both" }} key={step}>
 
-          {/* Step error */}
           {stepError && (
             <div style={{ marginBottom: 16, padding: "11px 14px", background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 10, color: "var(--color-error)", fontSize: "0.875rem", display: "flex", gap: 9, alignItems: "flex-start" }}>
               <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
@@ -499,7 +442,6 @@ export default function VAApplicationWizard() {
           {/* ── STEP 0: Introduction ── */}
           {step === 0 && (
             <div>
-              {/* Logo + name + title - centered */}
               <div style={{ textAlign: "center", marginBottom: 32, paddingTop: 8 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 16 }}>
                   <Image src="/logo.png" alt="Corvanta" width={38} height={38} />
@@ -515,47 +457,29 @@ export default function VAApplicationWizard() {
                 </p>
               </div>
 
-              {/* What to expect */}
               <div className="card" style={{ marginBottom: 20 }}>
                 <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "0 0 16px", color: "var(--color-text-primary)" }}>
                   What to expect
                 </h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   {[
-                    {
-                      icon: <Upload size={18} />,
-                      title: "Personal & professional details",
-                      desc: "A short form covering your background, skills, and links.",
-                    },
-                    {
-                      icon: <Video size={18} />,
-                      title: "3 live-recorded video questions",
-                      desc: "Each video is recorded directly in your browser - 30 seconds max, 2 attempts per question.",
-                    },
-                    {
-                      icon: <Clock size={18} />,
-                      title: "Response within 3 business days",
-                      desc: "Our team reviews every application and emails you your score and status.",
-                    },
+                    { icon: <Upload size={18} />, title: "Personal & professional details", desc: "A short form covering your background, skills, and links." },
+                    { icon: <Video size={18} />, title: "3 live-recorded video questions", desc: "Each video is recorded directly in your browser - 30 seconds max, 2 attempts per question." },
+                    { icon: <Clock size={18} />, title: "Response within 3 business days", desc: "Our team reviews every application and emails you your score and status." },
                   ].map(({ icon, title, desc }) => (
                     <div key={title} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
                       <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(15,118,110,0.08)", color: "var(--color-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         {icon}
                       </div>
                       <div>
-                        <p style={{ fontWeight: 700, fontSize: "0.9rem", margin: "0 0 3px", color: "var(--color-text-primary)" }}>
-                          {title}
-                        </p>
-                        <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", margin: 0, lineHeight: 1.55 }}>
-                          {desc}
-                        </p>
+                        <p style={{ fontWeight: 700, fontSize: "0.9rem", margin: "0 0 3px", color: "var(--color-text-primary)" }}>{title}</p>
+                        <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", margin: 0, lineHeight: 1.55 }}>{desc}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Before you start */}
               <div style={{ background: "rgba(15,118,110,0.05)", border: "1px solid rgba(15,118,110,0.2)", borderRadius: 10, padding: "18px 20px", marginBottom: 28 }}>
                 <h4 style={{ fontSize: "0.875rem", fontWeight: 700, margin: "0 0 10px", color: "var(--color-accent)" }}>
                   Before you start - make sure you have:
@@ -640,28 +564,16 @@ export default function VAApplicationWizard() {
               <h2 style={{ fontSize: "1.2rem", fontWeight: 800, margin: "0 0 4px" }}>Professional Background</h2>
               <p style={{ color: "var(--color-text-secondary)", fontSize: "0.875rem", margin: "0 0 24px" }}>All fields are required.</p>
 
-              {/* Niche dropdown */}
               <div style={fieldStyle}>
                 <label className="form-label">Niche / Specialization</label>
-                <select
-                  className="form-select"
-                  value={nichePick}
-                  onChange={(e) => setNichePick(e.target.value)}
-                >
+                <select className="form-select" value={nichePick} onChange={(e) => setNichePick(e.target.value)}>
                   <option value="">Select a specialization...</option>
                   {NICHE_OPTIONS.map((n) => (
                     <option key={n} value={n}>{n}</option>
                   ))}
                 </select>
                 {nichePick === "Other" && (
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Describe your specialization"
-                    value={nicheOther}
-                    onChange={(e) => setNicheOther(e.target.value)}
-                    style={{ marginTop: 10 }}
-                  />
+                  <input type="text" className="form-input" placeholder="Describe your specialization" value={nicheOther} onChange={(e) => setNicheOther(e.target.value)} style={{ marginTop: 10 }} />
                 )}
               </div>
 
@@ -726,39 +638,18 @@ export default function VAApplicationWizard() {
                 <p style={{ fontSize: "0.8rem", color: "var(--color-text-secondary)", margin: "0 0 12px" }}>Select all that apply.</p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 16px" }}>
                   {SKILL_OPTIONS.map((skill) => (
-                    <label
-                      key={skill}
-                      style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer", fontSize: "0.875rem", color: "var(--color-text-primary)", lineHeight: 1.4 }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedSkills.has(skill)}
-                        onChange={() => toggleSkill(skill)}
-                        style={{ marginTop: 2, flexShrink: 0, accentColor: "var(--color-accent)", width: 15, height: 15 }}
-                      />
+                    <label key={skill} style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer", fontSize: "0.875rem", color: "var(--color-text-primary)", lineHeight: 1.4 }}>
+                      <input type="checkbox" checked={selectedSkills.has(skill)} onChange={() => toggleSkill(skill)} style={{ marginTop: 2, flexShrink: 0, accentColor: "var(--color-accent)", width: 15, height: 15 }} />
                       {skill}
                     </label>
                   ))}
-                  {/* Other */}
                   <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer", fontSize: "0.875rem", color: "var(--color-text-primary)", lineHeight: 1.4 }}>
-                    <input
-                      type="checkbox"
-                      checked={otherSkillChecked}
-                      onChange={(e) => setOtherSkillChecked(e.target.checked)}
-                      style={{ marginTop: 2, flexShrink: 0, accentColor: "var(--color-accent)", width: 15, height: 15 }}
-                    />
+                    <input type="checkbox" checked={otherSkillChecked} onChange={(e) => setOtherSkillChecked(e.target.checked)} style={{ marginTop: 2, flexShrink: 0, accentColor: "var(--color-accent)", width: 15, height: 15 }} />
                     Other
                   </label>
                 </div>
                 {otherSkillChecked && (
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Describe your other skill or tool"
-                    value={otherSkillText}
-                    onChange={(e) => setOtherSkillText(e.target.value)}
-                    style={{ marginTop: 10 }}
-                  />
+                  <input type="text" className="form-input" placeholder="Describe your other skill or tool" value={otherSkillText} onChange={(e) => setOtherSkillText(e.target.value)} style={{ marginTop: 10 }} />
                 )}
               </div>
             </div>
@@ -772,46 +663,22 @@ export default function VAApplicationWizard() {
 
               <div style={fieldStyle}>
                 <label className="form-label">Short Bio / About You</label>
-                <textarea
-                  className="form-textarea"
-                  placeholder="Tell us about yourself, your work style, and what makes you a great VA..."
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  rows={4}
-                />
+                <textarea className="form-textarea" placeholder="Tell us about yourself, your work style, and what makes you a great VA..." value={bio} onChange={(e) => setBio(e.target.value)} rows={4} />
               </div>
 
               <div style={fieldStyle}>
                 <label className="form-label">Portfolio Link</label>
-                <input
-                  type="url"
-                  className="form-input"
-                  placeholder="https://yourportfolio.com"
-                  value={portfolioLink}
-                  onChange={(e) => setPortfolioLink(e.target.value)}
-                />
+                <input type="url" className="form-input" placeholder="https://yourportfolio.com" value={portfolioLink} onChange={(e) => setPortfolioLink(e.target.value)} />
               </div>
 
               <div className="form-row">
                 <div style={fieldStyle}>
                   <label className="form-label">LinkedIn</label>
-                  <input
-                    type="url"
-                    className="form-input"
-                    placeholder="https://linkedin.com/in/..."
-                    value={linkedinLink}
-                    onChange={(e) => setLinkedinLink(e.target.value)}
-                  />
+                  <input type="url" className="form-input" placeholder="https://linkedin.com/in/..." value={linkedinLink} onChange={(e) => setLinkedinLink(e.target.value)} />
                 </div>
                 <div style={fieldStyle}>
                   <label className="form-label">Facebook</label>
-                  <input
-                    type="url"
-                    className="form-input"
-                    placeholder="https://facebook.com/..."
-                    value={facebookLink}
-                    onChange={(e) => setFacebookLink(e.target.value)}
-                  />
+                  <input type="url" className="form-input" placeholder="https://facebook.com/..." value={facebookLink} onChange={(e) => setFacebookLink(e.target.value)} />
                 </div>
               </div>
             </div>
@@ -856,7 +723,6 @@ export default function VAApplicationWizard() {
             </div>
           )}
 
-          {/* Submit error / progress */}
           {submitError && (
             <div style={{ marginTop: 16, padding: "12px 16px", background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 10, color: "var(--color-error)", fontSize: "0.875rem", display: "flex", gap: 10, alignItems: "flex-start" }}>
               <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 1 }} />
@@ -893,23 +759,21 @@ export default function VAApplicationWizard() {
         </div>
       </div>
 
-      {/* ── Modals ── */}
+      {/* ── Test Modals ── */}
       {showEnglishModal && (
         <TestModal
           title="English Proficiency Test"
-          onClose={() => {
-            setShowEnglishModal(false);
-            setEnglishDone(true);
-          }}
+          questions={englishQuestions}
+          testType="english"
+          onComplete={handleEnglishComplete}
         />
       )}
       {showIqModal && (
         <TestModal
           title="IQ Check"
-          onClose={() => {
-            setShowIqModal(false);
-            setIqDone(true);
-          }}
+          questions={iqQuestions}
+          testType="iq"
+          onComplete={handleIqComplete}
         />
       )}
     </div>
