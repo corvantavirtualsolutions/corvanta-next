@@ -62,6 +62,7 @@ export default function Footer() {
             <h5>Businesses</h5>
             <ul>
               <li><Link href="/find-a-talent">Find a Talent</Link></li>
+              <li><Link href="/pricing">Pricing</Link></li>
               <li><Link href="/services">Services We Offer</Link></li>
               <li><Link href="/industries">Industries We Serve</Link></li>
             </ul>

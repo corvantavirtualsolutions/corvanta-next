@@ -22,6 +22,7 @@ const navItems: NavItem[] = [
       { label: "Industries We Serve", href: "/industries" },
     ],
   },
+  { label: "Pricing", href: "/pricing" },
   {
     label: "About Us",
     dropdown: [
