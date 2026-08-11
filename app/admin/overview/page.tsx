@@ -19,6 +19,7 @@ async function fetchOverviewData() {
     { count: totalDocs, error: docsError },
     { count: totalApplications, error: appsError },
     { count: newApplications, error: newAppsError },
+    { count: totalSubscribers, error: subscribersError },
   ] = await Promise.all([
     db.auth.admin.listUsers({ perPage: 1000 }),
     db.from("vas").select("*", { count: "exact", head: true }),
@@ -33,6 +34,7 @@ async function fetchOverviewData() {
     db.from("company_docs").select("*", { count: "exact", head: true }),
     db.from("va_applications").select("*", { count: "exact", head: true }),
     db.from("va_applications").select("*", { count: "exact", head: true }).eq("status", "pending"),
+    db.from("subscribers").select("*", { count: "exact", head: true }),
   ]);
 
   // Surface any errors to the console so they're visible in server logs
@@ -50,6 +52,7 @@ async function fetchOverviewData() {
     docsError && `company_docs: ${docsError.message}`,
     appsError && `va_applications: ${appsError.message}`,
     newAppsError && `va_applications (new): ${newAppsError.message}`,
+    subscribersError && `subscribers: ${subscribersError.message}`,
   ].filter(Boolean);
   if (errors.length > 0) {
     console.error("[Overview] Query errors:", errors.join(" | "));
@@ -111,6 +114,7 @@ async function fetchOverviewData() {
     totalDocs: totalDocs ?? 0,
     totalApplications: totalApplications ?? 0,
     newApplications: newApplications ?? 0,
+    totalSubscribers: totalSubscribers ?? 0,
     seekersOverTime,
     usersOverTime,
     vasByNicheData,
@@ -148,6 +152,11 @@ export default async function AdminOverviewPage() {
       value: data.totalApplications,
       href: "/admin/applications",
       sub: `${data.newApplications} pending`,
+    },
+    {
+      label: "Subscribers",
+      value: data.totalSubscribers,
+      href: "/admin/subscribers",
     },
   ];
 

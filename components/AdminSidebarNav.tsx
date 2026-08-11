@@ -50,6 +50,12 @@ export function AdminSidebarNav() {
         Messages
       </a>
       <a
+        href="/admin/subscribers"
+        className={`admin-nav-link${pathname === "/admin/subscribers" ? " active" : ""}`}
+      >
+        Subscribers
+      </a>
+      <a
         href="/admin/docs"
         className={`admin-nav-link${pathname === "/admin/docs" ? " active" : ""}`}
       >

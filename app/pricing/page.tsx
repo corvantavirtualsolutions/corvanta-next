@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import CTABand from "../components/CTABand";
 import ScrollToTop from "../components/ScrollToTop";
+import SubscribeButton from "./SubscribeButton";
 
 export const metadata: Metadata = {
   title: "Pricing | Corvanta Virtual Solutions",
@@ -316,12 +317,7 @@ export default function PricingPage() {
               </div>
 
               <div style={{ padding: "0 32px 32px" }}>
-                <Link
-                  href="/find-a-talent"
-                  className="btn btn-primary btn-lg btn-block"
-                >
-                  Subscribe - Start the Process <ArrowRight size={18} />
-                </Link>
+                <SubscribeButton />
                 <p
                   style={{
                     textAlign: "center",
@@ -331,8 +327,7 @@ export default function PricingPage() {
                     marginBottom: 0,
                   }}
                 >
-                  You'll fill out your requirements next - no payment charged
-                  today.
+                  No payment charged today - contract review comes first.
                 </p>
               </div>
             </div>
