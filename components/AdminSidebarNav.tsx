@@ -53,7 +53,7 @@ export function AdminSidebarNav() {
         href="/admin/subscribers"
         className={`admin-nav-link${pathname === "/admin/subscribers" ? " active" : ""}`}
       >
-        Subscribers
+        Subscription Form
       </a>
       <a
         href="/admin/docs"

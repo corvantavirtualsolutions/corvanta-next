@@ -5,6 +5,7 @@ type Subscriber = {
   id: string;
   name: string | null;
   email: string;
+  emailed: boolean;
   created_at: string;
 };
 
@@ -12,15 +13,15 @@ export default async function AdminSubscribersPage() {
   const db = createAdminClient();
   const { data, error } = await db
     .from("subscribers")
-    .select("id, name, email, created_at")
+    .select("id, name, email, emailed, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
     return (
       <div>
-        <h1 className="admin-page-title">Subscribers</h1>
+        <h1 className="admin-page-title">Subscription Form</h1>
         <p style={{ color: "var(--color-error)" }}>
-          Failed to load subscribers: {error.message}
+          Failed to load submissions: {error.message}
         </p>
       </div>
     );
@@ -30,7 +31,7 @@ export default async function AdminSubscribersPage() {
 
   return (
     <div>
-      <h1 className="admin-page-title">Subscribers</h1>
+      <h1 className="admin-page-title">Subscription Form</h1>
       <p
         style={{
           color: "var(--color-text-secondary)",
@@ -38,9 +39,9 @@ export default async function AdminSubscribersPage() {
           fontSize: "0.9rem",
         }}
       >
-        {subscribers.length} subscriber{subscribers.length !== 1 ? "s" : ""} -
-        most recent first. These people clicked Subscribe on the Pricing page
-        and are awaiting follow-up.
+        {subscribers.length} submission{subscribers.length !== 1 ? "s" : ""} -
+        most recent first. Toggle "Emailed" once you've followed up with each
+        person.
       </p>
       <SubscribersTable subscribers={subscribers} />
     </div>

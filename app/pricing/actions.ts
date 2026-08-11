@@ -9,7 +9,7 @@ export async function saveSubscriber(
   const db = createAdminClient();
   const { error } = await db
     .from("subscribers")
-    .insert({ name: name.trim() || null, email: email.trim().toLowerCase() });
+    .insert({ name: name.trim(), email: email.trim().toLowerCase() });
   if (error) return { error: error.message };
   return {};
 }

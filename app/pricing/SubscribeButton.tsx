@@ -28,14 +28,20 @@ export default function SubscribeButton() {
     e.preventDefault();
     setFieldError("");
 
+    const trimmedName = name.trim();
     const trimmedEmail = email.trim();
+
+    if (!trimmedName) {
+      setFieldError("name:Please enter your name.");
+      return;
+    }
     if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      setFieldError("Please enter a valid email address.");
+      setFieldError("email:Please enter a valid email address.");
       return;
     }
 
     setPhase("submitting");
-    const result = await saveSubscriber(name, trimmedEmail);
+    const result = await saveSubscriber(trimmedName, trimmedEmail);
     if (result.error) {
       setFieldError(result.error);
       setPhase("open");
@@ -178,22 +184,14 @@ export default function SubscribeButton() {
                       lineHeight: 1.65,
                     }}
                   >
-                    Enter your email and we'll send you the next steps and the
-                    contract details. No payment is charged today.
+                    Enter your name and email and we'll send you the next
+                    steps and the contract details. No payment is charged today.
                   </p>
 
                   {/* Name */}
                   <div className="form-group">
                     <label className="form-label" htmlFor="sub-name">
-                      Name{" "}
-                      <span
-                        style={{
-                          fontWeight: 400,
-                          color: "var(--color-text-secondary)",
-                        }}
-                      >
-                        (optional)
-                      </span>
+                      Name <span style={{ color: "var(--color-error)" }}>*</span>
                     </label>
                     <input
                       id="sub-name"
@@ -201,10 +199,18 @@ export default function SubscribeButton() {
                       className="form-input"
                       placeholder="Your name"
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        if (fieldError.startsWith("name:")) setFieldError("");
+                      }}
                       disabled={phase === "submitting"}
                       autoComplete="name"
                     />
+                    {fieldError.startsWith("name:") && (
+                      <p style={{ margin: "6px 0 0", fontSize: "0.82rem", color: "var(--color-error)" }}>
+                        {fieldError.slice(5)}
+                      </p>
+                    )}
                   </div>
 
                   {/* Email */}
@@ -220,21 +226,14 @@ export default function SubscribeButton() {
                       value={email}
                       onChange={(e) => {
                         setEmail(e.target.value);
-                        if (fieldError) setFieldError("");
+                        if (fieldError.startsWith("email:")) setFieldError("");
                       }}
                       disabled={phase === "submitting"}
                       autoComplete="email"
-                      required
                     />
-                    {fieldError && (
-                      <p
-                        style={{
-                          margin: "6px 0 0",
-                          fontSize: "0.82rem",
-                          color: "var(--color-error)",
-                        }}
-                      >
-                        {fieldError}
+                    {fieldError.startsWith("email:") && (
+                      <p style={{ margin: "6px 0 0", fontSize: "0.82rem", color: "var(--color-error)" }}>
+                        {fieldError.slice(6)}
                       </p>
                     )}
                   </div>

@@ -17,6 +17,25 @@ async function assertAdmin() {
   if (!isAdmin) throw new Error("Not authorized");
 }
 
+export async function toggleSubscriberEmailed(
+  id: string,
+  emailed: boolean
+): Promise<{ error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+  const db = createAdminClient();
+  const { error } = await db
+    .from("subscribers")
+    .update({ emailed })
+    .eq("id", id);
+  if (error) return { error: error.message };
+  revalidatePath("/admin/subscribers");
+  return {};
+}
+
 export async function deleteSubscriber(id: string): Promise<{ error?: string }> {
   try {
     await assertAdmin();

@@ -154,7 +154,7 @@ export default async function AdminOverviewPage() {
       sub: `${data.newApplications} pending`,
     },
     {
-      label: "Subscribers",
+      label: "Subscription Form",
       value: data.totalSubscribers,
       href: "/admin/subscribers",
     },
