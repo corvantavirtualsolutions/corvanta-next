@@ -3,6 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const SUPER_ADMIN = "corvantavirtualsolutions@gmail.com";
 
@@ -85,12 +88,47 @@ export async function toggleApplicationEmailed(
   } catch (e) {
     return { error: (e as Error).message };
   }
+
   const db = createAdminClient();
+
+  // Fetch applicant details for the email
+  const { data: app } = await db
+    .from("va_applications")
+    .select("email, full_name")
+    .eq("id", id)
+    .single();
+
   const { error } = await db
     .from("va_applications")
     .update({ emailed })
     .eq("id", id);
   if (error) return { error: error.message };
+
+  // Send email only when toggling TO emailed (not when toggling back off)
+  if (emailed && app?.email) {
+    await resend.emails.send({
+      from: "Corvanta Virtual Solutions <admin@corvantavirtualsolutions.net>",
+      to: app.email,
+      subject: "Your Corvanta VA Application Has Been Reviewed",
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a;">
+          <h2 style="color: #2eb87c;">Corvanta Virtual Solutions</h2>
+          <p>Hi ${app.full_name},</p>
+          <p>Thank you for applying to join the Corvanta Virtual Solutions team. We have reviewed your application and wanted to follow up with you.</p>
+          <p>Please watch the following video for important next steps regarding your application:</p>
+          <p style="margin: 24px 0;">
+            <a href="https://www.youtube.com/watch?v=DDWKuo3gXMQ&list=RDIRyMoHJu-i8&index=27"
+               style="background: #2eb87c; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">
+              Watch Video
+            </a>
+          </p>
+          <p>If you have any questions, feel free to reply to this email.</p>
+          <p>Best regards,<br/>The Corvanta Virtual Solutions Team</p>
+        </div>
+      `,
+    });
+  }
+
   revalidatePath("/admin/applications");
   return {};
 }
