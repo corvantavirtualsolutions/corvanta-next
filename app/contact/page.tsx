@@ -68,8 +68,8 @@ export default function ContactPage() {
               </div>
               <h4>Email Us</h4>
               <p style={{ marginBottom: 0 }}>
-                <a href="mailto:corvantavirtualsolutions@gmail.com">
-                  corvantavirtualsolutions@gmail.com
+                <a href="mailto:admin@corvantavirtualsolutions.net">
+                  admin@corvantavirtualsolutions.net
                 </a>
               </p>
             </div>

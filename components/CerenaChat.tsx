@@ -34,7 +34,7 @@ const REPLIES: Reply[] = [
   {
     pattern: /apply|become a va|join|work for|work with corvanta|va application/i,
     response:
-      "Interested in joining our VA network? We look for skilled, reliable professionals with experience in their field. Reach out to us at corvantavirtualsolutions@gmail.com and mention you'd like to apply as a VA.",
+      "Interested in joining our VA network? We look for skilled, reliable professionals with experience in their field. Reach out to us at admin@corvantavirtualsolutions.net and mention you'd like to apply as a VA.",
   },
   {
     pattern: /price|pricing|cost|rate|how much|fee|budget|charge/i,
@@ -49,7 +49,7 @@ const REPLIES: Reply[] = [
   {
     pattern: /contact|email|phone|address|reach|location|where are you/i,
     response:
-      "You can reach us at corvantavirtualsolutions@gmail.com or call (463) 223-9883. We're also located at 1800 N Meridian Suite 400b, Indianapolis, IN 46202. We'd love to hear from you!",
+      "You can reach us at admin@corvantavirtualsolutions.net or call (463) 223-9883. We're also located at 1800 N Meridian Suite 400b, Indianapolis, IN 46202. We'd love to hear from you!",
   },
   {
     pattern: /vet|screen|qualif|background|trust|reliable|quality/i,

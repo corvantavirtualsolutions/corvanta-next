@@ -19,7 +19,7 @@ import SubscribeButton from "./SubscribeButton";
 export const metadata: Metadata = {
   title: "Pricing | Corvanta Virtual Solutions",
   description:
-    "Simple, transparent pricing. $300 to get matched with your first VA, $29/month ongoing, $129 per additional VA.",
+    "Simple, transparent pricing. $500 to get matched with your first VA, $29/month ongoing, $129 per additional VA.",
 };
 
 const ONGOING_PERKS = [
@@ -145,7 +145,7 @@ export default function PricingPage() {
                       letterSpacing: "-0.03em",
                     }}
                   >
-                    $300
+                    $500
                   </span>
                   <span
                     style={{

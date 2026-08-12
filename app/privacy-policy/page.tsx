@@ -29,7 +29,7 @@ const sections = [
   },
   {
     heading: "6. Your Choices",
-    body: "You may request access to, correction of, or deletion of your personal information by contacting us at corvantavirtualsolutions@gmail.com.",
+    body: "You may request access to, correction of, or deletion of your personal information by contacting us at admin@corvantavirtualsolutions.net.",
   },
   {
     heading: "7. Changes to This Policy",
@@ -37,7 +37,7 @@ const sections = [
   },
   {
     heading: "8. Contact Us",
-    body: "Questions about this policy can be sent to corvantavirtualsolutions@gmail.com or 1800 N Meridian Suite 400b, Indianapolis, IN 46202.",
+    body: "Questions about this policy can be sent to admin@corvantavirtualsolutions.net or 1800 N Meridian Suite 400b, Indianapolis, IN 46202.",
   },
 ];
 
