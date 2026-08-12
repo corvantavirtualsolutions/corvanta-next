@@ -9,6 +9,7 @@ export type Message = {
   message: string;
   status: string;
   created_at: string;
+  opened_at: string | null;
 };
 
 export default async function AdminMessagesPage() {

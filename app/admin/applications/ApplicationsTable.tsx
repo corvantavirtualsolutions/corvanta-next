@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { X, Trash2, ExternalLink } from "lucide-react";
-import { deleteApplication, updateApplicationStatus } from "./actions";
+import { deleteApplication, updateApplicationStatus, markApplicationOpened } from "./actions";
 import type { VAApplication } from "./page";
 
 function formatDate(iso: string) {
@@ -396,7 +396,16 @@ export default function ApplicationsTable({
   applications: VAApplication[];
 }) {
   const [detail, setDetail] = useState<VAApplication | null>(null);
+  const [locallyOpened, setLocallyOpened] = useState<Set<string>>(new Set());
   const router = useRouter();
+
+  function openDetail(a: VAApplication) {
+    if (a.opened_at === null && !locallyOpened.has(a.id)) {
+      setLocallyOpened((prev) => new Set([...prev, a.id]));
+      void markApplicationOpened(a.id);
+    }
+    setDetail(a);
+  }
 
   function handleDeleted() {
     setDetail(null);
@@ -433,13 +442,16 @@ export default function ApplicationsTable({
                 </td>
               </tr>
             ) : (
-              applications.map((a) => (
+              applications.map((a) => {
+                const isUnread = a.opened_at === null && !locallyOpened.has(a.id);
+                return (
                 <tr
                   key={a.id}
                   className="seekers-table-row"
-                  onClick={() => setDetail(a)}
+                  onClick={() => openDetail(a)}
+                  style={{ background: isUnread ? "rgba(46,184,124,0.05)" : undefined }}
                 >
-                  <td style={{ fontWeight: 600 }}>{a.full_name}</td>
+                  <td style={{ fontWeight: isUnread ? 700 : 600 }}>{a.full_name}</td>
                   <td style={{ color: "var(--color-text-secondary)" }}>
                     {a.email}
                   </td>
@@ -455,7 +467,8 @@ export default function ApplicationsTable({
                     <DeleteButton id={a.id} onDeleted={() => router.refresh()} />
                   </td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
         </table>

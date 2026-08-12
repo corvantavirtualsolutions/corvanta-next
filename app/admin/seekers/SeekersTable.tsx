@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { DeleteSeekerButton } from "./DeleteSeekerButton";
 import { EmailedToggle } from "./EmailedToggle";
 import SeekerDetailModal from "./SeekerDetailModal";
+import { markSeekerOpened } from "./actions";
 import type { VaSeeker } from "./types";
 
 function formatDate(iso: string): string {
@@ -17,7 +18,16 @@ function formatDate(iso: string): string {
 
 export default function SeekersTable({ seekers }: { seekers: VaSeeker[] }) {
   const [detailSeeker, setDetailSeeker] = useState<VaSeeker | null>(null);
+  const [locallyOpened, setLocallyOpened] = useState<Set<string>>(new Set());
   const router = useRouter();
+
+  function openDetail(s: VaSeeker) {
+    if (s.opened_at === null && !locallyOpened.has(s.id)) {
+      setLocallyOpened((prev) => new Set([...prev, s.id]));
+      void markSeekerOpened(s.id);
+    }
+    setDetailSeeker(s);
+  }
 
   function handleDeleted() {
     setDetailSeeker(null);
@@ -54,13 +64,16 @@ export default function SeekersTable({ seekers }: { seekers: VaSeeker[] }) {
                 </td>
               </tr>
             ) : (
-              seekers.map((s) => (
+              seekers.map((s) => {
+                const isUnread = s.opened_at === null && !locallyOpened.has(s.id);
+                return (
                 <tr
                   key={s.id}
                   className="seekers-table-row"
-                  onClick={() => setDetailSeeker(s)}
+                  onClick={() => openDetail(s)}
+                  style={{ background: isUnread ? "rgba(46,184,124,0.05)" : undefined }}
                 >
-                  <td style={{ fontWeight: 600 }}>{s.name}</td>
+                  <td style={{ fontWeight: isUnread ? 700 : 600 }}>{s.name}</td>
                   <td>{s.company}</td>
                   <td style={{ color: "var(--color-text-secondary)" }}>
                     {s.email ?? "-"}
@@ -97,7 +110,8 @@ export default function SeekersTable({ seekers }: { seekers: VaSeeker[] }) {
                     />
                   </td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
         </table>

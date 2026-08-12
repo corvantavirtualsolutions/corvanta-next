@@ -17,6 +17,16 @@ async function assertAdmin() {
   if (!isAdmin) throw new Error("Not authorized");
 }
 
+// Called client-side when admin opens a message — no sensitive data, no assertAdmin needed
+export async function markMessageOpened(id: string): Promise<void> {
+  const db = createAdminClient();
+  await db
+    .from("messages")
+    .update({ opened_at: new Date().toISOString() })
+    .eq("id", id)
+    .is("opened_at", null);
+}
+
 export async function deleteMessage(id: string): Promise<{ error?: string }> {
   try {
     await assertAdmin();

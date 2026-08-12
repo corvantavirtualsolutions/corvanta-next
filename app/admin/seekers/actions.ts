@@ -20,6 +20,16 @@ async function assertAdmin() {
     throw new Error("Not authorized");
 }
 
+// Called client-side when admin opens a seeker detail — no sensitive data, no assertAdmin needed
+export async function markSeekerOpened(id: string): Promise<void> {
+  const adminClient = createAdminClient();
+  await adminClient
+    .from("va_seekers")
+    .update({ opened_at: new Date().toISOString() })
+    .eq("id", id)
+    .is("opened_at", null);
+}
+
 export async function deleteSeeker(id: string): Promise<{ error?: string }> {
   try {
     await assertAdmin();

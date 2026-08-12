@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { X, Trash2 } from "lucide-react";
-import { deleteMessage, updateMessageStatus } from "./actions";
+import { deleteMessage, updateMessageStatus, markMessageOpened } from "./actions";
 import type { Message } from "./page";
 
 function formatDate(iso: string): string {
@@ -199,7 +199,16 @@ function MessageDetailModal({
 
 export default function MessagesTable({ messages }: { messages: Message[] }) {
   const [detail, setDetail] = useState<Message | null>(null);
+  const [locallyOpened, setLocallyOpened] = useState<Set<string>>(new Set());
   const router = useRouter();
+
+  function openDetail(m: Message) {
+    if (m.opened_at === null && !locallyOpened.has(m.id)) {
+      setLocallyOpened((prev) => new Set([...prev, m.id]));
+      void markMessageOpened(m.id);
+    }
+    setDetail(m);
+  }
 
   function handleDeleted() {
     setDetail(null);
@@ -236,13 +245,16 @@ export default function MessagesTable({ messages }: { messages: Message[] }) {
                 </td>
               </tr>
             ) : (
-              messages.map((m) => (
+              messages.map((m) => {
+                const isUnread = m.opened_at === null && !locallyOpened.has(m.id);
+                return (
                 <tr
                   key={m.id}
                   className="seekers-table-row"
-                  onClick={() => setDetail(m)}
+                  onClick={() => openDetail(m)}
+                  style={{ background: isUnread ? "rgba(46,184,124,0.05)" : undefined }}
                 >
-                  <td style={{ fontWeight: 600 }}>{m.full_name}</td>
+                  <td style={{ fontWeight: isUnread ? 700 : 600 }}>{m.full_name}</td>
                   <td style={{ color: "var(--color-text-secondary)" }}>
                     {m.email}
                   </td>
@@ -271,7 +283,8 @@ export default function MessagesTable({ messages }: { messages: Message[] }) {
                     />
                   </td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
         </table>

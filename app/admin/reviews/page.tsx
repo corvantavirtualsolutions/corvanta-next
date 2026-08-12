@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { DeleteReviewButton } from "./DeleteReviewButton";
+import MarkAllReviewsRead from "./MarkAllReviewsRead";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -46,6 +47,7 @@ export default async function AdminReviewsPage() {
 
   return (
     <div>
+      <MarkAllReviewsRead />
       <h1 className="admin-page-title">Reviews</h1>
 
       {/* Summary stats */}

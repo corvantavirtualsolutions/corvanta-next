@@ -66,6 +66,16 @@ export async function deleteApplication(
   return {};
 }
 
+// Called client-side when admin opens a detail modal — no sensitive data, no assertAdmin needed
+export async function markApplicationOpened(id: string): Promise<void> {
+  const db = createAdminClient();
+  await db
+    .from("va_applications")
+    .update({ opened_at: new Date().toISOString() })
+    .eq("id", id)
+    .is("opened_at", null);
+}
+
 export async function updateApplicationStatus(
   id: string,
   status: string

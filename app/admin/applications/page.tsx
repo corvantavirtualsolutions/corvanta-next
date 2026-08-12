@@ -27,6 +27,7 @@ export type VAApplication = {
   iq_score: number | null;
   status: string;
   created_at: string;
+  opened_at: string | null;
 };
 
 export default async function AdminApplicationsPage() {

@@ -1,0 +1,136 @@
+CORVANTA NEXT - DEVELOPMENT LOG
+Aug 4 - Aug 7, 2026
+================================================
+
+
+AUG 4
+------
+
+1. Contact form wired to Supabase
+   - Contact form now saves submissions to the `messages` table in Supabase
+   - Admin dashboard: added Messages section to view all submitted contact forms
+   - Admin dashboard: added Company Docs section
+
+2. /find-a-talent auth gate
+   - The Find a Talent page is now gated behind server-side auth
+   - Unauthenticated users are redirected to login
+
+3. Scroll-to-top on route change
+   - Added sitewide scroll-to-top behavior on every route change
+   - Find a Talent: results panel scrolls into view automatically after search
+
+4. Contact form success state polish
+   - Improved visual hierarchy and animation on the post-submit success screen
+   - "Send another message" button centered
+
+
+AUG 5
+------
+
+5. VA Application form (first pass)
+   - Built /va-application as a standalone page hidden from the main nav
+   - Multi-step form with live in-browser video recording (intro, skills, and answer videos)
+   - Profile photo upload
+   - Submissions saved to `va_applications` table in Supabase with all fields + video URLs
+
+6. VA Application redesigned as 7-step wizard
+   - Rebuilt the form as a clean standalone wizard (no navbar/footer)
+   - 7 discrete steps with progress indicator
+   - Footer link updated: VA Application moved into the Resources column
+
+7. Admin dashboard: VA Applications section
+   - New admin page at /admin/applications
+   - Sidebar link placed directly below VA Seekers
+   - Table shows: Name, Email, Niche/Specialization, Country, Date, Status
+   - Status dropdown: Pending / Reviewed / Approved / Rejected (with legacy value normalization)
+   - Overview stat card updated to show pending application count
+   - Delete with confirmation dialog
+
+
+AUG 6
+------
+
+8. VA Application wizard overhaul
+   - Intro step: Corvanta logo centered above title, full comfortable spacing restored
+   - Removed duplicate logo from top-left sticky bar (bar now hidden on step 0)
+   - Added City + Country as separate required fields (joined as "City, Country" on submit)
+   - Niche/Specialization: dropdown with predefined options + "Other" free-text reveal
+   - Skills & Tools: checkbox grid with "Other" free-text reveal
+   - URL validation on portfolio, LinkedIn, and Facebook fields
+   - Video countdown reduced from 5 seconds to 3 seconds
+
+9. English Proficiency and IQ tests built into the wizard
+   - Created data/english-test.md (30 questions: Grammar, Vocabulary, Reading Comprehension,
+     Business English, 3 Writing prompts)
+   - Created data/iq-test.md (30 questions: Logical Reasoning, Numerical, Abstract,
+     Probability)
+   - New TestModal component: one question at a time, per-question countdown timers,
+     auto-advance at zero, immediate advance on MC answer click
+   - Intro disclaimer screen before each test starts
+   - Timer colors: accent (normal) -> yellow (<=20s) -> red (<=10s) with pulse animation
+   - Reading comprehension questions show the passage above the question
+   - Writing questions (3 min each): textarea + Submit Answer button
+   - Timer durations: Grammar/Business English 30s, Reading Comprehension 45s,
+     Writing 180s, IQ 45s each
+   - Both tests must be completed before the applicant can proceed past step 2
+   - Scores are hidden from the applicant; saved to Supabase on final submit:
+       english_mc_score  (integer, out of 27 auto-graded MC questions)
+       english_writing_1 (text)
+       english_writing_2 (text)
+       english_writing_3 (text)
+       iq_score          (integer, out of 30)
+   - Supabase: run the following to add the columns if not yet present:
+       ALTER TABLE va_applications
+         ADD COLUMN IF NOT EXISTS english_mc_score   integer,
+         ADD COLUMN IF NOT EXISTS english_writing_1  text,
+         ADD COLUMN IF NOT EXISTS english_writing_2  text,
+         ADD COLUMN IF NOT EXISTS english_writing_3  text,
+         ADD COLUMN IF NOT EXISTS iq_score           integer;
+
+10. Admin detail modal: Test Scores section
+    - Shows English MC score as "X / 27" with CEFR interpretation label:
+        27      Excellent (C1-C2)
+        23-26   Advanced (B2)
+        18-22   Intermediate (B1)
+        12-17   Basic (A2)
+        <12     Beginner (A1)
+    - Shows IQ score as "X / 30" with interpretation label:
+        27-30   Exceptional reasoning ability
+        24-26   Strong analytical skills
+        20-23   Above average; suitable for most VA roles
+        15-19   Average; may require more training
+        <15     Consider additional evaluation
+    - Shows all three writing answers (manually graded by admin)
+
+11. Storage cleanup on application delete
+    - Deleting a VA application from the admin dashboard now also removes the
+      associated files from the va-videos Supabase Storage bucket:
+      profile photo, intro video, skills video, and answer video
+    - Best-effort: row delete still succeeds if a storage file is already gone
+    - VA Seeker and Review deletes confirmed to have no associated storage files
+
+
+================================================
+FILES CHANGED (key files)
+================================================
+
+app/va-application/
+  page.tsx                  - server component; parses test files, passes as props
+  VAApplicationWizard.tsx   - full wizard rewrite; test state, submit payload
+  TestModal.tsx             - NEW; timed quiz modal component
+  parseTests.ts             - NEW; server-side .md parser for both tests
+  testTypes.ts              - NEW; shared TypeScript types for tests
+  actions.ts                - saveApplication: added 5 score fields to payload
+  VideoRecorder.tsx         - countdown 5s -> 3s
+
+data/
+  english-test.md           - NEW; 30 English questions
+  iq-test.md                - NEW; 30 IQ questions
+
+app/admin/applications/
+  page.tsx                  - VAApplication type: added 5 score columns
+  ApplicationsTable.tsx     - detail modal: Test Scores section with labels
+  actions.ts                - deleteApplication: storage cleanup added
+
+app/admin/overview/page.tsx - pending count fix (.eq status "pending")
+components/AdminSidebarNav.tsx - VA Applications link moved above Company Docs

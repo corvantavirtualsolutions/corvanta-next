@@ -2,65 +2,63 @@
 
 import { usePathname } from "next/navigation";
 
-export function AdminSidebarNav() {
+type UnreadCounts = {
+  messages: number;
+  seekers: number;
+  applications: number;
+  reviews: number;
+};
+
+function Badge({ count }: { count: number }) {
+  if (count <= 0) return null;
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minWidth: 18,
+        height: 18,
+        borderRadius: 99,
+        background: "var(--color-primary)",
+        color: "#fff",
+        fontSize: "0.68rem",
+        fontWeight: 700,
+        padding: "0 5px",
+        marginLeft: "auto",
+        flexShrink: 0,
+        lineHeight: 1,
+      }}
+    >
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
+
+export function AdminSidebarNav({ unreadCounts }: { unreadCounts: UnreadCounts }) {
   const pathname = usePathname();
+
+  const link = (href: string, label: string, badge = 0) => (
+    <a
+      href={href}
+      className={`admin-nav-link${pathname === href ? " active" : ""}`}
+      style={{ display: "flex", alignItems: "center" }}
+    >
+      {label}
+      <Badge count={badge} />
+    </a>
+  );
 
   return (
     <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      <a
-        href="/admin/overview"
-        className={`admin-nav-link${pathname === "/admin/overview" ? " active" : ""}`}
-      >
-        Overview
-      </a>
-      <a
-        href="/admin"
-        className={`admin-nav-link${pathname === "/admin" ? " active" : ""}`}
-      >
-        Users
-      </a>
-      <a
-        href="/admin/reviews"
-        className={`admin-nav-link${pathname === "/admin/reviews" ? " active" : ""}`}
-      >
-        Reviews
-      </a>
-      <a
-        href="/admin/vas"
-        className={`admin-nav-link${pathname === "/admin/vas" ? " active" : ""}`}
-      >
-        Our VAs
-      </a>
-      <a
-        href="/admin/seekers"
-        className={`admin-nav-link${pathname === "/admin/seekers" ? " active" : ""}`}
-      >
-        VA Seekers
-      </a>
-      <a
-        href="/admin/applications"
-        className={`admin-nav-link${pathname === "/admin/applications" ? " active" : ""}`}
-      >
-        VA Applications
-      </a>
-      <a
-        href="/admin/messages"
-        className={`admin-nav-link${pathname === "/admin/messages" ? " active" : ""}`}
-      >
-        Messages
-      </a>
-      <a
-        href="/admin/subscribers"
-        className={`admin-nav-link${pathname === "/admin/subscribers" ? " active" : ""}`}
-      >
-        Subscription Form
-      </a>
-      <a
-        href="/admin/docs"
-        className={`admin-nav-link${pathname === "/admin/docs" ? " active" : ""}`}
-      >
-        Company Docs
-      </a>
+      {link("/admin/overview", "Overview")}
+      {link("/admin", "Users")}
+      {link("/admin/reviews", "Reviews", unreadCounts.reviews)}
+      {link("/admin/vas", "Our VAs")}
+      {link("/admin/seekers", "VA Seekers", unreadCounts.seekers)}
+      {link("/admin/applications", "VA Applications", unreadCounts.applications)}
+      {link("/admin/messages", "Messages", unreadCounts.messages)}
+      {link("/admin/docs", "Company Docs")}
     </nav>
   );
 }

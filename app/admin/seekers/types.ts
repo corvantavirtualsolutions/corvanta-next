@@ -18,4 +18,5 @@ export type VaSeeker = {
   project_details: string | null;
   emailed: boolean;
   created_at: string;
+  opened_at: string | null;
 };
