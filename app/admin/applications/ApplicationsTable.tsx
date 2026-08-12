@@ -136,11 +136,14 @@ function DeleteButton({ id, onDeleted }: { id: string; onDeleted: () => void }) 
   );
 }
 
-function EmailedToggle({ id, initialEmailed }: { id: string; initialEmailed: boolean }) {
+function EmailedToggle({ id, initialEmailed, status }: { id: string; initialEmailed: boolean; status: string }) {
   const [emailed, setEmailed] = useState(initialEmailed);
   const [isPending, startTransition] = useTransition();
 
+  const isReviewed = status !== "pending" && status !== "new";
+
   function handleToggle() {
+    if (!isReviewed) return;
     const next = !emailed;
     setEmailed(next);
     startTransition(async () => {
@@ -153,8 +156,9 @@ function EmailedToggle({ id, initialEmailed }: { id: string; initialEmailed: boo
     <button
       className={`emailed-toggle${emailed ? " emailed-toggle--on" : ""}`}
       onClick={(e) => { e.stopPropagation(); handleToggle(); }}
-      disabled={isPending}
-      title={emailed ? "Mark as not emailed" : "Mark as emailed"}
+      disabled={isPending || !isReviewed}
+      title={!isReviewed ? "Change status to Reviewed first" : emailed ? "Mark as not emailed" : "Mark as emailed"}
+      style={{ opacity: isReviewed ? 1 : 0.4, cursor: isReviewed ? "pointer" : "not-allowed" }}
     >
       {emailed ? "Emailed" : "Not emailed"}
     </button>
@@ -408,7 +412,7 @@ function DetailModal({
           >
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               <StatusSelect app={app} />
-              <EmailedToggle id={app.id} initialEmailed={app.emailed} />
+              <EmailedToggle id={app.id} initialEmailed={app.emailed} status={app.status} />
             </div>
             <DeleteButton id={app.id} onDeleted={onDeleted} />
           </div>
@@ -493,7 +497,7 @@ export default function ApplicationsTable({
                     <StatusSelect app={a} />
                   </td>
                   <td onClick={(e) => e.stopPropagation()}>
-                    <EmailedToggle id={a.id} initialEmailed={a.emailed} />
+                    <EmailedToggle id={a.id} initialEmailed={a.emailed} status={a.status} />
                   </td>
                   <td onClick={(e) => e.stopPropagation()}>
                     <DeleteButton id={a.id} onDeleted={() => router.refresh()} />
