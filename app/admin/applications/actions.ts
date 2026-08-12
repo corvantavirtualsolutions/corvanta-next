@@ -5,8 +5,6 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const SUPER_ADMIN = "corvantavirtualsolutions@gmail.com";
 
 async function assertAdmin() {
@@ -106,6 +104,7 @@ export async function toggleApplicationEmailed(
 
   // Send email only when toggling TO emailed (not when toggling back off)
   if (emailed && app?.email) {
+    const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: "Corvanta Virtual Solutions <admin@corvantavirtualsolutions.net>",
       to: app.email,
