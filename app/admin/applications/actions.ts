@@ -76,6 +76,25 @@ export async function markApplicationOpened(id: string): Promise<void> {
     .is("opened_at", null);
 }
 
+export async function toggleApplicationEmailed(
+  id: string,
+  emailed: boolean
+): Promise<{ error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+  const db = createAdminClient();
+  const { error } = await db
+    .from("va_applications")
+    .update({ emailed })
+    .eq("id", id);
+  if (error) return { error: error.message };
+  revalidatePath("/admin/applications");
+  return {};
+}
+
 export async function updateApplicationStatus(
   id: string,
   status: string

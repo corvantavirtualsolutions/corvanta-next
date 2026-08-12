@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { X, Trash2, ExternalLink } from "lucide-react";
-import { deleteApplication, updateApplicationStatus, markApplicationOpened } from "./actions";
+import { deleteApplication, updateApplicationStatus, markApplicationOpened, toggleApplicationEmailed } from "./actions";
 import type { VAApplication } from "./page";
 
 function formatDate(iso: string) {
@@ -132,6 +132,31 @@ function DeleteButton({ id, onDeleted }: { id: string; onDeleted: () => void }) 
       aria-label="Delete application"
     >
       <Trash2 size={14} /> Delete
+    </button>
+  );
+}
+
+function EmailedToggle({ id, initialEmailed }: { id: string; initialEmailed: boolean }) {
+  const [emailed, setEmailed] = useState(initialEmailed);
+  const [isPending, startTransition] = useTransition();
+
+  function handleToggle() {
+    const next = !emailed;
+    setEmailed(next);
+    startTransition(async () => {
+      const result = await toggleApplicationEmailed(id, next);
+      if (result.error) setEmailed(!next);
+    });
+  }
+
+  return (
+    <button
+      className={`emailed-toggle${emailed ? " emailed-toggle--on" : ""}`}
+      onClick={(e) => { e.stopPropagation(); handleToggle(); }}
+      disabled={isPending}
+      title={emailed ? "Mark as not emailed" : "Mark as emailed"}
+    >
+      {emailed ? "Emailed" : "Not emailed"}
     </button>
   );
 }
@@ -381,7 +406,10 @@ function DetailModal({
               gap: 12,
             }}
           >
-            <StatusSelect app={app} />
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <StatusSelect app={app} />
+              <EmailedToggle id={app.id} initialEmailed={app.emailed} />
+            </div>
             <DeleteButton id={app.id} onDeleted={onDeleted} />
           </div>
         </div>
@@ -424,6 +452,7 @@ export default function ApplicationsTable({
               <th>Country</th>
               <th>Date</th>
               <th>Status</th>
+              <th>Emailed</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -431,7 +460,7 @@ export default function ApplicationsTable({
             {applications.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   style={{
                     textAlign: "center",
                     color: "var(--color-text-secondary)",
@@ -462,6 +491,9 @@ export default function ApplicationsTable({
                   </td>
                   <td onClick={(e) => e.stopPropagation()}>
                     <StatusSelect app={a} />
+                  </td>
+                  <td onClick={(e) => e.stopPropagation()}>
+                    <EmailedToggle id={a.id} initialEmailed={a.emailed} />
                   </td>
                   <td onClick={(e) => e.stopPropagation()}>
                     <DeleteButton id={a.id} onDeleted={() => router.refresh()} />

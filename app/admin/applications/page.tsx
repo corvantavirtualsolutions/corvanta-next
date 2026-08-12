@@ -26,6 +26,7 @@ export type VAApplication = {
   english_writing_3: string | null;
   iq_score: number | null;
   status: string;
+  emailed: boolean;
   created_at: string;
   opened_at: string | null;
 };
