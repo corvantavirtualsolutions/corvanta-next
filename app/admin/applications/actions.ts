@@ -105,7 +105,7 @@ export async function toggleApplicationEmailed(
   // Send email only when toggling TO emailed (not when toggling back off)
   if (emailed && app?.email) {
     const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
+    const { data: emailData, error: emailError } = await resend.emails.send({
       from: "Corvanta Virtual Solutions <admin@corvantavirtualsolutions.net>",
       to: app.email,
       subject: "Your Corvanta VA Application Has Been Reviewed",
@@ -126,6 +126,13 @@ export async function toggleApplicationEmailed(
         </div>
       `,
     });
+    if (emailError) {
+      console.error("[toggleApplicationEmailed] Resend error:", emailError);
+    } else {
+      console.log("[toggleApplicationEmailed] Email sent:", emailData?.id);
+    }
+  } else {
+    console.log("[toggleApplicationEmailed] Skipped email — emailed:", emailed, "app.email:", app?.email);
   }
 
   revalidatePath("/admin/applications");
