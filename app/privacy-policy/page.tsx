@@ -9,19 +9,19 @@ export const metadata: Metadata = {
 const sections = [
   {
     heading: "1. Overview",
-    body: 'This Privacy Policy explains how Corvanta Virtual Solutions ("Corvanta," "we," "us") collects, uses, and protects information when you use our website and services, including matching businesses with Virtual Assistants.',
+    body: 'This Privacy Policy explains how Corvanta Virtual Solutions ("Corvanta," "we," "us") collects, uses, and protects information when you use our website and services, including matching businesses with Virtual Assistants. Corvanta is based in Indianapolis, Indiana.',
   },
   {
     heading: "2. Information We Collect",
-    body: "We collect information you provide directly, such as your name, email, phone number, company details, and application materials, as well as usage data collected automatically through cookies and similar technologies.",
+    body: "We collect information you provide directly. For businesses, this includes your name, email, phone number, company details, and a description of your support needs. For Virtual Assistant applicants, this includes your name, email, phone number, work history, skills, and other application materials. We also collect usage data automatically through cookies and similar technologies.",
   },
   {
     heading: "3. How We Use Information",
-    body: "We use collected information to operate our matching platform, communicate with you, process applications, improve our services, and comply with legal obligations.",
+    body: "We use collected information to operate our matching platform, communicate with you, process VA applications and client inquiries, conduct background checks and skills assessments, improve our services, and comply with legal obligations.",
   },
   {
     heading: "4. Sharing of Information",
-    body: "We share information with matched businesses or Virtual Assistants as needed to facilitate a placement, and with service providers who help us operate our platform. We do not sell personal information.",
+    body: "We share information with matched businesses or Virtual Assistants as needed to facilitate a placement, and with trusted service providers who help us operate our platform (such as background check providers and communication tools). We do not sell personal information.",
   },
   {
     heading: "5. Data Security",
@@ -50,7 +50,7 @@ export default function PrivacyPolicyPage() {
             <Link href="/">Home</Link> / Privacy Policy
           </div>
           <h1>Privacy Policy</h1>
-          <p className="lead">Last updated: July 1, 2026</p>
+          <p className="lead">Last updated: August 14, 2026</p>
         </div>
       </section>
 
