@@ -1,6 +1,19 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
-import { Users, Bot, Star, Search, MessageCircle, FileText, ClipboardList, TrendingUp } from "lucide-react";
+import {
+  Users,
+  Bot,
+  Star,
+  Search,
+  MessageCircle,
+  FileText,
+  ClipboardList,
+  TrendingUp,
+  Eye,
+  Bell,
+  AlertTriangle,
+  ChevronRight,
+} from "lucide-react";
 import OverviewCharts from "./OverviewCharts";
 
 const STAT_COLORS = {
@@ -30,6 +43,11 @@ async function fetchOverviewData() {
     { count: totalDocs, error: docsError },
     { count: totalApplications, error: appsError },
     { count: newApplications, error: newAppsError },
+    { data: seekerCategories, error: catError },
+    { data: messagesFullData, error: msgFullError },
+    { data: appsFullData, error: appFullError },
+    { count: unopenedSeekers, error: unopenedSeekerError },
+    { count: unreadMessages, error: unreadMsgError },
   ] = await Promise.all([
     db.auth.admin.listUsers({ perPage: 1000 }),
     db.from("vas").select("*", { count: "exact", head: true }),
@@ -44,6 +62,14 @@ async function fetchOverviewData() {
     db.from("company_docs").select("*", { count: "exact", head: true }),
     db.from("va_applications").select("*", { count: "exact", head: true }),
     db.from("va_applications").select("*", { count: "exact", head: true }).eq("status", "pending"),
+    db.from("va_seekers").select("category"),
+    db.from("messages").select("i_am_a, created_at").order("created_at", { ascending: true }),
+    db
+      .from("va_applications")
+      .select("iq_score, english_mc_score, specialization, status, created_at")
+      .order("created_at", { ascending: true }),
+    db.from("va_seekers").select("*", { count: "exact", head: true }).is("opened_at", null),
+    db.from("messages").select("*", { count: "exact", head: true }).is("opened_at", null),
   ]);
 
   const errors = [
@@ -60,6 +86,11 @@ async function fetchOverviewData() {
     docsError && `company_docs: ${docsError.message}`,
     appsError && `va_applications: ${appsError.message}`,
     newAppsError && `va_applications (new): ${newAppsError.message}`,
+    catError && `va_seekers (category): ${catError.message}`,
+    msgFullError && `messages (full): ${msgFullError.message}`,
+    appFullError && `va_applications (full): ${appFullError.message}`,
+    unopenedSeekerError && `va_seekers (unopened): ${unopenedSeekerError.message}`,
+    unreadMsgError && `messages (unread): ${unreadMsgError.message}`,
   ].filter(Boolean);
   if (errors.length > 0) {
     console.error("[Overview] Query errors:", errors.join(" | "));
@@ -68,7 +99,7 @@ async function fetchOverviewData() {
   const authUsers = usersResult.data?.users ?? [];
   const totalUsers = authUsers.length;
 
-  // Group seekers by day
+  // Seekers over time
   const seekerDayCounts: Record<string, number> = {};
   for (const row of seekersByDay ?? []) {
     const day = row.created_at.slice(0, 10);
@@ -78,7 +109,7 @@ async function fetchOverviewData() {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, count]) => ({ date, count }));
 
-  // Group auth users by signup day
+  // Users over time
   const userDayCounts: Record<string, number> = {};
   for (const u of authUsers) {
     if (u.created_at) {
@@ -99,7 +130,7 @@ async function fetchOverviewData() {
     .sort(([, a], [, b]) => b - a)
     .map(([niche, count]) => ({ niche, count }));
 
-  // Rating distribution
+  // Rating distribution & avg
   const ratingCounts: Record<string, number> = {};
   for (const row of ratings ?? []) {
     const r = String(row.rating);
@@ -109,14 +140,72 @@ async function fetchOverviewData() {
     rating: `${r}★`,
     count: ratingCounts[r] ?? 0,
   }));
-
-  // Avg rating
   const ratingList = ratings ?? [];
   const avgRating =
     ratingList.length > 0
-      ? ratingList.reduce((sum: number, r: { rating: number | null }) => sum + (Number(r.rating) || 0), 0) /
-        ratingList.length
+      ? ratingList.reduce(
+          (sum: number, r: { rating: number | null }) => sum + (Number(r.rating) || 0),
+          0
+        ) / ratingList.length
       : null;
+
+  // Seeker categories
+  const catCounts: Record<string, number> = {};
+  for (const row of seekerCategories ?? []) {
+    const cat = row.category ?? "Unspecified";
+    catCounts[cat] = (catCounts[cat] ?? 0) + 1;
+  }
+  const categoryData = Object.entries(catCounts)
+    .sort(([, a], [, b]) => b - a)
+    .map(([category, count]) => ({ category, count }));
+
+  // Messages over time + sender types
+  const msgTypeCounts: Record<string, number> = {};
+  const msgDayCounts: Record<string, number> = {};
+  for (const row of messagesFullData ?? []) {
+    const type = row.i_am_a ?? "Unknown";
+    msgTypeCounts[type] = (msgTypeCounts[type] ?? 0) + 1;
+    const day = (row.created_at as string).slice(0, 10);
+    msgDayCounts[day] = (msgDayCounts[day] ?? 0) + 1;
+  }
+  const messageTypeData = Object.entries(msgTypeCounts)
+    .sort(([, a], [, b]) => b - a)
+    .map(([type, count]) => ({ type, count }));
+  const messagesOverTime = Object.entries(msgDayCounts)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, count]) => ({ date, count }));
+
+  // Applications: pipeline + scores + specialization + over time
+  const pipelineMap = { pending: 0, reviewed: 0, approved: 0, rejected: 0 };
+  const iqScores: number[] = [];
+  const englishScores: number[] = [];
+  const specCounts: Record<string, number> = {};
+  const appDayCounts: Record<string, number> = {};
+  for (const app of appsFullData ?? []) {
+    const s = (app.status ?? "pending").toLowerCase();
+    if (s === "pending" || s === "new") pipelineMap.pending++;
+    else if (s === "reviewed" || s === "reviewing") pipelineMap.reviewed++;
+    else if (s === "approved" || s === "accepted") pipelineMap.approved++;
+    else if (s === "rejected") pipelineMap.rejected++;
+
+    if (app.iq_score !== null) iqScores.push(Number(app.iq_score));
+    if (app.english_mc_score !== null) englishScores.push(Number(app.english_mc_score));
+    if (app.specialization) {
+      specCounts[app.specialization] = (specCounts[app.specialization] ?? 0) + 1;
+    }
+    const day = (app.created_at as string).slice(0, 10);
+    appDayCounts[day] = (appDayCounts[day] ?? 0) + 1;
+  }
+  const avgIQScore =
+    iqScores.length > 0 ? iqScores.reduce((s, v) => s + v, 0) / iqScores.length : null;
+  const avgEnglishScore =
+    englishScores.length > 0 ? englishScores.reduce((s, v) => s + v, 0) / englishScores.length : null;
+  const specializationData = Object.entries(specCounts)
+    .sort(([, a], [, b]) => b - a)
+    .map(([spec, count]) => ({ spec, count }));
+  const applicationsOverTime = Object.entries(appDayCounts)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, count]) => ({ date, count }));
 
   return {
     totalUsers,
@@ -130,14 +219,164 @@ async function fetchOverviewData() {
     totalApplications: totalApplications ?? 0,
     newApplications: newApplications ?? 0,
     avgRating,
+    unopenedSeekers: unopenedSeekers ?? 0,
+    unreadMessages: unreadMessages ?? 0,
+    pipelineMap,
+    avgIQScore,
+    avgEnglishScore,
     seekersOverTime,
     usersOverTime,
     vasByNicheData,
     ratingDistribution,
+    categoryData,
+    messageTypeData,
+    messagesOverTime,
+    applicationsOverTime,
+    specializationData,
     errors,
   };
 }
 
+// ─── Pipeline stage ───────────────────────────────────────────────────────────
+function PipelineStage({
+  label,
+  count,
+  total,
+  color,
+}: {
+  label: string;
+  count: number;
+  total: number;
+  color: string;
+}) {
+  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+  return (
+    <div
+      style={{
+        flex: 1,
+        background: "#fff",
+        border: "1px solid #E5E7EB",
+        borderTop: `3px solid ${color}`,
+        borderRadius: 10,
+        padding: "16px 18px",
+      }}
+    >
+      <div style={{ fontSize: "1.9rem", fontWeight: 800, color, lineHeight: 1 }}>{count}</div>
+      <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "#374151", margin: "5px 0 2px" }}>
+        {label}
+      </div>
+      <div style={{ fontSize: "0.72rem", color: "#9CA3AF" }}>{pct}% of total</div>
+      <div
+        style={{
+          marginTop: 10,
+          height: 4,
+          background: "#F3F4F6",
+          borderRadius: 4,
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            height: "100%",
+            width: `${pct}%`,
+            background: color,
+            borderRadius: 4,
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Score card ───────────────────────────────────────────────────────────────
+function ScoreCard({
+  label,
+  value,
+  max,
+  color,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  color: string;
+}) {
+  const pct = Math.round((value / max) * 100);
+  return (
+    <div
+      style={{
+        flex: 1,
+        background: "#fff",
+        border: "1px solid #E5E7EB",
+        borderTop: `3px solid ${color}`,
+        borderRadius: 10,
+        padding: "18px 20px",
+      }}
+    >
+      <div
+        style={{
+          fontSize: "0.7rem",
+          textTransform: "uppercase",
+          letterSpacing: "0.06em",
+          color: "#9CA3AF",
+          fontWeight: 700,
+          marginBottom: 8,
+        }}
+      >
+        {label}
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+        <span style={{ fontSize: "2.4rem", fontWeight: 800, color, lineHeight: 1 }}>
+          {value.toFixed(1)}
+        </span>
+        <span style={{ fontSize: "0.85rem", color: "#9CA3AF" }}>/ {max}</span>
+      </div>
+      <div style={{ fontSize: "0.75rem", color: "#6B7280", margin: "4px 0 12px" }}>
+        {pct}% — {pct >= 80 ? "Excellent" : pct >= 60 ? "Good" : pct >= 40 ? "Average" : "Below avg"}
+      </div>
+      <div style={{ height: 8, background: "#F3F4F6", borderRadius: 6, overflow: "hidden" }}>
+        <div
+          style={{
+            height: "100%",
+            width: `${pct}%`,
+            background: `linear-gradient(90deg, ${color}99, ${color})`,
+            borderRadius: 6,
+            transition: "width 0.4s ease",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Section divider ──────────────────────────────────────────────────────────
+function SectionDivider({ title }: { title: string }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        margin: "32px 0 18px",
+      }}
+    >
+      <span
+        style={{
+          fontSize: "0.7rem",
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          color: "#9CA3AF",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {title}
+      </span>
+      <div style={{ flex: 1, height: 1, background: "#E5E7EB" }} />
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 export default async function AdminOverviewPage() {
   const data = await fetchOverviewData();
 
@@ -218,16 +457,90 @@ export default async function AdminOverviewPage() {
   ];
 
   const kpiMetrics = [
-    { label: "Email Rate", value: `${emailRate}%`, description: "of seekers contacted", color: "#8B5CF6" },
-    { label: "Resolution Rate", value: `${resolutionRate}%`, description: "of messages resolved", color: "#3B82F6" },
+    {
+      label: "Email Rate",
+      value: `${emailRate}%`,
+      description: "of seekers contacted",
+      color: "#8B5CF6",
+    },
+    {
+      label: "Resolution Rate",
+      value: `${resolutionRate}%`,
+      description: "of messages resolved",
+      color: "#3B82F6",
+    },
     ...(data.avgRating
-      ? [{ label: "Avg Rating", value: `${data.avgRating.toFixed(1)}★`, description: "from reviews", color: "#F59E0B" }]
+      ? [
+          {
+            label: "Avg Rating",
+            value: `${data.avgRating.toFixed(1)}★`,
+            description: "from reviews",
+            color: "#F59E0B",
+          },
+        ]
       : []),
-    { label: "Pending Apps", value: String(data.newApplications), description: "need review", color: "#EF4444" },
+    ...(data.avgIQScore !== null
+      ? [
+          {
+            label: "Avg IQ",
+            value: `${data.avgIQScore.toFixed(1)}/30`,
+            description: "application score",
+            color: "#6366F1",
+          },
+        ]
+      : []),
+    ...(data.avgEnglishScore !== null
+      ? [
+          {
+            label: "Avg English",
+            value: `${data.avgEnglishScore.toFixed(1)}/27`,
+            description: "application score",
+            color: "#06B6D4",
+          },
+        ]
+      : []),
+  ];
+
+  const needsAttention = [
+    data.unopenedSeekers > 0 && {
+      href: "/admin/seekers",
+      count: data.unopenedSeekers,
+      label: "Unread Seekers",
+      color: "#8B5CF6",
+      icon: <Eye size={15} />,
+    },
+    data.unreadMessages > 0 && {
+      href: "/admin/messages",
+      count: data.unreadMessages,
+      label: "Unread Messages",
+      color: "#06B6D4",
+      icon: <Bell size={15} />,
+    },
+    data.newApplications > 0 && {
+      href: "/admin/applications",
+      count: data.newApplications,
+      label: "Pending Applications",
+      color: "#EF4444",
+      icon: <AlertTriangle size={15} />,
+    },
+  ].filter(Boolean) as {
+    href: string;
+    count: number;
+    label: string;
+    color: string;
+    icon: React.ReactNode;
+  }[];
+
+  const pipeline = [
+    { label: "Pending", count: data.pipelineMap.pending, color: "#F59E0B" },
+    { label: "Reviewed", count: data.pipelineMap.reviewed, color: "#3B82F6" },
+    { label: "Approved", count: data.pipelineMap.approved, color: "#2EB87C" },
+    { label: "Rejected", count: data.pipelineMap.rejected, color: "#EF4444" },
   ];
 
   return (
     <div>
+      {/* Header */}
       <div
         style={{
           display: "flex",
@@ -248,19 +561,21 @@ export default async function AdminOverviewPage() {
         <div
           style={{
             fontSize: "0.75rem",
-            color: "var(--color-text-secondary)",
-            background: "var(--color-surface)",
-            border: "1px solid var(--color-border)",
+            color: "#2EB87C",
+            background: "#E6F7EF",
+            border: "1px solid #2EB87C40",
             borderRadius: 20,
             padding: "5px 12px",
             whiteSpace: "nowrap",
             flexShrink: 0,
+            fontWeight: 600,
           }}
         >
-          Live data
+          ● Live data
         </div>
       </div>
 
+      {/* Errors */}
       {data.errors.length > 0 && (
         <div
           style={{
@@ -321,7 +636,7 @@ export default async function AdminOverviewPage() {
       </div>
 
       {/* KPI strip */}
-      <div className="overview-kpi-row" style={{ marginBottom: 28 }}>
+      <div className="overview-kpi-row" style={{ marginBottom: 24 }}>
         {kpiMetrics.map((kpi) => (
           <div key={kpi.label} className="overview-kpi-chip">
             <TrendingUp size={13} style={{ color: kpi.color, flexShrink: 0 }} />
@@ -334,11 +649,135 @@ export default async function AdminOverviewPage() {
         ))}
       </div>
 
+      {/* Needs Attention */}
+      {needsAttention.length > 0 && (
+        <>
+          <SectionDivider title="Needs Attention" />
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 8 }}>
+            {needsAttention.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  background: item.color + "0D",
+                  border: `1px solid ${item.color}40`,
+                  borderLeft: `4px solid ${item.color}`,
+                  borderRadius: 10,
+                  padding: "12px 18px",
+                  textDecoration: "none",
+                  transition: "box-shadow 0.15s",
+                  flex: "1 1 160px",
+                }}
+              >
+                <span style={{ color: item.color }}>{item.icon}</span>
+                <div>
+                  <div style={{ fontSize: "1.4rem", fontWeight: 800, color: item.color, lineHeight: 1 }}>
+                    {item.count}
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "#6B7280", marginTop: 2 }}>{item.label}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Application Pipeline */}
+      {data.totalApplications > 0 && (
+        <>
+          <SectionDivider title="Application Pipeline" />
+          <div
+            style={{
+              background: "#fff",
+              border: "1px solid #E5E7EB",
+              borderRadius: 12,
+              padding: "20px 22px",
+              marginBottom: 8,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <p style={{ margin: 0, fontSize: "0.8rem", color: "#9CA3AF" }}>
+                {data.totalApplications} total applications
+              </p>
+              <Link
+                href="/admin/applications"
+                style={{ fontSize: "0.78rem", color: "#2EB87C", fontWeight: 600, textDecoration: "none" }}
+              >
+                View all →
+              </Link>
+            </div>
+            <div style={{ display: "flex", gap: 10, alignItems: "stretch" }}>
+              {pipeline.map((stage, i) => (
+                <>
+                  <PipelineStage
+                    key={stage.label}
+                    label={stage.label}
+                    count={stage.count}
+                    total={data.totalApplications}
+                    color={stage.color}
+                  />
+                  {i < pipeline.length - 1 && (
+                    <div
+                      key={`arrow-${i}`}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#D1D5DB",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <ChevronRight size={18} />
+                    </div>
+                  )}
+                </>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Application Test Scores */}
+      {(data.avgIQScore !== null || data.avgEnglishScore !== null) && (
+        <>
+          <SectionDivider title="Applicant Test Scores" />
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 8 }}>
+            {data.avgIQScore !== null && (
+              <ScoreCard label="Avg IQ Score" value={data.avgIQScore} max={30} color="#6366F1" />
+            )}
+            {data.avgEnglishScore !== null && (
+              <ScoreCard
+                label="Avg English Score"
+                value={data.avgEnglishScore}
+                max={27}
+                color="#06B6D4"
+              />
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Charts */}
+      <SectionDivider title="Analytics & Trends" />
       <OverviewCharts
         seekersOverTime={data.seekersOverTime}
         usersOverTime={data.usersOverTime}
+        messagesOverTime={data.messagesOverTime}
+        applicationsOverTime={data.applicationsOverTime}
         vasByNiche={data.vasByNicheData}
         ratingDistribution={data.ratingDistribution}
+        categoryData={data.categoryData}
+        messageTypeData={data.messageTypeData}
+        specializationData={data.specializationData}
         seekerStatus={seekerStatus}
         messageStatus={messageStatus}
         applicationStatus={applicationStatus}
