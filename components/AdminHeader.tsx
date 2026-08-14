@@ -22,7 +22,7 @@ export default function AdminHeader({ user }: { user: AuthUser }) {
   }, []);
 
   return (
-    <header className="navbar">
+    <header className="admin-navbar">
       <div className="container" style={{ justifyContent: "space-between" }}>
         <Link href="/" className="logo">
           <Image

@@ -54,7 +54,7 @@ export function AdminSidebarNav({ unreadCounts }: { unreadCounts: UnreadCounts }
         <p>Welcome Back! 😊</p>
       </div>
       {link("/admin/overview", "Overview")}
-      {link("/admin", "Users")}
+      {link("/admin/users", "Users")}
       {link("/admin/reviews", "Reviews", unreadCounts.reviews)}
       {link("/admin/vas", "Our VAs")}
       {link("/admin/seekers", "VA Seekers", unreadCounts.seekers)}

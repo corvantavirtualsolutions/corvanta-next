@@ -1935,6 +1935,15 @@ section { padding: var(--sp-12) 0; }
 }
 
 /* ---------- Admin Dashboard ---------- */
+.admin-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+}
+.admin-navbar .container { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+
 .admin-layout {
   display: flex;
   align-items: flex-start;

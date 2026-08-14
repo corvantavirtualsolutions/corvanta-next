@@ -404,7 +404,7 @@ export default async function AdminOverviewPage() {
     {
       label: "Total Users",
       value: data.totalUsers,
-      href: "/admin",
+      href: "/admin/users",
       color: STAT_COLORS.users,
       icon: <Users size={18} />,
     },
