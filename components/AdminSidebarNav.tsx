@@ -51,6 +51,11 @@ export function AdminSidebarNav({ unreadCounts }: { unreadCounts: UnreadCounts }
 
   return (
     <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div style={{ padding: "8px 10px 12px", borderBottom: "1px solid var(--color-border)", marginBottom: 4 }}>
+        <p style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "1rem", color: "var(--color-text)", margin: 0 }}>
+          Welcome Back! 😊
+        </p>
+      </div>
       {link("/admin/overview", "Overview")}
       {link("/admin", "Users")}
       {link("/admin/reviews", "Reviews", unreadCounts.reviews)}
